@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["app/javascript/*"],
-      "~/*": ["app/javascript/*"]
+      "@/*": ["app/frontend/*"],
+      "~/*": ["app/frontend/*"]
     }
   },
   "files": [],

@@ -59,3 +59,8 @@ end
 gem "inertia_rails", "~> 3.16"
 
 gem "vite_rails", "~> 3.0"
+
+# Authentication
+gem "devise", "~> 4.9"
+gem "omniauth-google-oauth2", "~> 1.2"
+gem "omniauth-rails_csrf_protection", "~> 1.0"

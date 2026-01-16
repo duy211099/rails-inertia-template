@@ -1,6 +1,37 @@
-import { createInertiaApp, type ResolvedComponent } from '@inertiajs/react'
-import { StrictMode } from 'react'
+import { createInertiaApp, type ResolvedComponent, usePage } from '@inertiajs/react'
+import { StrictMode, useEffect, useRef, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Toaster, toast } from 'sonner'
+import type { SharedProps } from '@/types'
+
+// Flash toast component - shows flash messages and renders Toaster
+function FlashToaster() {
+  const { flash } = usePage<SharedProps>().props
+  const shownRef = useRef<{ notice?: string; alert?: string }>({})
+
+  useEffect(() => {
+    if (flash?.notice && flash.notice !== shownRef.current.notice) {
+      shownRef.current.notice = flash.notice
+      toast.success(flash.notice)
+    }
+    if (flash?.alert && flash.alert !== shownRef.current.alert) {
+      shownRef.current.alert = flash.alert
+      toast.error(flash.alert)
+    }
+  }, [flash])
+
+  return <Toaster position="top-right" richColors closeButton />
+}
+
+// Wrapper to provide flash messages within Inertia context
+function AppWrapper({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <FlashToaster />
+      {children}
+    </>
+  )
+}
 
 void createInertiaApp({
   // Set default page title
@@ -22,11 +53,8 @@ void createInertiaApp({
       console.error(`Missing Inertia page component: '${name}.tsx'`)
     }
 
-    // To use a default layout, import the Layout component
-    // and use the following line.
-    // see https://inertia-rails.dev/guide/pages#default-layouts
-    //
-    // page.default.layout ||= (page: ReactNode) => (<Layout>{page}</Layout>)
+    // Wrap all pages with AppWrapper for flash messages
+    page.default.layout ||= (page: ReactNode) => <AppWrapper>{page}</AppWrapper>
 
     return page
   },

@@ -5,6 +5,7 @@ import railsSvg from '/assets/rails.svg'
 import inertiaSvg from '/assets/inertia.svg'
 import reactSvg from '/assets/react.svg'
 
+import { AuthNav } from '@/components/auth-nav'
 import cs from './index.module.css'
 
 export default function InertiaExample(
@@ -14,6 +15,10 @@ export default function InertiaExample(
   return (
     <div className={cs.root}>
       <Head title="Ruby on Rails + Inertia + React" />
+
+      <header className="fixed top-0 right-0 p-4">
+        <AuthNav />
+      </header>
 
       <nav className={cs.subNav}>
         <a href="https://rubyonrails.org" target="_blank">
