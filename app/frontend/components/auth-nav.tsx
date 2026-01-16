@@ -9,9 +9,9 @@ export function AuthNav() {
     return (
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          {user.avatar_url && (
+          {user.avatarUrl && (
             <img
-              src={user.avatar_url}
+              src={user.avatarUrl}
               alt={user.name}
               className="h-8 w-8 rounded-full"
             />

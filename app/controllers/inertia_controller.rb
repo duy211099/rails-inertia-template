@@ -13,6 +13,6 @@ class InertiaController < ApplicationController
   inertia_share user: -> {
     return nil unless current_user
 
-    current_user.as_json(only: [ :id, :name, :email ], methods: [ :avatar_url ])
+    UserSerializer.one(current_user)
   }
 end
