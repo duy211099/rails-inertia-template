@@ -43,6 +43,12 @@ export default function ItemShow({ item }: Props) {
             )}
           </CardHeader>
           <CardContent>
+            {item.phoneNumber && (
+              <div className="mb-4">
+                <p className="text-sm font-medium">Phone Number</p>
+                <p>{item.phoneNumber}</p>
+              </div>
+            )}
             <div className="mb-6 text-sm text-muted-foreground">
               <p>Created: {new Date(item.createdAt).toLocaleString()}</p>
               <p>Updated: {new Date(item.updatedAt).toLocaleString()}</p>

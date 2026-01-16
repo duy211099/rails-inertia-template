@@ -13,10 +13,7 @@ type Props = {
 }
 
 export default function ItemEdit({ item }: Props) {
-  const { data, setData, patch, processing, errors } = useForm({
-    name: item.name,
-    description: item.description || '',
-  })
+  const { data, setData, patch, processing, errors } = useForm(item)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,6 +70,21 @@ export default function ItemEdit({ item }: Props) {
                 />
                 {errors.description && (
                   <p className="text-sm text-destructive">{errors.description}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  value={data.phoneNumber}
+                  onChange={(e) => setData('phoneNumber', e.target.value)}
+                  placeholder="Enter phone number (optional)"
+                  aria-invalid={!!errors.phoneNumber}
+                />
+                {errors.phoneNumber && (
+                  <p className="text-sm text-destructive">{errors.phoneNumber}</p>
                 )}
               </div>
 

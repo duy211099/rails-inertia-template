@@ -1,8 +1,21 @@
-import { createInertiaApp, type ResolvedComponent, usePage } from '@inertiajs/react'
+import type { RequestPayload } from '@inertiajs/core'
+import { createInertiaApp, type ResolvedComponent, router, usePage } from '@inertiajs/react'
 import { type ReactNode, StrictMode, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
+import snakecaseKeys from 'snakecase-keys'
 import { Toaster, toast } from 'sonner'
 import type { SharedProps } from '@/types'
+
+// Convert camelCase form data to snake_case before sending to Rails
+router.on('before', (event) => {
+  const { visit } = event.detail
+  if (visit.data && typeof visit.data === 'object') {
+    visit.data = snakecaseKeys(visit.data as any, {
+      deep: true,
+      exclude: [/^_/], // Preserve Rails internal params (_method, etc.)
+    }) as RequestPayload
+  }
+})
 
 // Flash toast component - shows flash messages and renders Toaster
 function FlashToaster() {

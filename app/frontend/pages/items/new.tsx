@@ -11,6 +11,7 @@ export default function ItemNew() {
   const { data, setData, post, processing, errors } = useForm({
     name: '',
     description: '',
+    phoneNumber: '',
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,6 +69,21 @@ export default function ItemNew() {
                 />
                 {errors.description && (
                   <p className="text-sm text-destructive">{errors.description}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  value={data.phoneNumber}
+                  onChange={(e) => setData('phoneNumber', e.target.value)}
+                  placeholder="Enter phone number (optional)"
+                  aria-invalid={!!errors.phoneNumber}
+                />
+                {errors.phoneNumber && (
+                  <p className="text-sm text-destructive">{errors.phoneNumber}</p>
                 )}
               </div>
 

@@ -57,6 +57,6 @@ class ItemsController < InertiaController
   end
 
   def item_params
-    params.require(:item).permit(:name, :description)
+    params.require(:item).permit(:name, :description, :phone_number)
   end
 end
