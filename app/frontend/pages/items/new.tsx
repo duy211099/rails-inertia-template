@@ -1,0 +1,87 @@
+import { Head, Link, useForm } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { AuthNav } from '@/components/auth-nav'
+
+export default function ItemNew() {
+  const { data, setData, post, processing, errors } = useForm({
+    name: '',
+    description: '',
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    post('/items')
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Head title="New Item" />
+
+      <header className="border-b">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Link href="/items">
+              <Button variant="ghost" size="sm">&larr; Back</Button>
+            </Link>
+            <h1 className="text-2xl font-bold">New Item</h1>
+          </div>
+          <AuthNav />
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <CardTitle>Create a new item</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={data.name}
+                  onChange={(e) => setData('name', e.target.value)}
+                  placeholder="Enter item name"
+                  aria-invalid={!!errors.name}
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">{errors.name}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={data.description}
+                  onChange={(e) => setData('description', e.target.value)}
+                  placeholder="Enter item description (optional)"
+                  rows={4}
+                  aria-invalid={!!errors.description}
+                />
+                {errors.description && (
+                  <p className="text-sm text-destructive">{errors.description}</p>
+                )}
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="submit" disabled={processing}>
+                  {processing ? 'Creating...' : 'Create Item'}
+                </Button>
+                <Link href="/items">
+                  <Button type="button" variant="outline">Cancel</Button>
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  )
+}

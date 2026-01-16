@@ -1,0 +1,16 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: First Item
+  description: This is the first item
+  user: one
+
+two:
+  name: Second Item
+  description: This is the second item
+  user: one
+
+three:
+  name: Third Item
+  description: This belongs to user two
+  user: two

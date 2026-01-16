@@ -1,0 +1,79 @@
+import { Head, Link, router } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AuthNav } from '@/components/auth-nav'
+import type { Item } from '@/types'
+
+type Props = {
+  items: Item[]
+}
+
+export default function ItemsIndex({ items }: Props) {
+  const handleDelete = (id: number) => {
+    if (confirm('Are you sure you want to delete this item?')) {
+      router.delete(`/items/${id}`)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Head title="Items" />
+
+      <header className="border-b">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+          <h1 className="text-2xl font-bold">Items</h1>
+          <AuthNav />
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex items-center justify-between">
+          <p className="text-muted-foreground">
+            {items.length} {items.length === 1 ? 'item' : 'items'}
+          </p>
+          <Link href="/items/new">
+            <Button>New Item</Button>
+          </Link>
+        </div>
+
+        {items.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground">No items yet. Create your first item!</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((item) => (
+              <Card key={item.id}>
+                <CardHeader>
+                  <CardTitle>{item.name}</CardTitle>
+                  {item.description && (
+                    <CardDescription>{item.description}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Link href={`/items/${item.id}`}>
+                      <Button variant="outline" size="sm">View</Button>
+                    </Link>
+                    <Link href={`/items/${item.id}/edit`}>
+                      <Button variant="outline" size="sm">Edit</Button>
+                    </Link>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
