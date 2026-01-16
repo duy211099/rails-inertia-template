@@ -1,13 +1,9 @@
+// Re-export generated types from serializers
+export type { Item, User } from './serializers'
+
 export type FlashData = {
   notice?: string
   alert?: string
-}
-
-export type User = {
-  id: number
-  name: string
-  email: string
-  avatarUrl?: string
 }
 
 export type SharedProps = {
@@ -15,10 +11,5 @@ export type SharedProps = {
   user?: User
 }
 
-export type Item = {
-  id: number
-  name: string
-  description: string | null
-  createdAt: string
-  updatedAt: string
-}
+// Import User type for SharedProps
+import type { User } from './serializers'

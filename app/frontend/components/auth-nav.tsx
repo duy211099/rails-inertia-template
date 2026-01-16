@@ -10,24 +10,18 @@ export function AuthNav() {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           {user.avatarUrl && (
-            <img
-              src={user.avatarUrl}
-              alt={user.name}
-              className="h-8 w-8 rounded-full"
-            />
+            <img src={user.avatarUrl} alt={user.name} className="h-8 w-8 rounded-full" />
           )}
           <span className="text-sm font-medium">{user.name}</span>
         </div>
         <form action="/users/sign_out" method="post">
-          <input
-            type="hidden"
-            name="_method"
-            value="delete"
-          />
+          <input type="hidden" name="_method" value="delete" />
           <input
             type="hidden"
             name="authenticity_token"
-            value={document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''}
+            value={
+              document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''
+            }
           />
           <Button type="submit" variant="outline" size="sm">
             Sign out

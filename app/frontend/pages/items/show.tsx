@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react'
+import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AuthNav } from '@/components/auth-nav'
+import { editItemPath, itemPath, itemsPath } from '@/lib/routes'
 import type { Item } from '@/types'
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 export default function ItemShow({ item }: Props) {
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this item?')) {
-      router.delete(`/items/${item.id}`)
+      router.delete(itemPath(item.id))
     }
   }
 
@@ -22,8 +23,10 @@ export default function ItemShow({ item }: Props) {
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/items">
-              <Button variant="ghost" size="sm">&larr; Back</Button>
+            <Link href={itemsPath()}>
+              <Button variant="ghost" size="sm">
+                &larr; Back
+              </Button>
             </Link>
             <h1 className="text-2xl font-bold">Item Details</h1>
           </div>
@@ -45,7 +48,7 @@ export default function ItemShow({ item }: Props) {
               <p>Updated: {new Date(item.updatedAt).toLocaleString()}</p>
             </div>
             <div className="flex gap-2">
-              <Link href={`/items/${item.id}/edit`}>
+              <Link href={editItemPath(item.id)}>
                 <Button>Edit</Button>
               </Link>
               <Button variant="destructive" onClick={handleDelete}>

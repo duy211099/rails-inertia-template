@@ -9,9 +9,7 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8 p-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-          <p className="mt-2 text-muted-foreground">
-            Sign in to your account to continue
-          </p>
+          <p className="mt-2 text-muted-foreground">Sign in to your account to continue</p>
         </div>
 
         <div className="space-y-4">
@@ -19,10 +17,13 @@ export default function Login() {
             <input
               type="hidden"
               name="authenticity_token"
-              value={document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''}
+              value={
+                document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''
+              }
             />
             <Button type="submit" className="w-full" size="lg">
-              <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+              <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" aria-label="Google logo">
+                <title>Google</title>
                 <path
                   fill="currentColor"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

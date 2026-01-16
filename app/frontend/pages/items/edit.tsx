@@ -1,10 +1,11 @@
 import { Head, Link, useForm } from '@inertiajs/react'
+import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { AuthNav } from '@/components/auth-nav'
+import { itemPath, itemsPath } from '@/lib/routes'
 import type { Item } from '@/types'
 
 type Props = {
@@ -19,7 +20,7 @@ export default function ItemEdit({ item }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    patch(`/items/${item.id}`)
+    patch(itemPath(item.id))
   }
 
   return (
@@ -29,8 +30,10 @@ export default function ItemEdit({ item }: Props) {
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/items">
-              <Button variant="ghost" size="sm">&larr; Back</Button>
+            <Link href={itemsPath()}>
+              <Button variant="ghost" size="sm">
+                &larr; Back
+              </Button>
             </Link>
             <h1 className="text-2xl font-bold">Edit Item</h1>
           </div>
@@ -55,9 +58,7 @@ export default function ItemEdit({ item }: Props) {
                   placeholder="Enter item name"
                   aria-invalid={!!errors.name}
                 />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
               </div>
 
               <div className="space-y-2">
@@ -79,8 +80,10 @@ export default function ItemEdit({ item }: Props) {
                 <Button type="submit" disabled={processing}>
                   {processing ? 'Updating...' : 'Update Item'}
                 </Button>
-                <Link href="/items">
-                  <Button type="button" variant="outline">Cancel</Button>
+                <Link href={itemsPath()}>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
                 </Link>
               </div>
             </form>

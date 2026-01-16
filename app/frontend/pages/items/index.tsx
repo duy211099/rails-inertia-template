@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react'
+import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AuthNav } from '@/components/auth-nav'
+import { editItemPath, itemPath, newItemPath } from '@/lib/routes'
 import type { Item } from '@/types'
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 export default function ItemsIndex({ items }: Props) {
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this item?')) {
-      router.delete(`/items/${id}`)
+      router.delete(itemPath(id))
     }
   }
 
@@ -31,7 +32,7 @@ export default function ItemsIndex({ items }: Props) {
           <p className="text-muted-foreground">
             {items.length} {items.length === 1 ? 'item' : 'items'}
           </p>
-          <Link href="/items/new">
+          <Link href={newItemPath()}>
             <Button>New Item</Button>
           </Link>
         </div>
@@ -48,23 +49,21 @@ export default function ItemsIndex({ items }: Props) {
               <Card key={item.id}>
                 <CardHeader>
                   <CardTitle>{item.name}</CardTitle>
-                  {item.description && (
-                    <CardDescription>{item.description}</CardDescription>
-                  )}
+                  {item.description && <CardDescription>{item.description}</CardDescription>}
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2">
-                    <Link href={`/items/${item.id}`}>
-                      <Button variant="outline" size="sm">View</Button>
+                    <Link href={itemPath(item.id)}>
+                      <Button variant="outline" size="sm">
+                        View
+                      </Button>
                     </Link>
-                    <Link href={`/items/${item.id}/edit`}>
-                      <Button variant="outline" size="sm">Edit</Button>
+                    <Link href={editItemPath(item.id)}>
+                      <Button variant="outline" size="sm">
+                        Edit
+                      </Button>
                     </Link>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(item.id)}
-                    >
+                    <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
                       Delete
                     </Button>
                   </div>

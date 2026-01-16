@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -48,6 +50,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Git hooks manager
+  gem "lefthook", require: false
 end
 
 group :test do
@@ -68,3 +73,7 @@ gem "omniauth-rails_csrf_protection", "~> 1.0"
 # Serialization
 gem "oj"
 gem "oj_serializers"
+gem "types_from_serializers"
+
+# Frontend routes
+gem "js-routes"

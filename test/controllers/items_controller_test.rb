@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class ItemsControllerTest < ActionDispatch::IntegrationTest
@@ -60,9 +62,8 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not show other user item" do
     sign_in @user
-    assert_raises(ActiveRecord::RecordNotFound) do
-      get item_url(@other_user_item)
-    end
+    get item_url(@other_user_item)
+    assert_response :not_found
   end
 
   test "should get edit" do
@@ -73,9 +74,8 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not edit other user item" do
     sign_in @user
-    assert_raises(ActiveRecord::RecordNotFound) do
-      get edit_item_url(@other_user_item)
-    end
+    get edit_item_url(@other_user_item)
+    assert_response :not_found
   end
 
   test "should update item" do
@@ -88,9 +88,8 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not update other user item" do
     sign_in @user
-    assert_raises(ActiveRecord::RecordNotFound) do
-      patch item_url(@other_user_item), params: { item: { name: "Hacked" } }
-    end
+    patch item_url(@other_user_item), params: { item: { name: "Hacked" } }
+    assert_response :not_found
   end
 
   test "should destroy item" do
@@ -103,9 +102,8 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not destroy other user item" do
     sign_in @user
-    assert_raises(ActiveRecord::RecordNotFound) do
-      delete item_url(@other_user_item)
-    end
+    delete item_url(@other_user_item)
+    assert_response :not_found
   end
 
   test "items should be scoped to current user" do
