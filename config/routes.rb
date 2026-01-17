@@ -11,4 +11,10 @@ Rails.application.routes.draw do
 
   # Demo CRUD
   draw :items
+
+  # Audit log
+  resources :versions, only: %i[index]
+
+  # Solid Queue web UI (admin only)
+  mount MissionControl::Jobs::Engine, at: "/jobs"
 end

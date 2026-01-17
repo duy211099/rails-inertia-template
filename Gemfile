@@ -45,6 +45,21 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Environment variables
+  gem "dotenv-rails", "~> 3.1"
+
+  # Model annotations
+  gem "annotaterb", "~> 4.20"
+
+  # i18n management
+  gem "i18n-tasks", "~> 1.0"
+
+  # Database validations
+  gem "database_validations", "~> 1.1"
+
+  # Database consistency checks
+  gem "database_consistency", "~> 2.1", require: false
 end
 
 group :development do
@@ -53,6 +68,16 @@ group :development do
 
   # Git hooks manager
   gem "lefthook", require: false
+
+  # Better error pages
+  gem "better_errors", "~> 2.10"
+  gem "binding_of_caller", "~> 1.0"
+
+  # Performance profiling
+  gem "rack-mini-profiler", "~> 4.0"
+
+  # N+1 query detection
+  gem "bullet", "~> 8.1"
 end
 
 group :test do
@@ -77,3 +102,25 @@ gem "types_from_serializers"
 
 # Frontend routes
 gem "js-routes"
+
+# Authorization
+gem "action_policy", "~> 0.7"
+
+# Audit trail / versioning
+gem "paper_trail", "~> 17.0"
+
+# Pagination
+gem "pagy", "~> 9.3"
+
+# Soft deletes
+gem "discard", "~> 1.4"
+
+# JSON store enhancements
+gem "store_attribute", "~> 2.0"
+gem "store_model", "~> 4.4"
+
+# Solid Queue web UI
+gem "mission_control-jobs", "~> 1.1"
+
+# S3-compatible storage (for Cloudflare R2)
+gem "aws-sdk-s3", "~> 1.180", require: false

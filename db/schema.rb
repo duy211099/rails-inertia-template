@@ -10,14 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_16_190405) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_17_054635) do
   create_table "items", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.datetime "discarded_at"
     t.string "name", null: false
     t.string "phone_number"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["discarded_at"], name: "index_items_on_discarded_at"
     t.index ["user_id"], name: "index_items_on_user_id"
   end
 
@@ -36,6 +38,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_190405) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string "event", null: false
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.text "object", limit: 1073741823
+    t.text "object_changes"
+    t.string "whodunnit"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "items", "users"

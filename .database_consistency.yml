@@ -1,0 +1,16 @@
+# Database Consistency configuration
+# See: https://github.com/djezzzl/database_consistency
+
+# Enable all checks by default
+enabled: true
+
+# Ignore specific checks
+# ColumnPresenceChecker:
+#   enabled: false
+
+# Ignore specific models or columns
+# ignore:
+#   - User.email
+
+# Log settings
+log_level: :warn

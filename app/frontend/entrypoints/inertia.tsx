@@ -1,10 +1,37 @@
 import type { RequestPayload } from '@inertiajs/core'
 import { createInertiaApp, type ResolvedComponent, router, usePage } from '@inertiajs/react'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import { type ReactNode, StrictMode, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import snakecaseKeys from 'snakecase-keys'
 import { Toaster, toast } from 'sonner'
 import type { SharedProps } from '@/types'
+
+// Configure NProgress
+NProgress.configure({ showSpinner: false })
+
+// Set up NProgress for Inertia page transitions
+let progressTimeout: ReturnType<typeof setTimeout> | null = null
+
+router.on('start', () => {
+  progressTimeout = setTimeout(() => NProgress.start(), 250)
+})
+
+router.on('finish', (event) => {
+  if (progressTimeout) {
+    clearTimeout(progressTimeout)
+    progressTimeout = null
+  }
+  if (event.detail.visit.completed) {
+    NProgress.done()
+  } else if (event.detail.visit.interrupted) {
+    NProgress.set(0)
+  } else if (event.detail.visit.cancelled) {
+    NProgress.done()
+    NProgress.remove()
+  }
+})
 
 // Convert camelCase form data to snake_case before sending to Rails
 router.on('before', (event) => {
