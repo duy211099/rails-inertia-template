@@ -17,7 +17,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
     }
   }
 
-  const goToPage = (page: number) => {
+  const goToPage = (page: number | null = 1) => {
     router.get(itemsPath(), { page }, { preserveState: true })
   }
 
@@ -84,7 +84,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => goToPage(pagy.prev!)}
+                  onClick={() => goToPage(pagy?.prev)}
                   disabled={!pagy.prev}
                 >
                   Previous
@@ -95,7 +95,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => goToPage(pagy.next!)}
+                  onClick={() => goToPage(pagy?.next)}
                   disabled={!pagy.next}
                 >
                   Next
