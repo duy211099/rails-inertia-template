@@ -38,6 +38,7 @@
     "biome:check": "biome check app/frontend",
     "biome:fix": "biome check --write app/frontend",
     "gengenerate:types": "bin/rails types_from_serializers:generate",
-    "vite":"vite"
+    "vite":"vite",
+    "build":"vite build"
   }
 }
