@@ -110,7 +110,7 @@ gem "action_policy", "~> 0.7"
 gem "paper_trail", "~> 17.0"
 
 # Pagination
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.2"
 
 # Soft deletes
 gem "discard", "~> 1.4"
