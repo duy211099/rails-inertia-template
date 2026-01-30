@@ -123,4 +123,4 @@ gem "store_model", "~> 4.4"
 gem "mission_control-jobs", "~> 1.1"
 
 # S3-compatible storage (for Cloudflare R2)
-gem "aws-sdk-s3", "~> 1.180", require: false
+gem "aws-sdk-s3", "~> 1.213", require: false
