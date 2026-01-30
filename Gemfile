@@ -50,7 +50,7 @@ group :development, :test do
   gem "dotenv-rails", "~> 3.1"
 
   # Model annotations
-  gem "annotaterb", "~> 4.20"
+  gem "annotaterb", "~> 4.21"
 
   # i18n management
   gem "i18n-tasks", "~> 1.0"
