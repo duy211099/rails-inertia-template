@@ -93,7 +93,7 @@ gem "vite_rails", "~> 3.0"
 # Authentication
 gem "devise", "~> 4.9"
 gem "omniauth-google-oauth2", "~> 1.2"
-gem "omniauth-rails_csrf_protection", "~> 1.0"
+gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 # Serialization
 gem "oj"
