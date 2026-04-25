@@ -8,6 +8,7 @@
     "vite-plugin-ruby": "^5.2.1"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.2.8",
     "@inertiajs/react": "^3.0.3",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/forms": "^0.5.11",
@@ -19,13 +20,15 @@
     "@vitejs/plugin-react": "^6.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.8.0",
+    "lucide-react": "^1.11.0",
     "nprogress": "^0.2.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "shadcn": "^4.4.0",
     "snakecase-keys": "^9.0.2",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^6.0.3"
   },
