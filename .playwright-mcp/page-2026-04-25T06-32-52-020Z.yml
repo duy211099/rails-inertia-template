@@ -1,0 +1,24 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - link [ref=e6] [cursor=pointer]:
+      - /url: https://vite-ruby.netlify.app/
+      - img [ref=e7]
+    - img [ref=e10]
+    - link [ref=e12] [cursor=pointer]:
+      - /url: https://vitejs.dev
+      - img [ref=e13]
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - paragraph [ref=e18]: This is the Vite development server that provides Hot Module Replacement for your Ruby application.
+      - paragraph [ref=e19]: To access your Ruby application, you will need to run a local development server.
+      - heading "The Rails Command Line" [level=2] [ref=e20]:
+        - link "The Rails Command Line" [ref=e21] [cursor=pointer]:
+          - /url: https://guides.rubyonrails.org/command_line.html
+      - paragraph [ref=e22]:
+        - text: "Start the Rails server by running:"
+        - code [ref=e23]: bin/rails s
+    - generic [ref=e24]:
+      - paragraph [ref=e25]: Want more information on Vite Ruby's Rails integration?
+      - paragraph [ref=e26]:
+        - link "Read the docs →" [ref=e27] [cursor=pointer]:
+          - /url: https://vite-ruby.netlify.app/guide/rails.html
