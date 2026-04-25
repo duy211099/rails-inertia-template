@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import {
   Accordion,
@@ -151,6 +152,18 @@ const Demo = () => {
             <Switch checked={switchChecked} onCheckedChange={setSwitchChecked} />
           </div>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Flash Messages Test</CardTitle>
+            <CardDescription>Click buttons to trigger flash messages via Inertia</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            <Button variant="default" onClick={() => router.post('/demo')}>
+              Trigger POST Toast
+            </Button>
+          </CardContent>
+        </Card>
 
         <Tabs value={tabsValue} onValueChange={setTabsValue}>
           <TabsList>

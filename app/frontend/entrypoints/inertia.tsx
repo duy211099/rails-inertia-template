@@ -44,14 +44,11 @@ createInertiaApp({
 
     const Component = page.default ?? page
 
-    const WrappedComponent: any = (props: any) => {
-      return createElement(Layout, null, createElement(Component, props))
+    if (!Component.layout) {
+      Component.layout = (page: ReactNode) => createElement(Layout, null, page)
     }
 
-    WrappedComponent.layout =
-      Component.layout || ((page: ReactNode) => createElement(Layout, null, page))
-
-    return WrappedComponent
+    return Component
   },
 
   setup({ el, App, props }) {

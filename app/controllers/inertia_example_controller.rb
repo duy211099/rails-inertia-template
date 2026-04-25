@@ -20,4 +20,9 @@ class InertiaExampleController < InertiaController
   def demo
     render inertia: {}
   end
+
+  def create
+    flash[:notice] = "POST request successful! Toast triggered from backend."
+    redirect_to controller: "inertia_example", action: "demo"
+  end
 end
