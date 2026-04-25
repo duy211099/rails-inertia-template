@@ -24,8 +24,6 @@ const MissingPage: any = () =>
 
 MissingPage.layout = (page: ReactNode) => createElement(Layout, null, page)
 
-let root: ReturnType<typeof createRoot> | null = null
-
 createInertiaApp({
   title: (title) => (title ? `${title} - WithDui` : 'WithDui'),
 
@@ -58,10 +56,7 @@ createInertiaApp({
 
   setup({ el, App, props }) {
     if (el) {
-      if (!root) {
-        root = createRoot(el)
-      }
-      root.render(createElement(ErrorBoundary, null, createElement(App, props)))
+      createRoot(el).render(createElement(ErrorBoundary, null, createElement(App, props)))
     } else {
       console.error(
         'Missing root element.\n\n' +
