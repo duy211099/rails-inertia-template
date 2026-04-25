@@ -16,4 +16,8 @@ class InertiaExampleController < InertiaController
       recent_items: ItemSerializer.many(recent_items)
     }
   end
+
+  def demo
+    render inertia: {}
+  end
 end
