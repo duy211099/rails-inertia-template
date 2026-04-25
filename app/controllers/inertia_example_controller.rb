@@ -25,4 +25,12 @@ class InertiaExampleController < InertiaController
     flash[:notice] = "POST request successful! Toast triggered from backend."
     redirect_to controller: "inertia_example", action: "demo"
   end
+
+  def client_fetch
+    if rand < 0.5
+      render json: { message: "Request succeeded!" }, status: :ok
+    else
+      render json: { message: "Request failed (simulated error)." }, status: :unprocessable_entity
+    end
+  end
 end

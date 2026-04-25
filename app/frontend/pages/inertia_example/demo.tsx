@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import {
   Accordion,
   AccordionContent,
@@ -124,6 +125,7 @@ function ComponentShowcase({
 }
 
 const Demo = () => {
+  const [fetching, setFetching] = useState(false)
   const [sliderValue, setSliderValue] = useState([50])
   const [switchChecked, setSwitchChecked] = useState(false)
   const [selectValue, setSelectValue] = useState('')
@@ -133,6 +135,28 @@ const Demo = () => {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertDialogOpen, setAlertDialogOpen] = useState(false)
+
+  const handleClientFetch = async () => {
+    setFetching(true)
+    try {
+      const csrfToken =
+        document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
+      const res = await fetch('/demo/fetch', {
+        method: 'POST',
+        headers: { 'X-CSRF-Token': csrfToken, 'Content-Type': 'application/json' },
+      })
+      const data = await res.json()
+      if (res.ok) {
+        toast.success(data.message)
+      } else {
+        toast.error(data.message)
+      }
+    } catch {
+      toast.error('Network error')
+    } finally {
+      setFetching(false)
+    }
+  }
 
   useEffect(() => {
     if (switchChecked) {
@@ -153,17 +177,31 @@ const Demo = () => {
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Flash Messages Test</CardTitle>
-            <CardDescription>Click buttons to trigger flash messages via Inertia</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            <Button variant="default" onClick={() => router.post('/demo')}>
-              Trigger POST Toast
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Flash Messages Test</CardTitle>
+              <CardDescription>Click buttons to trigger flash messages via Inertia</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              <Button variant="default" onClick={() => router.post('/demo')}>
+                Trigger POST Toast
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Client Fetch Demo</CardTitle>
+              <CardDescription>Uses raw fetch() — 50% success, 50% error</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={handleClientFetch} disabled={fetching}>
+                {fetching ? 'Sending…' : 'Send Fetch Request'}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         <Tabs value={tabsValue} onValueChange={setTabsValue}>
           <TabsList>

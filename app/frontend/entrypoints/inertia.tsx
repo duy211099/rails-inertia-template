@@ -3,6 +3,7 @@ import { createInertiaApp, router } from '@inertiajs/react'
 import { createElement, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import snakecaseKeys from 'snakecase-keys'
+import { toast } from 'sonner'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Layout from '@/components/Layout'
 
@@ -53,7 +54,11 @@ createInertiaApp({
 
   setup({ el, App, props }) {
     if (el) {
-      createRoot(el).render(createElement(ErrorBoundary, null, createElement(App, props)))
+      if (!(el as any).__reactRoot) {
+        ;(el as any).__reactRoot = createRoot(el)
+      }
+      const root = (el as any).__reactRoot
+      root.render(createElement(ErrorBoundary, null, createElement(App, props)))
     } else {
       console.error(
         'Missing root element.\n\n' +
@@ -89,3 +94,11 @@ const redirectToErrorPage = (event: Event) => {
 
 document.addEventListener('inertia:exception', redirectToErrorPage)
 document.addEventListener('inertia:invalid', redirectToErrorPage)
+
+// HMR-safe: clean up previous listener before re-registering
+;(window as any).__flashToastCleanup?.()
+;(window as any).__flashToastCleanup = router.on('flash', (event) => {
+  const flash = event.detail.flash as { notice?: string; alert?: string }
+  if (flash?.notice) toast.success(flash.notice)
+  if (flash?.alert) toast.error(flash.alert)
+})
