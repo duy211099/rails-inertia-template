@@ -1,4 +1,10 @@
 import { useEffect, useState } from 'react'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   AlertDialog,
@@ -302,73 +308,28 @@ const Demo = () => {
               </ComponentShowcase>
 
               <ComponentShowcase title="Accordion" description="Expandable sections">
-                <div className="w-full max-w-md border rounded-lg">
-                  <div className="px-4 py-3 border-b">
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between text-sm font-medium"
-                    >
-                      What is shadcn/ui?
-                      <svg
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="px-4 py-3 border-b">
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between text-sm font-medium"
-                    >
-                      Is it free to use?
-                      <svg
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="px-4 py-3">
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between text-sm font-medium"
-                    >
-                      Can I customize it?
-                      <svg
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                  </div>
+                <div className="w-full max-w-md">
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                      <AccordionTrigger>What is shadcn/ui?</AccordionTrigger>
+                      <AccordionContent>
+                        shadcn/ui is a collection of re-usable components built using Radix UI and
+                        Tailwind CSS.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                      <AccordionTrigger>Is it free to use?</AccordionTrigger>
+                      <AccordionContent>
+                        Yes, shadcn/ui is completely free and open source.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                      <AccordionTrigger>Can I customize it?</AccordionTrigger>
+                      <AccordionContent>
+                        Absolutely! All components can be customized to fit your design system.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               </ComponentShowcase>
 
