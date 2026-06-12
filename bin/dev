@@ -4,6 +4,11 @@ export PORT="${PORT:-3000}"
 
 if command -v overmind 1> /dev/null 2>&1
 then
+  # Remove a stale socket left behind by a crashed run (no live overmind).
+  if [ -S ./.overmind.sock ] && ! pgrep -f "overmind start" > /dev/null 2>&1
+  then
+    rm -f ./.overmind.sock
+  fi
   overmind start -f Procfile.dev "$@"
   exit $?
 fi
