@@ -22,7 +22,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache", "~> 1.0"
 gem "solid_queue", "~> 1.4"
-gem "solid_cable", "~> 3.0"
+gem "solid_cable", "~> 4.0"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", "~> 1.23", require: false
@@ -31,7 +31,7 @@ gem "bootsnap", "~> 1.23", require: false
 gem "thruster", "~> 0.1", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -56,10 +56,10 @@ group :development, :test do
   gem "i18n-tasks", "~> 1.0"
 
   # Database validations
-  gem "database_validations", "~> 1.1"
+  gem "database_validations", "~> 2.1"
 
   # Database consistency checks
-  gem "database_consistency", "~> 2.1", require: false
+  gem "database_consistency", "~> 3.0", require: false
 end
 
 group :development do
@@ -71,7 +71,7 @@ group :development do
 
   # Better error pages
   gem "better_errors", "~> 2.10"
-  gem "binding_of_caller", "~> 1.0"
+  gem "binding_of_caller", "~> 2.0"
 
   # Performance profiling
   gem "rack-mini-profiler", "~> 4.0"
@@ -97,7 +97,7 @@ gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 # Serialization
 gem "oj", "~> 3.17"
-gem "oj_serializers", "~> 2.1"
+gem "oj_serializers", "~> 3.0"
 gem "types_from_serializers", "~> 2.5"
 
 # Frontend routes
@@ -110,10 +110,10 @@ gem "action_policy", "~> 0.7"
 gem "paper_trail", "~> 17.0"
 
 # Pagination
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.5"
 
 # Soft deletes
-gem "discard", "~> 1.4"
+gem "discard", "~> 2.0"
 
 # JSON store enhancements
 gem "store_attribute", "~> 2.0"
