@@ -23,6 +23,9 @@ export default defineConfig({
   build: {
     sourcemap: false,
     minify: 'esbuild',
+    // swagger-ui-dist is lazy-loaded only on the /api-docs page and can't be
+    // split further; raise the limit so the build doesn't warn on it.
+    chunkSizeWarningLimit: 1600,
     // Tailwind v4 keeps custom @theme directives in the CSS pipeline.
     // Lightning CSS warns about that at-rule while minifying; esbuild
     // preserves it without emitting a false-positive warning.
