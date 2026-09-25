@@ -17,7 +17,7 @@ RSpec.describe "Locale resolution", type: :request do
   end
 
   def verify_resolved_locale!(locale)
-    expect(I18n).to have_received(:with_locale).with(locale)
+    expect(I18n).to have_received(:with_locale).with(locale).once
   end
 
   it "defaults to en with no cookie or header" do
@@ -96,7 +96,7 @@ RSpec.describe "Locale resolution", type: :request do
     it "localizes the unauthenticated 401 error message" do
       original_locales = I18n.available_locales
       I18n.available_locales = %i[en fr]
-      I18n.backend.store_translations(:fr, api: { errors: { unauthorized: "Connectez-vous pour continuer." } })
+      I18n.backend.store_translations(:fr, api: { v1: { errors: { unauthorized: "Connectez-vous pour continuer." } } })
       begin
         get api_v1_items_path, headers: { "Accept-Language" => "fr" }
         expect(response).to have_http_status(:unauthorized)
@@ -109,7 +109,7 @@ RSpec.describe "Locale resolution", type: :request do
     it "localizes a rescue_from error message (RecordNotFound)" do
       original_locales = I18n.available_locales
       I18n.available_locales = %i[en fr]
-      I18n.backend.store_translations(:fr, api: { errors: { not_found: "Enregistrement introuvable." } })
+      I18n.backend.store_translations(:fr, api: { v1: { errors: { not_found: "Enregistrement introuvable." } } })
       begin
         sign_in users(:one)
         get api_v1_item_path(id: 0), headers: { "Accept-Language" => "fr" }

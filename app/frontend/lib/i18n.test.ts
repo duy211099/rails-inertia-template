@@ -12,7 +12,15 @@ describe('i18n', () => {
     expect(i18n.t('switcher.label')).toBe('Language')
   })
 
-  it('syncLocale changes the active language', async () => {
+  it('syncLocale switches the active language to a different one', async () => {
+    await initI18n('en')
+    syncLocale('fr')
+    expect(i18n.language).toBe('fr')
+    syncLocale('en')
+    expect(i18n.language).toBe('en')
+  })
+
+  it('syncLocale is a no-op when already on the given locale', async () => {
     await initI18n('en')
     syncLocale('en')
     expect(i18n.language).toBe('en')

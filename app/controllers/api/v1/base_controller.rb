@@ -13,22 +13,22 @@ module Api
       authorize :user, through: :current_user
 
       rescue_from ActiveRecord::RecordNotFound do
-        render_error :not_found, "api.errors.not_found", :not_found
+        render_error :not_found, "api.v1.errors.not_found", :not_found
       end
       rescue_from ActionPolicy::Unauthorized do
-        render_error :forbidden, "api.errors.forbidden", :forbidden
+        render_error :forbidden, "api.v1.errors.forbidden", :forbidden
       end
       rescue_from ActionController::ParameterMissing, ActionDispatch::Http::Parameters::ParseError do
-        render_error :bad_request, "api.errors.bad_request", :bad_request
+        render_error :bad_request, "api.v1.errors.bad_request", :bad_request
       end
       rescue_from ActionController::InvalidAuthenticityToken do
-        render_error :invalid_csrf_token, "api.errors.invalid_csrf_token", :unprocessable_content
+        render_error :invalid_csrf_token, "api.v1.errors.invalid_csrf_token", :unprocessable_content
       end
 
       private
 
       def require_api_user!
-        render_error(:unauthorized, "api.errors.unauthorized", :unauthorized) unless current_user
+        render_error(:unauthorized, "api.v1.errors.unauthorized", :unauthorized) unless current_user
       end
 
       # I18n.locale is not reliable here: SetsLocale's around_action wraps
