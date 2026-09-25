@@ -2,8 +2,10 @@
 
 source "https://rubygems.org"
 
+ruby file: ".ruby-version"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.1.2"
+gem "rails", "~> 8.1.4"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft", "~> 1.3"
 # Use sqlite3 as the database for Active Record
@@ -74,7 +76,7 @@ group :development do
   gem "binding_of_caller", "~> 2.0"
 
   # Performance profiling
-  gem "rack-mini-profiler", "~> 4.0"
+  gem "rack-mini-profiler", "~> 5.0"
 
   # N+1 query detection
   gem "bullet", "~> 8.1"

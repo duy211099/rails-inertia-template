@@ -44,8 +44,4 @@ export default defineConfig({
       },
     },
   },
-  esbuild: {
-    // Remove console.log, console.warn, console.error in production
-    // drop: ['console', 'debugger'],
-  },
 })
