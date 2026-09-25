@@ -1,0 +1,9 @@
+{
+  "nameLabel": "Name",
+  "namePlaceholder": "Enter item name",
+  "descriptionLabel": "Description",
+  "descriptionPlaceholder": "Enter item description (optional)",
+  "phoneNumberLabel": "Phone Number",
+  "phoneNumberPlaceholder": "Enter phone number (optional)",
+  "cancel": "Cancel"
+}

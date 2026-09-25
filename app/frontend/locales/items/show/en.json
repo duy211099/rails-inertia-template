@@ -1,0 +1,10 @@
+{
+  "back": "Back",
+  "heading": "Item Details",
+  "phoneNumberLabel": "Phone Number",
+  "created": "Created: {{date}}",
+  "updated": "Updated: {{date}}",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirmDelete": "Are you sure you want to delete this item?"
+}

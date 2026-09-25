@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react'
+import { useTranslation } from 'react-i18next'
 import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,8 +11,10 @@ type Props = {
 }
 
 export default function ItemShow({ item }: Props) {
+  const { t } = useTranslation('items/show')
+
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this item?')) {
+    if (confirm(t('confirmDelete'))) {
       router.delete(itemPath(item.id))
     }
   }
@@ -25,10 +28,10 @@ export default function ItemShow({ item }: Props) {
           <div className="flex items-center gap-4">
             <Link href={itemsPath()}>
               <Button variant="ghost" size="sm">
-                &larr; Back
+                &larr; {t('back')}
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold">Item Details</h1>
+            <h1 className="text-2xl font-bold">{t('heading')}</h1>
           </div>
           <AuthNav />
         </div>
@@ -45,20 +48,20 @@ export default function ItemShow({ item }: Props) {
           <CardContent>
             {item.phoneNumber && (
               <div className="mb-4">
-                <p className="text-sm font-medium">Phone Number</p>
+                <p className="text-sm font-medium">{t('phoneNumberLabel')}</p>
                 <p>{item.phoneNumber}</p>
               </div>
             )}
             <div className="mb-6 text-sm text-muted-foreground">
-              <p>Created: {new Date(item.createdAt).toLocaleString()}</p>
-              <p>Updated: {new Date(item.updatedAt).toLocaleString()}</p>
+              <p>{t('created', { date: new Date(item.createdAt).toLocaleString() })}</p>
+              <p>{t('updated', { date: new Date(item.updatedAt).toLocaleString() })}</p>
             </div>
             <div className="flex gap-2">
               <Link href={editItemPath(item.id)}>
-                <Button>Edit</Button>
+                <Button>{t('edit')}</Button>
               </Link>
               <Button variant="destructive" onClick={handleDelete}>
-                Delete
+                {t('delete')}
               </Button>
             </div>
           </CardContent>

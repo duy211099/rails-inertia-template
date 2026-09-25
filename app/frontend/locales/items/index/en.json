@@ -1,0 +1,16 @@
+{
+  "pageTitle": "Items",
+  "heading": "Items",
+  "newItem": "New Item",
+  "itemCount_one": "{{count}} item",
+  "itemCount_other": "{{count}} items",
+  "showingRange": "(showing {{from}}-{{to}})",
+  "empty": "No items yet. Create your first item!",
+  "view": "View",
+  "edit": "Edit",
+  "delete": "Delete",
+  "previous": "Previous",
+  "next": "Next",
+  "pageOf": "Page {{page}} of {{pages}}",
+  "confirmDelete": "Are you sure you want to delete this item?"
+}

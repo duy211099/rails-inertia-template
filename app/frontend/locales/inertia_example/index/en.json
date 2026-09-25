@@ -1,0 +1,14 @@
+{
+  "pageTitle": "Rails Inertia Template",
+  "heading": "Rails Inertia Template",
+  "welcomeBack": "Welcome back, {{name}}!",
+  "welcomeGuest": "Welcome to Rails Inertia Template",
+  "tagline": "A modern full-stack template combining Ruby on Rails, Inertia.js, and React with TypeScript.",
+  "viewAllItems": "View All Items",
+  "createNewItem": "Create New Item",
+  "recentItemsHeading": "Your Recent Items",
+  "railsVersion": "Rails {{version}}",
+  "rackVersion": "Rack {{version}}",
+  "inertiaRailsVersion": "Inertia Rails {{version}}",
+  "reactVersion": "React {{version}}"
+}

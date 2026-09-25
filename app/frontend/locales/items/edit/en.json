@@ -1,0 +1,8 @@
+{
+  "pageTitleTemplate": "Edit {{name}}",
+  "back": "Back",
+  "heading": "Edit Item",
+  "cardTitle": "Edit item",
+  "submitting": "Updating...",
+  "submit": "Update Item"
+}

@@ -1,0 +1,15 @@
+{
+  "pageTitle": "Audit Log",
+  "heading": "Audit Log",
+  "changeCount_one": "{{count}} change recorded",
+  "changeCount_other": "{{count}} changes recorded",
+  "showingRange": "(showing {{from}}-{{to}})",
+  "empty": "No audit history yet.",
+  "emptyValue": "(empty)",
+  "eventCreated": "Created",
+  "eventUpdated": "Updated",
+  "eventDeleted": "Deleted",
+  "previous": "Previous",
+  "next": "Next",
+  "pageOf": "Page {{page}} of {{pages}}"
+}

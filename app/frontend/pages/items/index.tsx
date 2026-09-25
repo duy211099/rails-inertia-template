@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react'
+import { useTranslation } from 'react-i18next'
 import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,8 +12,10 @@ type Props = {
 }
 
 export default function ItemsIndex({ items, pagy }: Props) {
+  const { t } = useTranslation('items/index')
+
   const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this item?')) {
+    if (confirm(t('confirmDelete'))) {
       router.delete(itemPath(id))
     }
   }
@@ -23,11 +26,11 @@ export default function ItemsIndex({ items, pagy }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Head title="Items" />
+      <Head title={t('pageTitle')} />
 
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between p-4">
-          <h1 className="text-2xl font-bold">Items</h1>
+          <h1 className="text-2xl font-bold">{t('heading')}</h1>
           <AuthNav />
         </div>
       </header>
@@ -35,18 +38,18 @@ export default function ItemsIndex({ items, pagy }: Props) {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-muted-foreground">
-            {pagy.count} {pagy.count === 1 ? 'item' : 'items'}
-            {pagy.pages > 1 && ` (showing ${pagy.from}-${pagy.to})`}
+            {t('itemCount', { count: pagy.count })}
+            {pagy.pages > 1 && ` ${t('showingRange', { from: pagy.from, to: pagy.to })}`}
           </p>
           <Link href={newItemPath()}>
-            <Button>New Item</Button>
+            <Button>{t('newItem')}</Button>
           </Link>
         </div>
 
         {items.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">No items yet. Create your first item!</p>
+              <p className="text-muted-foreground">{t('empty')}</p>
             </CardContent>
           </Card>
         ) : (
@@ -62,16 +65,16 @@ export default function ItemsIndex({ items, pagy }: Props) {
                     <div className="flex gap-2">
                       <Link href={itemPath(item.id)}>
                         <Button variant="outline" size="sm">
-                          View
+                          {t('view')}
                         </Button>
                       </Link>
                       <Link href={editItemPath(item.id)}>
                         <Button variant="outline" size="sm">
-                          Edit
+                          {t('edit')}
                         </Button>
                       </Link>
                       <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
-                        Delete
+                        {t('delete')}
                       </Button>
                     </div>
                   </CardContent>
@@ -87,10 +90,10 @@ export default function ItemsIndex({ items, pagy }: Props) {
                   onClick={() => goToPage(pagy?.prev)}
                   disabled={!pagy.prev}
                 >
-                  Previous
+                  {t('previous')}
                 </Button>
                 <span className="px-4 text-sm text-muted-foreground">
-                  Page {pagy.page} of {pagy.pages}
+                  {t('pageOf', { page: pagy.page, pages: pagy.pages })}
                 </span>
                 <Button
                   variant="outline"
@@ -98,7 +101,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
                   onClick={() => goToPage(pagy?.next)}
                   disabled={!pagy.next}
                 >
-                  Next
+                  {t('next')}
                 </Button>
               </div>
             )}

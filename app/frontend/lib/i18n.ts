@@ -1,14 +1,35 @@
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import authLogin from '@/locales/auth/login/en.json'
 import common from '@/locales/common/en.json'
+import inertiaExampleDemo from '@/locales/inertia_example/demo/en.json'
+import inertiaExampleIndex from '@/locales/inertia_example/index/en.json'
+import itemsEdit from '@/locales/items/edit/en.json'
+import itemsForm from '@/locales/items/form/en.json'
+import itemsIndex from '@/locales/items/index/en.json'
+import itemsNew from '@/locales/items/new/en.json'
+import itemsShow from '@/locales/items/show/en.json'
+import versionsIndex from '@/locales/versions/index/en.json'
 
-// Each namespace mirrors a folder under app/frontend/locales/, the same
-// way config/locales/<controller-path>/en.yml mirrors app/controllers/ on
-// the backend. "common" holds UI strings shared across pages (e.g. the
-// locale switcher); a page-specific namespace (e.g. "items") is added the
-// same way once that page has copy to translate.
+// Each namespace mirrors a page or shared folder under app/frontend/locales/,
+// the same way config/locales/<controller-path>/en.yml mirrors
+// app/controllers/ on the backend. "common" holds UI strings shared across
+// pages (e.g. the locale switcher); every other namespace corresponds
+// exactly to one page under app/frontend/pages/, named after its path
+// (e.g. "items/index" for app/frontend/pages/items/index.tsx).
 const resources = {
-  en: { common },
+  en: {
+    common,
+    'auth/login': authLogin,
+    'items/index': itemsIndex,
+    'items/show': itemsShow,
+    'items/form': itemsForm,
+    'items/new': itemsNew,
+    'items/edit': itemsEdit,
+    'versions/index': versionsIndex,
+    'inertia_example/index': inertiaExampleIndex,
+    'inertia_example/demo': inertiaExampleDemo,
+  },
 }
 
 let initialized = false

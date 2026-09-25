@@ -1,15 +1,18 @@
 import { Head, Link } from '@inertiajs/react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
 export default function Login() {
+  const { t } = useTranslation('auth/login')
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <Head title="Sign In" />
+      <Head title={t('pageTitle')} />
 
       <div className="w-full max-w-md space-y-8 p-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-          <p className="mt-2 text-muted-foreground">Sign in to your account to continue</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('welcomeTitle')}</h1>
+          <p className="mt-2 text-muted-foreground">{t('welcomeSubtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -41,14 +44,14 @@ export default function Login() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Continue with Google
+              {t('continueWithGoogle')}
             </Button>
           </form>
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
           <Link href="/" className="underline underline-offset-4 hover:text-foreground">
-            Back to home
+            {t('backToHome')}
           </Link>
         </div>
       </div>
