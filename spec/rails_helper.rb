@@ -5,6 +5,10 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 abort("RSpec must run in the test environment") unless Rails.env.test?
 require "rspec/rails"
+require "webmock/rspec"
+require "n_plus_one_control/rspec"
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 ActiveRecord::Migration.maintain_test_schema!
 

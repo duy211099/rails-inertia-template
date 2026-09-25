@@ -23,8 +23,9 @@ RSpec.describe User, type: :model do
     it "reuses the same provider identity without overwriting its profile" do
       existing = described_class.from_omniauth(auth)
       auth.info.name = "Changed upstream"
-      expect { @returned = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
-      expect(@returned).to eq(existing)
+      returned = nil
+      expect { returned = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
+      expect(returned).to eq(existing)
       expect(existing.reload.name).to eq("New User")
     end
 
@@ -43,6 +44,21 @@ RSpec.describe User, type: :model do
       expect(result.errors[:email]).to be_present
       expect(users(:one).reload.provider).to be_nil
     end
+  end
+
+  it "rejects a duplicate OAuth identity with validation errors" do
+    users(:one).update!(provider: "google_oauth2", uid: "shared-id")
+    user = users(:two)
+    user.assign_attributes(provider: "google_oauth2", uid: "shared-id")
+    expect(user).not_to be_valid
+    expect(user.errors[:uid]).to include("has already been taken")
+  end
+
+  it "requires an email for password authentication" do
+    user = users(:one)
+    user.email = nil
+    expect(user).not_to be_valid
+    expect(user.errors[:email]).to include("can't be blank")
   end
 
   it "destroys owned items without affecting another user's items" do

@@ -1,4 +1,7 @@
 # Omakase Ruby styling for Rails
+plugins:
+  - rubocop-rspec
+
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
 AllCops:
@@ -21,3 +24,17 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - "config/initializers/*"
+
+# Contract examples keep related assertions together, with failure aggregation.
+RSpec/ExampleLength:
+  Max: 15
+  CountAsOne: [array, hash, heredoc]
+
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/runtime/**/*"
+    - "spec/requests/**/*"
+    - "spec/resources/**/*"
+
+RSpec/MultipleExpectations:
+  Max: 5
