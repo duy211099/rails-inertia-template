@@ -5,11 +5,11 @@ require "open3"
 require "json"
 
 RSpec.describe "Runtime integrations" do
-  def expect_run_in(environment, script)
+  def expect_run_in(environment, script, extra_env = {})
     output, status = Open3.capture2e(
       { "RAILS_ENV" => environment, "TYPELIZER" => "false", "SECRET_KEY_BASE_DUMMY" => "1",
         "R2_ENDPOINT" => "https://storage.example.test", "R2_ACCESS_KEY_ID" => "test",
-        "R2_SECRET_ACCESS_KEY" => "test", "R2_BUCKET" => "test", "AWS_EC2_METADATA_DISABLED" => "true" },
+        "R2_SECRET_ACCESS_KEY" => "test", "R2_BUCKET" => "test", "AWS_EC2_METADATA_DISABLED" => "true" }.merge(extra_env),
       "bundle", "exec", "rails", "runner", "-", stdin_data: script
     )
     expect(status.success?).to be(true), output
@@ -33,6 +33,15 @@ RSpec.describe "Runtime integrations" do
     expect(logs).to include(hash_including("method" => "POST", "path" => "/demo/fetch", "request_id" => "logging-check"))
     expect(logs).not_to include(hash_including("path" => "/up"))
     expect(output).not_to include("secret-marker")
+  end
+
+  it "honors the production log level for request summaries" do
+    output = expect_run_in("production", <<~RUBY, { "RAILS_LOG_LEVEL" => "warn" })
+      require "rack/mock"
+      Rack::MockRequest.new(Rails.application).post("/demo/fetch", "HTTP_HOST" => "example.com",
+        "HTTP_X_REQUEST_ID" => "quiet-request")
+    RUBY
+    expect(output).not_to include('"request_id":"quiet-request"')
   end
 
   it "delivers development mail to a local inbox without launching a browser" do
