@@ -10,7 +10,7 @@ export function AuthNav() {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           {user.avatarUrl && (
-            <img src={user.avatarUrl} alt={user.name} className="size-8 rounded-full" />
+            <img src={user.avatarUrl} alt={user.name ?? ''} className="size-8 rounded-full" />
           )}
           <span className="text-sm font-medium">{user.name}</span>
         </div>

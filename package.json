@@ -56,11 +56,12 @@
     "biome:fix": "biome check --write app/frontend",
     "lint:tailwind": "eslint 'app/frontend/**/*.{ts,tsx}'",
     "lint:tailwind:fix": "eslint 'app/frontend/**/*.{ts,tsx}' --fix",
-    "gengenerate:types": "bin/rails types_from_serializers:generate",
     "vite": "vite",
     "build": "vite build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate:types": "TYPELIZER=true bin/rails typelizer:types:refresh",
+    "check:types": "bin/check-types"
   },
   "engines": {
     "node": ">=24.21.0 <25"

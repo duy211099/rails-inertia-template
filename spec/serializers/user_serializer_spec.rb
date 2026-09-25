@@ -8,7 +8,7 @@ RSpec.describe UserSerializer do
   it "exposes the public profile with camelCase keys and no authentication secrets" do
     user = users(:one)
     user.avatar_url = "https://example.com/avatar.png"
-    result = described_class.one(user).stringify_keys
+    result = described_class.new(user).serializable_hash.stringify_keys
     expect(result).to eq("id" => user.id, "name" => "User One", "email" => "user_one@example.com", "avatarUrl" => "https://example.com/avatar.png")
   end
 end

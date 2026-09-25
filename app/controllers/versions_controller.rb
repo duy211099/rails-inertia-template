@@ -10,9 +10,8 @@ class VersionsController < InertiaController
 
     pagy, paginated_versions = pagy(versions)
 
-    render inertia: "versions/index", props: {
-      versions: VersionSerializer.many(paginated_versions),
-      pagy: PagySerializer.one(pagy)
-    }
+    render inertia: "versions/index", props: VersionsIndexResource.new(
+      { versions: paginated_versions, pagy: pagy }
+    ).to_inertia
   end
 end

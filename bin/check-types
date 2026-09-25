@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "tmpdir"
+
+# An optional directory argument lets tools verify an exported copy of the types.
+root = File.expand_path("..", __dir__)
+expected_dir = File.expand_path(ARGV.fetch(0, "app/frontend/types/serializers"), root)
+Dir.chdir(root) do
+  Dir.mktmpdir("template-types-") do |generated_dir|
+    system({ "TYPELIZER" => "true", "TYPELIZER_OUTPUT_DIR" => generated_dir },
+      "bin/rails", "typelizer:types:refresh", exception: true)
+    generated = Dir.glob("**/*", base: generated_dir).select { |path| File.file?(File.join(generated_dir, path)) }
+    checked_in = Dir.glob("**/*", base: expected_dir).select { |path| File.file?(File.join(expected_dir, path)) }
+    changed = (generated | checked_in).sort.select do |path|
+      expected = File.join(expected_dir, path)
+      actual = File.join(generated_dir, path)
+      !File.file?(expected) || !File.file?(actual) || File.binread(expected) != File.binread(actual)
+    end
+    abort "Generated types are stale: #{changed.join(', ')}. Run npm run generate:types." if changed.any?
+    puts "Generated types are up to date."
+  end
+end

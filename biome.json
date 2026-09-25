@@ -13,7 +13,8 @@
 	},
 	"overrides": [
 		{
-			"includes": ["app/frontend/lib/**"],
+			"includes": ["app/frontend/lib/**", "app/frontend/types/serializers/**"],
+			"assist": { "enabled": false },
 			"linter": {
 				"enabled": false
 			},
