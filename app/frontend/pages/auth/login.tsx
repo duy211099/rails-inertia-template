@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 
 export default function Login() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <Head title="Sign In" />
 
       <div className="w-full max-w-md space-y-8 p-8">
@@ -22,7 +22,7 @@ export default function Login() {
               }
             />
             <Button type="submit" className="w-full" size="lg">
-              <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" aria-label="Google logo">
+              <svg className="mr-2 size-5" viewBox="0 0 24 24" aria-label="Google logo">
                 <title>Google</title>
                 <path
                   fill="currentColor"
@@ -47,7 +47,7 @@ export default function Login() {
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground underline underline-offset-4">
+          <Link href="/" className="underline underline-offset-4 hover:text-foreground">
             Back to home
           </Link>
         </div>

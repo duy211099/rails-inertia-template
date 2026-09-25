@@ -21,7 +21,7 @@ export default function ItemShow({ item }: Props) {
       <Head title={item.name} />
 
       <header className="border-b">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+        <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <Link href={itemsPath()}>
               <Button variant="ghost" size="sm">

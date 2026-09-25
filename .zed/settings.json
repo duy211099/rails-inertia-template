@@ -2,6 +2,16 @@
   "languages": {
     "CSS": {
       "language_servers": ["tailwindcss-language-server", "!vscode-css-language-server"]
+    },
+    "TSX": {
+      "code_actions_on_format": {
+        "source.fixAll.tailwindCSS": true
+      }
+    },
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.fixAll.tailwindCSS": true
+      }
     }
   },
   "lsp": {

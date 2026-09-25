@@ -13,7 +13,7 @@ describe('cn', () => {
   })
 
   it('keeps responsive and state variants independent', () => {
-    expect(cn('p-2 md:p-4 hover:bg-red-500', 'p-6 hover:bg-blue-500')).toBe(
+    expect(cn('p-2 hover:bg-red-500 md:p-4', 'p-6 hover:bg-blue-500')).toBe(
       'md:p-4 p-6 hover:bg-blue-500'
     )
   })

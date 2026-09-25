@@ -324,7 +324,7 @@ const Demo = () => {
 
               <ComponentShowcase title="Select">
                 <Select value={selectValue} onValueChange={setSelectValue}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-45">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
                   <SelectContent>
