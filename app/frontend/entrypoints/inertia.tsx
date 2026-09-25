@@ -6,6 +6,7 @@ import snakecaseKeys from 'snakecase-keys'
 import { toast } from 'sonner'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Layout from '@/components/Layout'
+import { initI18n, syncLocale } from '@/lib/i18n'
 
 const MissingPage: any = () =>
   createElement(
@@ -54,11 +55,14 @@ createInertiaApp({
 
   setup({ el, App, props }) {
     if (el) {
-      if (!(el as any).__reactRoot) {
-        ;(el as any).__reactRoot = createRoot(el)
-      }
-      const root = (el as any).__reactRoot
-      root.render(createElement(ErrorBoundary, null, createElement(App, props)))
+      const initialLocale = (props.initialPage.props as { locale?: string }).locale ?? 'en'
+      initI18n(initialLocale).then(() => {
+        if (!(el as any).__reactRoot) {
+          ;(el as any).__reactRoot = createRoot(el)
+        }
+        const root = (el as any).__reactRoot
+        root.render(createElement(ErrorBoundary, null, createElement(App, props)))
+      })
     } else {
       console.error(
         'Missing root element.\n\n' +
@@ -83,6 +87,11 @@ router.on('before', (event) => {
       exclude: [/^_/],
     })
   }
+})
+
+router.on('navigate', (event) => {
+  const locale = (event.detail.page.props as { locale?: string }).locale
+  if (locale) syncLocale(locale)
 })
 
 const redirectToErrorPage = (event: Event) => {
