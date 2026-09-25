@@ -64,51 +64,11 @@ jobs:
       - name: TypeScript and frontend lint
         run: npm run check && npm run lint
 
-      - name: Build Vite assets (test)
-        run: npm run build -- --mode=test
+      - name: Frontend unit tests
+        run: npm test
+
+      - name: Backend specs (parallel)
         env:
           RAILS_ENV: test
-
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-        run: bin/rails db:test:prepare test
-
-  system-test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: package.json
-          cache: npm
-
-      - name: Install JS deps
-        run: npm ci
-
-      - name: Build Vite assets (test)
-        run: npm run build -- --mode=test
-        env:
-          RAILS_ENV: test
-
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v2
-
-      - name: Run system tests
-        env:
-          RAILS_ENV: test
-        run: bin/rails db:test:prepare test:system
-
-      - name: Upload screenshots
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: screenshots
-          path: tmp/screenshots
-          if-no-files-found: ignore
+          PARALLEL_TEST_PROCESSORS: 2
+        run: bin/test

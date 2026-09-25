@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Each RSpec worker gets its own SQLite database through TEST_ENV_NUMBER.
+ENV["RAILS_ENV"] = "test"
+workers = ENV.fetch("PARALLEL_TEST_PROCESSORS", "2")
+abort "PARALLEL_TEST_PROCESSORS must be a positive integer" unless workers.match?(/\A[1-9]\d*\z/)
+
+Dir.chdir(File.expand_path("..", __dir__)) do
+  # Build once before workers start so request specs cannot race on Vite output.
+  system("npm", "run", "build", "--", "--mode=test", exception: true)
+  system("bundle", "exec", "rake", "parallel:create[#{workers}]", "parallel:load_schema[#{workers}]", exception: true)
+  exec "bundle", "exec", "parallel_rspec", "-n", workers, *(ARGV.empty? ? [ "spec" ] : ARGV)
+end

@@ -24,8 +24,11 @@ pre-commit:
 pre-push:
   parallel: true
   commands:
-    rails-test:
-      run: bin/rails test
+    backend-test:
+      run: bin/test
+
+    frontend-test:
+      run: npm test
 
     biome-lint:
       run: npm run biome:check

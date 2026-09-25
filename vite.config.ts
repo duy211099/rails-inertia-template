@@ -23,6 +23,10 @@ export default defineConfig({
   build: {
     sourcemap: false,
     minify: 'esbuild',
+    // Tailwind v4 keeps custom @theme directives in the CSS pipeline.
+    // Lightning CSS warns about that at-rule while minifying; esbuild
+    // preserves it without emitting a false-positive warning.
+    cssMinify: 'esbuild',
     rollupOptions: {
       output: {
         chunkFileNames: 'assets/[name]-[hash].js',
