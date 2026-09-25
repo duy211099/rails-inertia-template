@@ -31,7 +31,7 @@ class ItemsController < InertiaController
     authorize! @item
 
     if @item.save
-      redirect_to items_path, notice: "Item was successfully created."
+      redirect_to items_path, notice: I18n.t("items.notices.created")
     else
       redirect_to new_item_path, inertia: { errors: @item.errors.to_hash }
     end
@@ -47,7 +47,7 @@ class ItemsController < InertiaController
   def update
     authorize! @item
     if @item.update(item_params)
-      redirect_to items_path, notice: "Item was successfully updated."
+      redirect_to items_path, notice: I18n.t("items.notices.updated")
     else
       redirect_to edit_item_path(@item), inertia: { errors: @item.errors.to_hash }
     end
@@ -56,7 +56,7 @@ class ItemsController < InertiaController
   def destroy
     authorize! @item
     @item.discard
-    redirect_to items_path, notice: "Item was successfully deleted."
+    redirect_to items_path, notice: I18n.t("items.notices.destroyed")
   end
 
   private

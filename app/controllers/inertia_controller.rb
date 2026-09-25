@@ -13,4 +13,6 @@ class InertiaController < ApplicationController
 
     UserSerializer.new(current_user).serializable_hash
   }
+
+  inertia_share locale: -> { I18n.locale.to_s }
 end

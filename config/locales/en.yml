@@ -26,6 +26,11 @@
 #     en:
 #       "yes": yup
 #       enabled: "ON"
+#
+# Locale files below the top level are organized to mirror app/controllers
+# structure, e.g. config/locales/items/en.yml holds the "items.*" keys used
+# by ItemsController. Rails loads config/locales/**/*.yml recursively by
+# default (see Rails::Engine::Configuration), so no extra config is needed.
 
 en:
   hello: "Hello world"

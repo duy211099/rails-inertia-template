@@ -1,0 +1,6 @@
+en:
+  items:
+    notices:
+      created: "Item was successfully created."
+      updated: "Item was successfully updated."
+      destroyed: "Item was successfully deleted."
