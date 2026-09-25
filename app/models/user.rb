@@ -34,12 +34,16 @@ class User < ApplicationRecord
 
   validates :uid, uniqueness: { scope: :provider }, allow_nil: true
 
-  def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
+  def versions
+    PaperTrail::Version.where(whodunnit: id.to_s).order(created_at: :desc)
+  end
+
+  def self.from_omniauth(provider:, uid:, email:, name:, avatar_url:)
+    where(provider: provider, uid: uid).first_or_create do |user|
+      user.email = email
       user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name
-      user.avatar_url = auth.info.image
+      user.name = name
+      user.avatar_url = avatar_url
     end
   end
 end

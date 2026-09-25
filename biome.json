@@ -13,7 +13,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["app/frontend/lib/**", "app/frontend/types/serializers/**"],
+			"includes": ["app/frontend/lib/routes.js", "app/frontend/lib/routes.d.ts", "app/frontend/types/serializers/**"],
 			"assist": { "enabled": false },
 			"linter": {
 				"enabled": false

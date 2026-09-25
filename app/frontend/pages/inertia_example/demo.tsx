@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
   Accordion,
@@ -125,6 +126,7 @@ function ComponentShowcase({
 }
 
 const Demo = () => {
+  const { t } = useTranslation('inertia_example/demo')
   const [fetching, setFetching] = useState(false)
   const [sliderValue, setSliderValue] = useState([50])
   const [switchChecked, setSwitchChecked] = useState(false)
@@ -152,7 +154,7 @@ const Demo = () => {
         toast.error(data.message)
       }
     } catch {
-      toast.error('Network error')
+      toast.error(t('clientFetch.networkError'))
     } finally {
       setFetching(false)
     }
@@ -170,9 +172,9 @@ const Demo = () => {
     <TooltipProvider>
       <div className="container mx-auto max-w-6xl space-y-8 p-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">shadcn/ui Component Showcase</h1>
+          <h1 className="text-2xl font-bold">{t('heading')}</h1>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Dark mode</span>
+            <span className="text-sm text-muted-foreground">{t('darkMode')}</span>
             <Switch checked={switchChecked} onCheckedChange={setSwitchChecked} />
           </div>
         </div>
@@ -180,24 +182,24 @@ const Demo = () => {
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Flash Messages Test</CardTitle>
-              <CardDescription>Click buttons to trigger flash messages via Inertia</CardDescription>
+              <CardTitle className="text-base">{t('flashTest.title')}</CardTitle>
+              <CardDescription>{t('flashTest.description')}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               <Button variant="default" onClick={() => router.post('/demo')}>
-                Trigger POST Toast
+                {t('flashTest.triggerButton')}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Client Fetch Demo</CardTitle>
-              <CardDescription>Uses raw fetch() — 50% success, 50% error</CardDescription>
+              <CardTitle className="text-base">{t('clientFetch.title')}</CardTitle>
+              <CardDescription>{t('clientFetch.description')}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={handleClientFetch} disabled={fetching}>
-                {fetching ? 'Sending…' : 'Send Fetch Request'}
+                {fetching ? t('clientFetch.sending') : t('clientFetch.sendButton')}
               </Button>
             </CardContent>
           </Card>
@@ -205,30 +207,36 @@ const Demo = () => {
 
         <Tabs value={tabsValue} onValueChange={setTabsValue}>
           <TabsList>
-            <TabsTrigger value="tab1">Form Controls</TabsTrigger>
-            <TabsTrigger value="tab2">Navigation</TabsTrigger>
-            <TabsTrigger value="tab3">Feedback</TabsTrigger>
-            <TabsTrigger value="tab4">Overlays</TabsTrigger>
-            <TabsTrigger value="tab5">Data Display</TabsTrigger>
+            <TabsTrigger value="tab1">{t('tabs.formControls')}</TabsTrigger>
+            <TabsTrigger value="tab2">{t('tabs.navigation')}</TabsTrigger>
+            <TabsTrigger value="tab3">{t('tabs.feedback')}</TabsTrigger>
+            <TabsTrigger value="tab4">{t('tabs.overlays')}</TabsTrigger>
+            <TabsTrigger value="tab5">{t('tabs.dataDisplay')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tab1" className="space-y-6 pt-4">
-            <Section title="Buttons">
-              <ComponentShowcase title="Variants" description="Different button styles">
+            <Section title={t('buttons.sectionTitle')}>
+              <ComponentShowcase
+                title={t('buttons.variantsTitle')}
+                description={t('buttons.variantsDescription')}
+              >
                 {variants.map((v) => (
                   <Button key={v} variant={v}>
                     {v}
                   </Button>
                 ))}
               </ComponentShowcase>
-              <ComponentShowcase title="Sizes" description="Different button sizes">
+              <ComponentShowcase
+                title={t('buttons.sizesTitle')}
+                description={t('buttons.sizesDescription')}
+              >
                 {sizes.map((s) => (
                   <Button key={s} size={s}>
                     {s}
                   </Button>
                 ))}
               </ComponentShowcase>
-              <ComponentShowcase title="With Icons">
+              <ComponentShowcase title={t('buttons.withIconsTitle')}>
                 <Button variant="default">
                   <svg
                     aria-hidden="true"
@@ -245,10 +253,10 @@ const Demo = () => {
                     <path d="M5 12h14" />
                     <path d="m12 5 7 7-7 7" />
                   </svg>
-                  Icon Left
+                  {t('buttons.iconLeft')}
                 </Button>
                 <Button variant="outline">
-                  Icon Right
+                  {t('buttons.iconRight')}
                   <svg
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
@@ -268,123 +276,138 @@ const Demo = () => {
               </ComponentShowcase>
             </Section>
 
-            <Section title="Form Controls">
-              <ComponentShowcase title="Input" description="Text input field">
-                <Input placeholder="Enter text..." />
+            <Section title={t('formControlsSection.sectionTitle')}>
+              <ComponentShowcase
+                title={t('formControlsSection.inputTitle')}
+                description={t('formControlsSection.inputDescription')}
+              >
+                <Input placeholder={t('formControlsSection.inputPlaceholder')} />
               </ComponentShowcase>
 
-              <ComponentShowcase title="Textarea" description="Multi-line text input">
-                <Textarea placeholder="Enter description..." />
+              <ComponentShowcase
+                title={t('formControlsSection.textareaTitle')}
+                description={t('formControlsSection.textareaDescription')}
+              >
+                <Textarea placeholder={t('formControlsSection.textareaPlaceholder')} />
               </ComponentShowcase>
 
-              <ComponentShowcase title="Checkbox">
+              <ComponentShowcase title={t('formControlsSection.checkboxTitle')}>
                 <div className="flex items-center gap-2">
                   <Checkbox
                     id="check"
                     checked={checkboxChecked}
                     onCheckedChange={(c) => setCheckboxChecked(!!c)}
                   />
-                  <Label htmlFor="check">Accept terms and conditions</Label>
+                  <Label htmlFor="check">{t('formControlsSection.acceptTerms')}</Label>
                 </div>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Radio Group">
+              <ComponentShowcase title={t('formControlsSection.radioGroupTitle')}>
                 <RadioGroup value={radioValue} onValueChange={setRadioValue}>
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="opt1" id="r1" />
-                    <Label htmlFor="r1">Option 1</Label>
+                    <Label htmlFor="r1">{t('formControlsSection.option1')}</Label>
                   </div>
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="opt2" id="r2" />
-                    <Label htmlFor="r2">Option 2</Label>
+                    <Label htmlFor="r2">{t('formControlsSection.option2')}</Label>
                   </div>
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="opt3" id="r3" />
-                    <Label htmlFor="r3">Option 3</Label>
+                    <Label htmlFor="r3">{t('formControlsSection.option3')}</Label>
                   </div>
                 </RadioGroup>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Switch">
+              <ComponentShowcase title={t('formControlsSection.switchTitle')}>
                 <div className="flex items-center gap-2">
                   <Switch
                     id="switch-demo"
                     checked={switchChecked}
                     onCheckedChange={setSwitchChecked}
                   />
-                  <Label htmlFor="switch-demo">Enable notifications</Label>
+                  <Label htmlFor="switch-demo">
+                    {t('formControlsSection.enableNotifications')}
+                  </Label>
                 </div>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Slider" description="Value: {sliderValue[0]}">
+              <ComponentShowcase
+                title={t('formControlsSection.sliderTitle')}
+                description={t('formControlsSection.sliderDescriptionTemplate', {
+                  value: sliderValue[0],
+                })}
+              >
                 <div className="w-full max-w-xs">
                   <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
                 </div>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Select">
+              <ComponentShowcase title={t('formControlsSection.selectTitle')}>
                 <Select value={selectValue} onValueChange={setSelectValue}>
                   <SelectTrigger className="w-45">
-                    <SelectValue placeholder="Select option" />
+                    <SelectValue placeholder={t('formControlsSection.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="opt1">Option 1</SelectItem>
-                    <SelectItem value="opt2">Option 2</SelectItem>
-                    <SelectItem value="opt3">Option 3</SelectItem>
+                    <SelectItem value="opt1">{t('formControlsSection.option1')}</SelectItem>
+                    <SelectItem value="opt2">{t('formControlsSection.option2')}</SelectItem>
+                    <SelectItem value="opt3">{t('formControlsSection.option3')}</SelectItem>
                   </SelectContent>
                 </Select>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Label">
-                <Label htmlFor="email">Email address</Label>
+              <ComponentShowcase title={t('formControlsSection.labelTitle')}>
+                <Label htmlFor="email">{t('formControlsSection.emailLabel')}</Label>
               </ComponentShowcase>
             </Section>
           </TabsContent>
 
           <TabsContent value="tab2" className="space-y-6 pt-4">
-            <Section title="Navigation">
-              <ComponentShowcase title="Tabs" description="Switch between views">
+            <Section title={t('navigationSection.sectionTitle')}>
+              <ComponentShowcase
+                title={t('navigationSection.tabsTitle')}
+                description={t('navigationSection.tabsDescription')}
+              >
                 <div className="w-full max-w-md">
                   <Tabs value={tabsValue} onValueChange={setTabsValue}>
                     <TabsList>
-                      <TabsTrigger value="tab1">Overview</TabsTrigger>
-                      <TabsTrigger value="tab2">Details</TabsTrigger>
-                      <TabsTrigger value="tab3">Settings</TabsTrigger>
+                      <TabsTrigger value="tab1">{t('navigationSection.overview')}</TabsTrigger>
+                      <TabsTrigger value="tab2">{t('navigationSection.details')}</TabsTrigger>
+                      <TabsTrigger value="tab3">{t('navigationSection.settings')}</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="tab1">Overview content here</TabsContent>
-                    <TabsContent value="tab2">Details content here</TabsContent>
-                    <TabsContent value="tab3">Settings content here</TabsContent>
+                    <TabsContent value="tab1">{t('navigationSection.overviewContent')}</TabsContent>
+                    <TabsContent value="tab2">{t('navigationSection.detailsContent')}</TabsContent>
+                    <TabsContent value="tab3">{t('navigationSection.settingsContent')}</TabsContent>
                   </Tabs>
                 </div>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Accordion" description="Expandable sections">
+              <ComponentShowcase
+                title={t('navigationSection.accordionTitle')}
+                description={t('navigationSection.accordionDescription')}
+              >
                 <div className="w-full max-w-md">
                   <Accordion type="single" collapsible>
                     <AccordionItem value="item-1">
-                      <AccordionTrigger>What is shadcn/ui?</AccordionTrigger>
-                      <AccordionContent>
-                        shadcn/ui is a collection of re-usable components built using Radix UI and
-                        Tailwind CSS.
-                      </AccordionContent>
+                      <AccordionTrigger>{t('navigationSection.faq1Question')}</AccordionTrigger>
+                      <AccordionContent>{t('navigationSection.faq1Answer')}</AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
-                      <AccordionTrigger>Is it free to use?</AccordionTrigger>
-                      <AccordionContent>
-                        Yes, shadcn/ui is completely free and open source.
-                      </AccordionContent>
+                      <AccordionTrigger>{t('navigationSection.faq2Question')}</AccordionTrigger>
+                      <AccordionContent>{t('navigationSection.faq2Answer')}</AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
-                      <AccordionTrigger>Can I customize it?</AccordionTrigger>
-                      <AccordionContent>
-                        Absolutely! All components can be customized to fit your design system.
-                      </AccordionContent>
+                      <AccordionTrigger>{t('navigationSection.faq3Question')}</AccordionTrigger>
+                      <AccordionContent>{t('navigationSection.faq3Answer')}</AccordionContent>
                     </AccordionItem>
                   </Accordion>
                 </div>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Avatar" description="User profile pictures">
+              <ComponentShowcase
+                title={t('navigationSection.avatarTitle')}
+                description={t('navigationSection.avatarDescription')}
+              >
                 <Avatar>
                   <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
                   <AvatarFallback>CN</AvatarFallback>
@@ -398,7 +421,10 @@ const Demo = () => {
                 </Avatar>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Avatar Group" description="Multiple avatars">
+              <ComponentShowcase
+                title={t('navigationSection.avatarGroupTitle')}
+                description={t('navigationSection.avatarGroupDescription')}
+              >
                 <AvatarGroup>
                   <Avatar>
                     <AvatarFallback>AB</AvatarFallback>
@@ -413,17 +439,19 @@ const Demo = () => {
                 </AvatarGroup>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Dropdown Menu">
+              <ComponentShowcase title={t('navigationSection.dropdownTitle')}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">Open Menu</Button>
+                    <Button variant="outline">{t('navigationSection.openMenu')}</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
+                    <DropdownMenuItem>{t('navigationSection.profile')}</DropdownMenuItem>
+                    <DropdownMenuItem>{t('navigationSection.settingsMenuItem')}</DropdownMenuItem>
+                    <DropdownMenuItem>{t('navigationSection.billing')}</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive">Sign out</DropdownMenuItem>
+                    <DropdownMenuItem variant="destructive">
+                      {t('navigationSection.signOut')}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </ComponentShowcase>
@@ -431,136 +459,138 @@ const Demo = () => {
           </TabsContent>
 
           <TabsContent value="tab3" className="space-y-6 pt-4">
-            <Section title="Feedback">
-              <ComponentShowcase title="Alert" description="Informational alert">
+            <Section title={t('feedbackSection.sectionTitle')}>
+              <ComponentShowcase title={t('feedbackSection.alertTitle')}>
                 <Alert>
-                  <AlertTitle>Info</AlertTitle>
-                  <AlertDescription>This is an informational message.</AlertDescription>
+                  <AlertTitle>{t('feedbackSection.info')}</AlertTitle>
+                  <AlertDescription>{t('feedbackSection.infoMessage')}</AlertDescription>
                 </Alert>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Alert Variants">
+              <ComponentShowcase title={t('feedbackSection.alertVariantsTitle')}>
                 <Alert>
-                  <AlertTitle>Default</AlertTitle>
-                  <AlertDescription>This is a default alert.</AlertDescription>
+                  <AlertTitle>{t('feedbackSection.default')}</AlertTitle>
+                  <AlertDescription>{t('feedbackSection.defaultMessage')}</AlertDescription>
                 </Alert>
                 <Alert variant="destructive">
-                  <AlertTitle>Destructive</AlertTitle>
-                  <AlertDescription>Something went wrong.</AlertDescription>
+                  <AlertTitle>{t('feedbackSection.destructive')}</AlertTitle>
+                  <AlertDescription>{t('feedbackSection.destructiveMessage')}</AlertDescription>
                 </Alert>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Badge" description="Labels and tags">
-                <Badge>Default</Badge>
-                <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="destructive">Destructive</Badge>
-                <Badge variant="outline">Outline</Badge>
-                <Badge variant="link">Link</Badge>
+              <ComponentShowcase title={t('feedbackSection.badgeTitle')}>
+                <Badge>{t('feedbackSection.default')}</Badge>
+                <Badge variant="secondary">{t('feedbackSection.secondary')}</Badge>
+                <Badge variant="destructive">{t('feedbackSection.destructive')}</Badge>
+                <Badge variant="outline">{t('feedbackSection.outline')}</Badge>
+                <Badge variant="link">{t('feedbackSection.link')}</Badge>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Separator">
+              <ComponentShowcase title={t('feedbackSection.separatorTitle')}>
                 <div className="w-full max-w-xs space-y-2">
                   <div className="flex items-center gap-2">
-                    <span>Item 1</span>
+                    <span>{t('feedbackSection.item1')}</span>
                     <Separator orientation="vertical" className="h-4" />
-                    <span>Item 2</span>
+                    <span>{t('feedbackSection.item2')}</span>
                     <Separator orientation="vertical" className="h-4" />
-                    <span>Item 3</span>
+                    <span>{t('feedbackSection.item3')}</span>
                   </div>
                   <Separator />
-                  <p>Content above and below the separator</p>
+                  <p>{t('feedbackSection.separatorContent')}</p>
                 </div>
               </ComponentShowcase>
             </Section>
           </TabsContent>
 
           <TabsContent value="tab4" className="space-y-6 pt-4">
-            <Section title="Overlays">
-              <ComponentShowcase title="Dialog" description="Modal dialog">
+            <Section title={t('overlaysSection.sectionTitle')}>
+              <ComponentShowcase title={t('overlaysSection.dialogTitle')}>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button>Open Dialog</Button>
+                    <Button>{t('overlaysSection.openDialog')}</Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Dialog Title</DialogTitle>
-                      <DialogDescription>
-                        This is a dialog component for confirming actions.
-                      </DialogDescription>
+                      <DialogTitle>{t('overlaysSection.dialogHeading')}</DialogTitle>
+                      <DialogDescription>{t('overlaysSection.dialogBody')}</DialogDescription>
                     </DialogHeader>
-                    <p>Are you sure you want to continue with this action?</p>
+                    <p>{t('overlaysSection.confirmQuestion')}</p>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                        Cancel
+                        {t('overlaysSection.cancel')}
                       </Button>
-                      <Button onClick={() => setDialogOpen(false)}>Confirm</Button>
+                      <Button onClick={() => setDialogOpen(false)}>
+                        {t('overlaysSection.confirm')}
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Alert Dialog" description="Confirmation dialog">
+              <ComponentShowcase title={t('overlaysSection.alertDialogTitle')}>
                 <AlertDialog open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive">Delete Item</Button>
+                    <Button variant="destructive">{t('overlaysSection.deleteItem')}</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                      <AlertDialogTitle>{t('overlaysSection.areYouSure')}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t('overlaysSection.cannotBeUndone')}
+                      </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel onClick={() => setAlertDialogOpen(false)}>
-                        Cancel
+                        {t('overlaysSection.cancel')}
                       </AlertDialogCancel>
                       <AlertDialogAction onClick={() => setAlertDialogOpen(false)}>
-                        Delete
+                        {t('overlaysSection.delete')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Sheet" description="Slide-in panel">
+              <ComponentShowcase title={t('overlaysSection.sheetTitle')}>
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="outline">Open Sheet</Button>
+                    <Button variant="outline">{t('overlaysSection.openSheet')}</Button>
                   </SheetTrigger>
                   <SheetContent>
                     <SheetHeader>
-                      <SheetTitle>Sheet Title</SheetTitle>
-                      <SheetDescription>
-                        This is a sheet component for side panels.
-                      </SheetDescription>
+                      <SheetTitle>{t('overlaysSection.sheetHeading')}</SheetTitle>
+                      <SheetDescription>{t('overlaysSection.sheetBody')}</SheetDescription>
                     </SheetHeader>
                     <div className="mt-4 space-y-2">
-                      <p>Additional content goes here.</p>
+                      <p>{t('overlaysSection.additionalContent')}</p>
                     </div>
                   </SheetContent>
                 </Sheet>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Popover" description="Floating content">
+              <ComponentShowcase title={t('overlaysSection.popoverTitle')}>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline">Open Popover</Button>
+                    <Button variant="outline">{t('overlaysSection.openPopover')}</Button>
                   </PopoverTrigger>
                   <PopoverContent>
                     <div className="space-y-2">
-                      <h4 className="font-medium">Popover Title</h4>
-                      <p className="text-sm text-muted-foreground">This is a popover component.</p>
+                      <h4 className="font-medium">{t('overlaysSection.popoverHeading')}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {t('overlaysSection.popoverBody')}
+                      </p>
                     </div>
                   </PopoverContent>
                 </Popover>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Tooltip" description="Hover for more info">
+              <ComponentShowcase title={t('overlaysSection.tooltipTitle')}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline">Hover me</Button>
+                    <Button variant="outline">{t('overlaysSection.hoverMe')}</Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>This is a tooltip</p>
+                    <p>{t('overlaysSection.tooltipText')}</p>
                   </TooltipContent>
                 </Tooltip>
               </ComponentShowcase>
@@ -568,62 +598,64 @@ const Demo = () => {
           </TabsContent>
 
           <TabsContent value="tab5" className="space-y-6 pt-4">
-            <Section title="Data Display">
-              <ComponentShowcase title="Card">
+            <Section title={t('dataDisplaySection.sectionTitle')}>
+              <ComponentShowcase title={t('dataDisplaySection.cardTitle')}>
                 <Card className="w-full max-w-sm">
                   <CardHeader>
-                    <CardTitle>Card Title</CardTitle>
-                    <CardDescription>Card description goes here.</CardDescription>
+                    <CardTitle>{t('dataDisplaySection.cardHeading')}</CardTitle>
+                    <CardDescription>{t('dataDisplaySection.cardDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p>Card content area with additional details.</p>
+                    <p>{t('dataDisplaySection.cardBody')}</p>
                   </CardContent>
                   <CardFooter className="flex gap-2">
-                    <Button size="sm">Action</Button>
+                    <Button size="sm">{t('dataDisplaySection.action')}</Button>
                     <Button variant="outline" size="sm">
-                      Cancel
+                      {t('dataDisplaySection.cancel')}
                     </Button>
                   </CardFooter>
                 </Card>
               </ComponentShowcase>
 
-              <ComponentShowcase title="Table">
+              <ComponentShowcase title={t('dataDisplaySection.tableTitle')}>
                 <Table>
-                  <TableCaption>A list of recent items.</TableCaption>
+                  <TableCaption>{t('dataDisplaySection.tableCaption')}</TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Role</TableHead>
+                      <TableHead>{t('dataDisplaySection.name')}</TableHead>
+                      <TableHead>{t('dataDisplaySection.status')}</TableHead>
+                      <TableHead>{t('dataDisplaySection.role')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
                       <TableCell>John Doe</TableCell>
                       <TableCell>
-                        <Badge variant="default">Active</Badge>
+                        <Badge variant="default">{t('dataDisplaySection.active')}</Badge>
                       </TableCell>
-                      <TableCell>Admin</TableCell>
+                      <TableCell>{t('dataDisplaySection.admin')}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Jane Smith</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">Inactive</Badge>
+                        <Badge variant="secondary">{t('dataDisplaySection.inactive')}</Badge>
                       </TableCell>
-                      <TableCell>User</TableCell>
+                      <TableCell>{t('dataDisplaySection.user')}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Bob Wilson</TableCell>
                       <TableCell>
-                        <Badge variant="outline">Pending</Badge>
+                        <Badge variant="outline">{t('dataDisplaySection.pending')}</Badge>
                       </TableCell>
-                      <TableCell>Editor</TableCell>
+                      <TableCell>{t('dataDisplaySection.editor')}</TableCell>
                     </TableRow>
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={2}>Total</TableCell>
-                      <TableCell>3 users</TableCell>
+                      <TableCell colSpan={2}>{t('dataDisplaySection.total')}</TableCell>
+                      <TableCell>
+                        {t('dataDisplaySection.totalUsersTemplate', { count: 3 })}
+                      </TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>

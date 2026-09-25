@@ -36,33 +36,40 @@ RSpec.describe User, type: :model do
       )
     end
 
+    def from_auth(auth)
+      described_class.from_omniauth(
+        provider: auth.provider, uid: auth.uid,
+        email: auth.info.email, name: auth.info.name, avatar_url: auth.info.image
+      )
+    end
+
     it "creates an account with the provider identity and profile" do
-      expect { described_class.from_omniauth(auth) }.to change(described_class, :count).by(1)
+      expect { from_auth(auth) }.to change(described_class, :count).by(1)
       user = described_class.find_by!(provider: "google_oauth2", uid: "google-123")
       expect(user).to have_attributes(email: "new@example.com", name: "New User", avatar_url: "https://example.com/avatar.png")
       expect(user.encrypted_password).to be_present
     end
 
     it "reuses the same provider identity without overwriting its profile" do
-      existing = described_class.from_omniauth(auth)
+      existing = from_auth(auth)
       auth.info.name = "Changed upstream"
       returned = nil
-      expect { returned = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
+      expect { returned = from_auth(auth) }.not_to change(described_class, :count)
       expect(returned).to eq(existing)
       expect(existing.reload.name).to eq("New User")
     end
 
     it "does not confuse identical IDs from different providers" do
-      described_class.from_omniauth(auth)
+      from_auth(auth)
       auth.provider = "another_provider"
       auth.info.email = "another@example.com"
-      expect { described_class.from_omniauth(auth) }.to change(described_class, :count).by(1)
+      expect { from_auth(auth) }.to change(described_class, :count).by(1)
     end
 
     it "does not silently link an existing email to a new identity" do
       auth.info.email = users(:one).email
       result = nil
-      expect { result = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
+      expect { result = from_auth(auth) }.not_to change(described_class, :count)
       expect(result).not_to be_persisted
       expect(result.errors[:email]).to be_present
       expect(users(:one).reload.provider).to be_nil

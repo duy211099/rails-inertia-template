@@ -1,0 +1,10 @@
+en:
+  api:
+    v1:
+      errors:
+        not_found: "Record not found."
+        forbidden: "Access denied."
+        bad_request: "Invalid request parameters."
+        invalid_csrf_token: "A valid CSRF token is required."
+        unauthorized: "Sign in to continue."
+        validation_failed: "Item could not be saved."
