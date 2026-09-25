@@ -4,20 +4,19 @@ Rails 8.1, SQLite, Inertia, React, TypeScript, Vite, and Tailwind CSS.
 
 ## Setup
 
+Requires Ruby 4.0.7 and Node 24.21.0 (see `.ruby-version` / `mise.toml`; [mise](https://mise.jdx.dev/) installs and pins both automatically via `mise trust && mise install`).
+
 ```sh
-mise trust
-mise install
-mise exec -- bin/setup
+bin/setup
 ```
 
-- `mise.toml` pins Ruby 4.0.7 and Node 24.21.0. Omit `mise exec --` if mise is activated in your shell.
-- Keep `.ruby-version` and the Dockerfile runtime args in sync with the pins. CI reads Ruby from `.ruby-version`, Node range from `package.json`.
+- Keep `.ruby-version` and the Dockerfile runtime args in sync. CI reads Ruby from `.ruby-version`, Node range from `package.json`.
 - Versions are locked in `Gemfile.lock` / `package-lock.json`.
 
 ## Development
 
 ```sh
-mise exec -- bin/dev
+bin/dev
 ```
 
 SQLite, so no separate database server. `bin/setup` installs deps and preps the dev database.
@@ -81,7 +80,7 @@ Errors: `{ "error": { "code": "...", "message": "...", "details": {} } }`. 401 u
 [OpenAPI 3.1 contract](docs/openapi.yml) covers all six operations. [Skooma](https://github.com/evilmartians/skooma) (test-only) checks the doc against real request/response contracts; specs also exercise real Devise login + CSRF.
 
 ```sh
-mise exec -- bin/test spec/requests/api
+bin/test spec/requests/api
 ```
 
 No extra API framework needed. Add `rack-cors` for cross-origin browser clients, or Doorkeeper for third-party OAuth. Rate limiting / bearer auth / retry-idempotency are out of scope for this session-authenticated example.
@@ -89,16 +88,16 @@ No extra API framework needed. Add `rack-cors` for cross-origin browser clients,
 ## Checks
 
 ```sh
-mise exec -- bin/test
-mise exec -- npm test
-mise exec -- bin/rails zeitwerk:check
-mise exec -- bin/rubocop
-mise exec -- npm run check
-mise exec -- npm run lint
-mise exec -- npm run build
-mise exec -- bin/brakeman --no-pager
-mise exec -- bin/bundler-audit
-mise exec -- npm audit
+bin/test
+npm test
+bin/rails zeitwerk:check
+bin/rubocop
+npm run check
+npm run lint
+npm run build
+bin/brakeman --no-pager
+bin/bundler-audit
+npm audit
 ```
 
 ## Tests
@@ -106,8 +105,8 @@ mise exec -- npm audit
 Backend: RSpec + [parallel_tests](https://github.com/grosser/parallel_tests).
 
 ```sh
-mise exec -- bin/test
-PARALLEL_TEST_PROCESSORS=4 mise exec -- bin/test
+bin/test
+PARALLEL_TEST_PROCESSORS=4 bin/test
 ```
 
 `bin/test` preps a separate SQLite DB per worker (`storage/test.sqlite3`, `test2.sqlite3`, ...), checks generated types, builds test assets once, runs specs. Reloads test schemas every run; doesn't touch dev data. Transactional fixtures roll back each example.
@@ -115,17 +114,17 @@ PARALLEL_TEST_PROCESSORS=4 mise exec -- bin/test
 Specs: `spec/models`, `spec/policies`, `spec/serializers`, `spec/requests`. Fixtures in `spec/fixtures`, factories in `spec/factories`. No browser/system tests currently.
 
 ```sh
-mise exec -- bin/test spec/models spec/policies spec/serializers
-mise exec -- bundle exec rspec spec/models/user_spec.rb
-mise exec -- bundle exec rspec spec/requests/items_spec.rb:28
+bin/test spec/models spec/policies spec/serializers
+bundle exec rspec spec/models/user_spec.rb
+bundle exec rspec spec/requests/items_spec.rb:28
 ```
 
 Frontend: [Vitest](https://vitest.dev/guide/) + React Testing Library + jsdom, `*.test.ts(x)` beside source, no Rails server needed.
 
 ```sh
-mise exec -- npm test
-mise exec -- npm run test:watch
-mise exec -- npm test -- app/frontend/components/auth-nav.test.tsx
+npm test
+npm run test:watch
+npm test -- app/frontend/components/auth-nav.test.tsx
 ```
 
 GitHub Actions, `bin/ci`, and the pre-push hook run both suites.
@@ -145,8 +144,8 @@ Alba serializers define the JSON contract; Typelizer generates matching TypeScri
 Page resources extend `ApplicationResource`. Collections pass `Resource.new({ ... }).to_inertia` so partial reloads only evaluate requested props — authorize/scope in the controller first. Other responses use `Serializer.new(record).serializable_hash`.
 
 ```sh
-mise exec -- npm run generate:types
-RAILS_ENV=test mise exec -- bin/check-types
+npm run generate:types
+RAILS_ENV=test bin/check-types
 ```
 
 Prep the target env's DB before generating. Commit output under `app/frontend/types/serializers`, import via `@/types`. `bin/check-types` fails on drift without rewriting checked-in output; `bin/test` runs it once before parallel workers start.
@@ -166,8 +165,8 @@ Production request logs: Lograge JSON on stdout (method, path, status, duration,
 - `anyway_config` is available for typed, validated config classes under `app/configs` once plain `ENV[]` reads outgrow themselves.
 
 ```sh
-EVENT_PROF=sql.active_record mise exec -- bundle exec rspec spec/requests   # TestProf, opt-in
-RAILS_ENV=test mise exec -- bundle exec database_consistency
+EVENT_PROF=sql.active_record bundle exec rspec spec/requests   # TestProf, opt-in
+RAILS_ENV=test bundle exec database_consistency
 ```
 
 CI runs `database_consistency` against a prepared test DB, with narrow exceptions for Devise's conditional email validation and its reset-token index.
