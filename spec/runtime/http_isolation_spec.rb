@@ -5,7 +5,8 @@ require "net/http"
 
 RSpec.describe "Backend HTTP isolation" do
   it "blocks accidental external requests" do
-    expect { Net::HTTP.get(URI("https://network-check.invalid")) }.to raise_error(WebMock::NetConnectNotAllowedError)
+    expect { Net::HTTP.get(URI("https://network-check.invalid")) }
+      .to raise_error { |error| expect(error).to be_a(WebMock::NetConnectNotAllowedError).or be_a(VCR::Errors::UnhandledHTTPRequestError) }
   end
 
   it "allows explicitly stubbed integrations" do
