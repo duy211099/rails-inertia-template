@@ -67,13 +67,13 @@ type KeywordUrlOptions = Optional<{
 type RouteOptions = KeywordUrlOptions & RouteParameters;
 
 export {};
-export const configure: RouterExposedMethods['configure'];
+export declare const configure: RouterExposedMethods['configure'];
 
-export const config: RouterExposedMethods['config'];
+export declare const config: RouterExposedMethods['config'];
 
-export const serialize: RouterExposedMethods['serialize'];
+export declare const serialize: RouterExposedMethods['serialize'];
 
-export const __route: RouterExposedMethods['__route'];
+export declare const __route: RouterExposedMethods['__route'];
 
 /**
  * Generates rails route to
@@ -81,7 +81,7 @@ export const __route: RouterExposedMethods['__route'];
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const cancelUserRegistrationPath: ((
+export declare const cancelUserRegistrationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -91,7 +91,7 @@ export const cancelUserRegistrationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const demoPath: ((
+export declare const demoPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -101,7 +101,7 @@ export const demoPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const demoFetchPath: ((
+export declare const demoFetchPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -111,7 +111,7 @@ export const demoFetchPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const destroyUserSessionPath: ((
+export declare const destroyUserSessionPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -122,7 +122,7 @@ export const destroyUserSessionPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const editItemPath: ((
+export declare const editItemPath: ((
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -133,7 +133,7 @@ export const editItemPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const editUserPasswordPath: ((
+export declare const editUserPasswordPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -143,7 +143,7 @@ export const editUserPasswordPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const editUserRegistrationPath: ((
+export declare const editUserRegistrationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -153,7 +153,7 @@ export const editUserRegistrationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const inertiaExamplePath: ((
+export declare const inertiaExamplePath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -164,7 +164,7 @@ export const inertiaExamplePath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const itemPath: ((
+export declare const itemPath: ((
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -175,7 +175,7 @@ export const itemPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const itemsPath: ((
+export declare const itemsPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -185,7 +185,7 @@ export const itemsPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsPath: ((
+export declare const missionControlJobsPath: ((
   options?: RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -197,7 +197,7 @@ export const missionControlJobsPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationBatchPath: ((
+export declare const missionControlJobsApplicationBatchPath: ((
   applicationId: RequiredRouteParameter,
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -210,7 +210,7 @@ export const missionControlJobsApplicationBatchPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationBatchesPath: ((
+export declare const missionControlJobsApplicationBatchesPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -222,7 +222,7 @@ export const missionControlJobsApplicationBatchesPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationBulkDiscardsPath: ((
+export declare const missionControlJobsApplicationBulkDiscardsPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -234,7 +234,7 @@ export const missionControlJobsApplicationBulkDiscardsPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationBulkRetriesPath: ((
+export declare const missionControlJobsApplicationBulkRetriesPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -247,7 +247,7 @@ export const missionControlJobsApplicationBulkRetriesPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationJobPath: ((
+export declare const missionControlJobsApplicationJobPath: ((
   applicationId: RequiredRouteParameter,
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -261,7 +261,7 @@ export const missionControlJobsApplicationJobPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationJobDiscardPath: ((
+export declare const missionControlJobsApplicationJobDiscardPath: ((
   applicationId: RequiredRouteParameter,
   jobId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -275,7 +275,7 @@ export const missionControlJobsApplicationJobDiscardPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationJobDispatchPath: ((
+export declare const missionControlJobsApplicationJobDispatchPath: ((
   applicationId: RequiredRouteParameter,
   jobId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -289,7 +289,7 @@ export const missionControlJobsApplicationJobDispatchPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationJobRetryPath: ((
+export declare const missionControlJobsApplicationJobRetryPath: ((
   applicationId: RequiredRouteParameter,
   jobId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -303,7 +303,7 @@ export const missionControlJobsApplicationJobRetryPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationJobsPath: ((
+export declare const missionControlJobsApplicationJobsPath: ((
   applicationId: RequiredRouteParameter,
   status: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -317,7 +317,7 @@ export const missionControlJobsApplicationJobsPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationQueuePath: ((
+export declare const missionControlJobsApplicationQueuePath: ((
   applicationId: RequiredRouteParameter,
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -331,7 +331,7 @@ export const missionControlJobsApplicationQueuePath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationQueuePausePath: ((
+export declare const missionControlJobsApplicationQueuePausePath: ((
   applicationId: RequiredRouteParameter,
   queueId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -344,7 +344,7 @@ export const missionControlJobsApplicationQueuePausePath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationQueuesPath: ((
+export declare const missionControlJobsApplicationQueuesPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -357,7 +357,7 @@ export const missionControlJobsApplicationQueuesPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationRecurringTaskPath: ((
+export declare const missionControlJobsApplicationRecurringTaskPath: ((
   applicationId: RequiredRouteParameter,
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -370,7 +370,7 @@ export const missionControlJobsApplicationRecurringTaskPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationRecurringTasksPath: ((
+export declare const missionControlJobsApplicationRecurringTasksPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -383,7 +383,7 @@ export const missionControlJobsApplicationRecurringTasksPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationWorkerPath: ((
+export declare const missionControlJobsApplicationWorkerPath: ((
   applicationId: RequiredRouteParameter,
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
@@ -396,7 +396,7 @@ export const missionControlJobsApplicationWorkerPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsApplicationWorkersPath: ((
+export declare const missionControlJobsApplicationWorkersPath: ((
   applicationId: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -408,7 +408,7 @@ export const missionControlJobsApplicationWorkersPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsJobPath: ((
+export declare const missionControlJobsJobPath: ((
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -420,7 +420,7 @@ export const missionControlJobsJobPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsJobsPath: ((
+export declare const missionControlJobsJobsPath: ((
   status: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -432,7 +432,7 @@ export const missionControlJobsJobsPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsQueuePath: ((
+export declare const missionControlJobsQueuePath: ((
   id: RequiredRouteParameter,
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
@@ -443,7 +443,7 @@ export const missionControlJobsQueuePath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsQueuesPath: ((
+export declare const missionControlJobsQueuesPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -453,7 +453,7 @@ export const missionControlJobsQueuesPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const missionControlJobsRootPath: ((
+export declare const missionControlJobsRootPath: ((
   options?: RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -463,7 +463,7 @@ export const missionControlJobsRootPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const newItemPath: ((
+export declare const newItemPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -473,7 +473,7 @@ export const newItemPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const newUserPasswordPath: ((
+export declare const newUserPasswordPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -483,7 +483,7 @@ export const newUserPasswordPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const newUserRegistrationPath: ((
+export declare const newUserRegistrationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -493,7 +493,7 @@ export const newUserRegistrationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const newUserSessionPath: ((
+export declare const newUserSessionPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -503,7 +503,7 @@ export const newUserSessionPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const rootPath: ((
+export declare const rootPath: ((
   options?: RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -513,7 +513,7 @@ export const rootPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const turboRecedeHistoricalLocationPath: ((
+export declare const turboRecedeHistoricalLocationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -523,7 +523,7 @@ export const turboRecedeHistoricalLocationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const turboRefreshHistoricalLocationPath: ((
+export declare const turboRefreshHistoricalLocationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -533,7 +533,7 @@ export const turboRefreshHistoricalLocationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const turboResumeHistoricalLocationPath: ((
+export declare const turboResumeHistoricalLocationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -543,7 +543,7 @@ export const turboResumeHistoricalLocationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const userGoogleOauth2OmniauthAuthorizePath: ((
+export declare const userGoogleOauth2OmniauthAuthorizePath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -553,7 +553,7 @@ export const userGoogleOauth2OmniauthAuthorizePath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const userGoogleOauth2OmniauthCallbackPath: ((
+export declare const userGoogleOauth2OmniauthCallbackPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -563,7 +563,7 @@ export const userGoogleOauth2OmniauthCallbackPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const userPasswordPath: ((
+export declare const userPasswordPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -573,7 +573,7 @@ export const userPasswordPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const userRegistrationPath: ((
+export declare const userRegistrationPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -583,7 +583,7 @@ export const userRegistrationPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const userSessionPath: ((
+export declare const userSessionPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
 
@@ -593,6 +593,6 @@ export const userSessionPath: ((
  * @param {object | undefined} options
  * @returns {string} route path
  */
-export const versionsPath: ((
+export declare const versionsPath: ((
   options?: {format?: OptionalRouteParameter} & RouteOptions
 ) => string) & RouteHelperExtras;
