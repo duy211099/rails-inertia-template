@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  draw :letter_opener
 
   draw :public
 
@@ -17,9 +17,6 @@ Rails.application.routes.draw do
   draw :api
   draw :api_docs
 
-  # Audit log
-  resources :versions, only: %i[index]
-
-  # Solid Queue web UI (admin only)
-  mount MissionControl::Jobs::Engine, at: "/jobs"
+  draw :versions
+  draw :jobs
 end
