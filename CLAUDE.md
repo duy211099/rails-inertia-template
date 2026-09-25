@@ -12,10 +12,12 @@ bin/rails db:setup               # Create and seed database
 
 ### Testing
 ```bash
-bin/rails test                   # Run unit/integration tests
-bin/rails test:system            # Run Capybara system tests (requires Chrome)
-bin/rails test test/path/to/test_file.rb  # Run a single test file
-bin/rails test test/path/to/test_file.rb:42  # Run a single test at line
+bin/test                        # Build assets, prepare test DBs, run RSpec with 2 workers
+PARALLEL_TEST_PROCESSORS=4 bin/test  # Run RSpec with 4 isolated workers
+bundle exec rspec spec/models/user_spec.rb  # Run a single spec file
+bundle exec rspec spec/requests/items_spec.rb:28  # Run one example at a line
+npm test                        # Run frontend unit/component tests
+npm run test:watch               # Watch frontend tests
 ```
 
 ### Linting & Formatting

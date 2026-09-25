@@ -1,0 +1,54 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe User, type: :model do
+  fixtures :users, :items
+
+  describe ".from_omniauth" do
+    let(:auth) do
+      OmniAuth::AuthHash.new(
+        provider: "google_oauth2", uid: "google-123",
+        info: { email: "new@example.com", name: "New User", image: "https://example.com/avatar.png" }
+      )
+    end
+
+    it "creates an account with the provider identity and profile" do
+      expect { described_class.from_omniauth(auth) }.to change(described_class, :count).by(1)
+      user = described_class.find_by!(provider: "google_oauth2", uid: "google-123")
+      expect(user).to have_attributes(email: "new@example.com", name: "New User", avatar_url: "https://example.com/avatar.png")
+      expect(user.encrypted_password).to be_present
+    end
+
+    it "reuses the same provider identity without overwriting its profile" do
+      existing = described_class.from_omniauth(auth)
+      auth.info.name = "Changed upstream"
+      expect { @returned = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
+      expect(@returned).to eq(existing)
+      expect(existing.reload.name).to eq("New User")
+    end
+
+    it "does not confuse identical IDs from different providers" do
+      described_class.from_omniauth(auth)
+      auth.provider = "another_provider"
+      auth.info.email = "another@example.com"
+      expect { described_class.from_omniauth(auth) }.to change(described_class, :count).by(1)
+    end
+
+    it "does not silently link an existing email to a new identity" do
+      auth.info.email = users(:one).email
+      result = nil
+      expect { result = described_class.from_omniauth(auth) }.not_to change(described_class, :count)
+      expect(result).not_to be_persisted
+      expect(result.errors[:email]).to be_present
+      expect(users(:one).reload.provider).to be_nil
+    end
+  end
+
+  it "destroys owned items without affecting another user's items" do
+    owned_ids = users(:one).items.ids
+    users(:one).destroy!
+    expect(Item.unscoped.where(id: owned_ids)).to be_empty
+    expect(Item.exists?(items(:three).id)).to be(true)
+  end
+end

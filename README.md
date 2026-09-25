@@ -33,7 +33,8 @@ installs dependencies and prepares the development database.
 ## Checks
 
 ```sh
-mise exec -- bin/rails test
+mise exec -- bin/test
+mise exec -- npm test
 mise exec -- bin/rails zeitwerk:check
 mise exec -- bin/rubocop
 mise exec -- npm run check
@@ -44,7 +45,45 @@ mise exec -- bin/bundler-audit
 mise exec -- npm audit
 ```
 
-The system-test scaffold currently has no active browser tests.
+## Tests
+
+Backend tests use RSpec and [parallel_tests](https://github.com/grosser/parallel_tests).
+Run the full suite with two workers:
+
+```sh
+mise exec -- bin/test
+PARALLEL_TEST_PROCESSORS=4 mise exec -- bin/test
+```
+
+`bin/test` builds test assets once, prepares a separate SQLite database for each
+worker (`storage/test.sqlite3`, `storage/test2.sqlite3`, etc.), and runs the specs.
+It reloads the test schemas on every run; it does not touch development data.
+Each example rolls back its database changes using transactional fixtures.
+
+Specs live in `spec/models`, `spec/policies`, `spec/serializers`, and
+`spec/requests`; reusable fixture data lives in `spec/fixtures`. The former
+Minitest checks have been migrated to RSpec. Rails generators now create RSpec
+specs. There are currently no browser/system tests.
+
+Run just the backend unit specs, or one spec while developing:
+
+```sh
+mise exec -- bin/test spec/models spec/policies spec/serializers
+mise exec -- bundle exec rspec spec/models/user_spec.rb
+mise exec -- bundle exec rspec spec/requests/items_spec.rb:28
+```
+
+Frontend unit and component tests use [Vitest](https://vitest.dev/guide/) with
+React Testing Library and jsdom. Tests sit beside their source files as
+`*.test.ts` / `*.test.tsx`. They do not require a running Rails server.
+
+```sh
+mise exec -- npm test
+mise exec -- npm run test:watch
+mise exec -- npm test -- app/frontend/components/auth-nav.test.tsx
+```
+
+GitHub Actions, `bin/ci`, and the pre-push hook run both suites.
 
 ## Production image
 

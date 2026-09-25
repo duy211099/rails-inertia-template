@@ -26,7 +26,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
       <Head title="Items" />
 
       <header className="border-b">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+        <div className="container mx-auto flex items-center justify-between p-4">
           <h1 className="text-2xl font-bold">Items</h1>
           <AuthNav />
         </div>

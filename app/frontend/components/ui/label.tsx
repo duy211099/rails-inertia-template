@@ -11,7 +11,7 @@ function Label({ className, htmlFor, ...props }: LabelProps) {
       htmlFor={htmlFor}
       data-slot="label"
       className={cn(
-        'flex items-center gap-2 text-sm font-medium leading-none select-none',
+        'flex items-center gap-2 text-sm leading-none font-medium select-none',
         className
       )}
       {...props}

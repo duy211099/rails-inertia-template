@@ -36,6 +36,9 @@ gem "thruster", "~> 0.1", require: false
 gem "image_processing", "~> 2.0"
 
 group :development, :test do
+  gem "rspec-rails", "~> 8.0"
+  gem "parallel_tests", "~> 5.0"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
@@ -103,7 +106,7 @@ gem "oj_serializers", "~> 3.0"
 gem "types_from_serializers", "~> 2.5"
 
 # Frontend routes
-gem "js-routes", "~> 2.3"
+gem "js-routes", "2.4.1"
 
 # Authorization
 gem "action_policy", "~> 0.7"

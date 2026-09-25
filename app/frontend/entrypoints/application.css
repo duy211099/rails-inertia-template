@@ -1,16 +1,15 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-
-@plugin '@tailwindcss/typography';
-@plugin '@tailwindcss/forms';
-
 @import './_tokens.css';
 @import './_themes.css';
 @import './_base.css';
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
 
 @theme inline {
     --font-heading: var(--font-sans);

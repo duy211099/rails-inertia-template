@@ -1,0 +1,24 @@
+{
+  "languages": {
+    "CSS": {
+      "language_servers": ["tailwindcss-language-server", "!vscode-css-language-server"]
+    },
+    "TSX": {
+      "code_actions_on_format": {
+        "source.fixAll.tailwindCSS": true
+      }
+    },
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.fixAll.tailwindCSS": true
+      }
+    }
+  },
+  "lsp": {
+    "solargraph": {
+      "binary": {
+        "path": "/Users/duy/.local/share/mise/installs/ruby/4.0.7/bin/solargraph"
+      }
+    }
+  }
+}
