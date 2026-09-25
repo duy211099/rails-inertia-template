@@ -65,7 +65,7 @@ module Api
       end
 
       def render_validation_errors
-        render_error :validation_failed, I18n.t("api.errors.validation_failed"), :unprocessable_content, details: @item.errors.to_hash
+        render_error :validation_failed, "api.errors.validation_failed", :unprocessable_content, details: @item.errors.to_hash
       end
     end
   end

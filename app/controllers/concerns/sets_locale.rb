@@ -19,7 +19,9 @@ module SetsLocale
 
   def locale_from_cookie
     candidate = cookies[:locale]
-    candidate&.to_sym if candidate.present? && I18n.available_locales.include?(candidate.to_sym)
+    return nil unless candidate.is_a?(String) && candidate.valid_encoding? && candidate.present?
+
+    candidate.to_sym if I18n.available_locales.map(&:to_s).include?(candidate)
   end
 
   def locale_from_header

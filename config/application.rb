@@ -20,6 +20,12 @@ module RailsInertiaTemplate
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Pin explicitly: some gems (e.g. i18n-tasks) ship their own bundled
+    # locale files on the I18n load path, which would otherwise silently
+    # add locales (like i18n-tasks' ru.yml) to I18n.available_locales that
+    # this app has no real translations for.
+    config.i18n.available_locales = [ :en ]
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

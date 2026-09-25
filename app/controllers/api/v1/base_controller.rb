@@ -13,25 +13,32 @@ module Api
       authorize :user, through: :current_user
 
       rescue_from ActiveRecord::RecordNotFound do
-        render_error :not_found, I18n.t("api.errors.not_found"), :not_found
+        render_error :not_found, "api.errors.not_found", :not_found
       end
       rescue_from ActionPolicy::Unauthorized do
-        render_error :forbidden, I18n.t("api.errors.forbidden"), :forbidden
+        render_error :forbidden, "api.errors.forbidden", :forbidden
       end
       rescue_from ActionController::ParameterMissing, ActionDispatch::Http::Parameters::ParseError do
-        render_error :bad_request, I18n.t("api.errors.bad_request"), :bad_request
+        render_error :bad_request, "api.errors.bad_request", :bad_request
       end
       rescue_from ActionController::InvalidAuthenticityToken do
-        render_error :invalid_csrf_token, I18n.t("api.errors.invalid_csrf_token"), :unprocessable_content
+        render_error :invalid_csrf_token, "api.errors.invalid_csrf_token", :unprocessable_content
       end
 
       private
 
       def require_api_user!
-        render_error(:unauthorized, I18n.t("api.errors.unauthorized"), :unauthorized) unless current_user
+        render_error(:unauthorized, "api.errors.unauthorized", :unauthorized) unless current_user
       end
 
-      def render_error(code, message, status, details: {})
+      # I18n.locale is not reliable here: SetsLocale's around_action wraps
+      # process_action from the outside, but ActionController::Rescue's
+      # rescue clause (which invokes rescue_from handlers) and a
+      # prepend_before_action halt both run outside/before that wrapper's
+      # active locale, so ambient I18n.t would silently fall back to the
+      # default locale. Resolve explicitly instead of relying on ambient state.
+      def render_error(code, i18n_key, status, details: {})
+        message = I18n.t(i18n_key, locale: resolve_locale)
         render json: { error: { code: code, message: message, details: details } }, status: status
       end
     end

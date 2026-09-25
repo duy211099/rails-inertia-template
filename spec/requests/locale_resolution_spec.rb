@@ -3,6 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "Locale resolution", type: :request do
+  it "only advertises en as available (i18n-tasks' bundled ru.yml must not leak in)" do
+    expect(I18n.available_locales).to eq([ :en ])
+  end
+
   # I18n.with_locale restores the prior locale once its block (the
   # controller action) returns, so I18n.locale read *after* `get` always
   # reflects the value from before the request, not what was resolved
@@ -58,6 +62,13 @@ RSpec.describe "Locale resolution", type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it "does not raise for a locale cookie with invalid UTF-8 bytes" do
+    expect {
+      get root_path, headers: { "Cookie" => "locale=%FF%FE" }
+    }.not_to raise_error
+    expect(response).to have_http_status(:ok)
+  end
+
   it "prefers the cookie over a differing Accept-Language header" do
     original_locales = I18n.available_locales
     I18n.available_locales = %i[en fr]
@@ -80,6 +91,33 @@ RSpec.describe "Locale resolution", type: :request do
       get api_v1_items_path, headers: { "Accept-Language" => "en-US" }
       expect(response).to have_http_status(:ok)
       verify_resolved_locale!(:en)
+    end
+
+    it "localizes the unauthenticated 401 error message" do
+      original_locales = I18n.available_locales
+      I18n.available_locales = %i[en fr]
+      I18n.backend.store_translations(:fr, api: { errors: { unauthorized: "Connectez-vous pour continuer." } })
+      begin
+        get api_v1_items_path, headers: { "Accept-Language" => "fr" }
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.parsed_body.dig("error", "message")).to eq("Connectez-vous pour continuer.")
+      ensure
+        I18n.available_locales = original_locales
+      end
+    end
+
+    it "localizes a rescue_from error message (RecordNotFound)" do
+      original_locales = I18n.available_locales
+      I18n.available_locales = %i[en fr]
+      I18n.backend.store_translations(:fr, api: { errors: { not_found: "Enregistrement introuvable." } })
+      begin
+        sign_in users(:one)
+        get api_v1_item_path(id: 0), headers: { "Accept-Language" => "fr" }
+        expect(response).to have_http_status(:not_found)
+        expect(response.parsed_body.dig("error", "message")).to eq("Enregistrement introuvable.")
+      ensure
+        I18n.available_locales = original_locales
+      end
     end
   end
 end

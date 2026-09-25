@@ -19,4 +19,11 @@ RSpec.describe "PATCH /locale", type: :request do
     patch locale_path
     expect(response).to have_http_status(:bad_request)
   end
+
+  it "rejects a non-string locale param without raising" do
+    expect {
+      patch locale_path, params: { locale: [ "en" ] }
+    }.not_to raise_error
+    expect(response).to have_http_status(:bad_request)
+  end
 end

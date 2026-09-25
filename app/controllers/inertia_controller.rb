@@ -15,4 +15,6 @@ class InertiaController < ApplicationController
   }
 
   inertia_share locale: -> { I18n.locale.to_s }
+
+  inertia_share availableLocales: -> { I18n.available_locales.map(&:to_s) }
 end
