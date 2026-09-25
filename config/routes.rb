@@ -19,4 +19,6 @@ Rails.application.routes.draw do
 
   draw :versions
   draw :jobs
+
+  draw :locale
 end
