@@ -5,6 +5,7 @@ module Api
     class BaseController < ActionController::Base
       include ActionPolicy::Controller
       include Pagy::Method
+      include SetsLocale
 
       protect_from_forgery with: :exception
       prepend_before_action :require_api_user!

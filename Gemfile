@@ -150,3 +150,6 @@ gem "anyway_config", "~> 2.7"
 
 # Flags unsafe migrations before they run
 gem "strong_migrations", "~> 2.4"
+
+# Parses Accept-Language headers for locale resolution
+gem "http_accept_language", "~> 2.1"
