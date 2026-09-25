@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  background: #fafafa;
+}
+
+.api-docs-header {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  color: #3b4151;
+  font-family: sans-serif;
+}
+
+.api-docs-header a {
+  color: #235a97;
+}

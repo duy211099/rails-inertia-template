@@ -20,3 +20,15 @@ DatabaseConsistencyCheckers:
 
 # Log settings (string, not a symbol, in v3)
 log_level: warn
+
+# Devise's conditional email validator is not understood by the static checker.
+# spec/models/user_spec.rb covers the actual password-account requirement.
+User:
+  email:
+    ColumnPresenceChecker:
+      enabled: false
+  # Devise generates collision-checked reset tokens; the unique index is the
+  # final race-safety constraint, not an input validation rule.
+  index_users_on_reset_password_token:
+    UniqueIndexChecker:
+      enabled: false

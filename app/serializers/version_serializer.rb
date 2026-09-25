@@ -1,36 +1,25 @@
 # frozen_string_literal: true
 
 class VersionSerializer < BaseSerializer
-  attribute :id, type: :number
-  attribute :item_type, type: :string
-  attribute :item_id, type: :number
-  attribute :event, type: :string
-  attribute :object, type: "Record<string, unknown> | null"
-  attribute :object_changes, type: "Record<string, [unknown, unknown]> | null"
-  attribute :created_at, type: :string
+  typelize_from PaperTrail::Version
 
-  def id = @object.id
-  def item_type = @object.item_type
-  def item_id = @object.item_id
-  def event = @object.event
-  def created_at = @object.created_at.iso8601
+  attributes :id, :item_type, :item_id, :event
+  typelize id: :number, item_id: :number, created_at: :string,
+    object: "Record<string, unknown> | null",
+    object_changes: "Record<string, [unknown, unknown]> | null"
 
-  def object
-    parse_json(@object.object)
-  end
-
-  def object_changes
-    parse_json(@object.object_changes)
-  end
+  attribute(:created_at) { |version| version.created_at.iso8601 }
+  attribute(:object) { |version| parse_json(version.object) }
+  attribute(:object_changes) { |version| parse_json(version.object_changes) }
 
   private
 
-  def parse_json(json_string)
-    return nil if json_string.blank?
+  def parse_json(value)
+    return nil if value.blank?
 
-    JSON.parse(json_string)
+    JSON.parse(value)
   rescue JSON::ParserError
-    # Fallback for old YAML data
+    # Legacy YAML snapshots are deliberately not deserialized.
     nil
   end
 end

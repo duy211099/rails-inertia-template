@@ -24,7 +24,7 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class UserSerializer < BaseSerializer
-  object_as :user, model: "User"
+  typelize_from User
 
   attributes :id, :name, :email, :avatar_url
 end

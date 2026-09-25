@@ -13,7 +13,7 @@ class InertiaExampleController < InertiaController
       ruby_version: RUBY_DESCRIPTION,
       rack_version: Rack.release,
       inertia_rails_version: InertiaRails::VERSION,
-      recent_items: ItemSerializer.many(recent_items)
+      recent_items: ItemSerializer.new(recent_items).serializable_hash
     }
   end
 

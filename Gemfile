@@ -50,6 +50,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem "rubocop-rspec", "~> 3.10", require: false
 
   # Environment variables
   gem "dotenv-rails", "~> 3.1"
@@ -65,6 +66,9 @@ group :development, :test do
 
   # Database consistency checks
   gem "database_consistency", "~> 3.0", require: false
+
+  # Test data factories
+  gem "factory_bot_rails", "~> 6.4"
 end
 
 group :development do
@@ -83,12 +87,19 @@ group :development do
 
   # N+1 query detection
   gem "bullet", "~> 8.1"
+
+  gem "letter_opener_web", "~> 3.0"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "webmock", "~> 3.26"
+  gem "vcr", "~> 6.3"
+  gem "test-prof", "~> 1.6"
+  gem "n_plus_one_control", "~> 0.8"
+  gem "skooma", "~> 0.4.0"
 end
 
 gem "inertia_rails", "~> 3.16"
@@ -102,8 +113,9 @@ gem "omniauth-rails_csrf_protection", "~> 2.0"
 
 # Serialization
 gem "oj", "~> 3.17"
-gem "oj_serializers", "~> 3.0"
-gem "types_from_serializers", "~> 2.5"
+gem "alba", "~> 4.0"
+gem "alba-inertia", "~> 0.1.4"
+gem "typelizer", "~> 0.13.1"
 
 # Frontend routes
 gem "js-routes", "2.4.1"
@@ -129,3 +141,12 @@ gem "mission_control-jobs", "~> 1.1"
 
 # S3-compatible storage (for Cloudflare R2)
 gem "aws-sdk-s3", "~> 1.180", require: false
+
+# Structured production request logs
+gem "lograge", "~> 0.15"
+
+# Typed, validated application configuration
+gem "anyway_config", "~> 2.7"
+
+# Flags unsafe migrations before they run
+gem "strong_migrations", "~> 2.4"

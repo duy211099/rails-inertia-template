@@ -9,16 +9,15 @@ class ItemsController < InertiaController
     items = authorized_scope(Item.all).order(created_at: :desc)
     pagy, paginated_items = pagy(items)
 
-    render inertia: "items/index", props: {
-      items: ItemSerializer.many(paginated_items),
-      pagy: PagySerializer.one(pagy)
-    }
+    render inertia: "items/index", props: ItemsIndexResource.new(
+      { items: paginated_items, pagy: pagy }
+    ).to_inertia
   end
 
   def show
     authorize! @item
     render inertia: "items/show", props: {
-      item: ItemSerializer.one(@item)
+      item: ItemSerializer.new(@item).serializable_hash
     }
   end
 
@@ -41,7 +40,7 @@ class ItemsController < InertiaController
   def edit
     authorize! @item
     render inertia: "items/edit", props: {
-      item: ItemSerializer.one(@item)
+      item: ItemSerializer.new(@item).serializable_hash
     }
   end
 

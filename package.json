@@ -41,6 +41,7 @@
     "shadcn": "^4.21.0",
     "snakecase-keys": "^9.0.2",
     "sonner": "^2.0.8",
+    "swagger-ui-dist": "^5.33.0",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
@@ -56,11 +57,12 @@
     "biome:fix": "biome check --write app/frontend",
     "lint:tailwind": "eslint 'app/frontend/**/*.{ts,tsx}'",
     "lint:tailwind:fix": "eslint 'app/frontend/**/*.{ts,tsx}' --fix",
-    "gengenerate:types": "bin/rails types_from_serializers:generate",
     "vite": "vite",
     "build": "vite build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate:types": "TYPELIZER=true bin/rails typelizer:types:refresh",
+    "check:types": "bin/check-types"
   },
   "engines": {
     "node": ">=24.21.0 <25"

@@ -9,6 +9,10 @@ CI.run do
 
   step "Security: Gem audit", "bin/bundler-audit"
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
+  step "Database: Prepare", "env RAILS_ENV=test TYPELIZER=false bin/rails db:prepare"
+  step "Database: Consistency", "env RAILS_ENV=test TYPELIZER=false bundle exec database_consistency"
+  step "Types: TypeScript", "npm run check"
+  step "Style: Frontend", "npm run lint"
   step "Tests: Frontend", "npm test"
   step "Tests: RSpec (parallel)", "bin/test"
   step "Tests: Seeds", "env RAILS_ENV=test bin/rails db:seed:replant"

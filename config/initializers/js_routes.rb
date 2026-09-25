@@ -12,7 +12,8 @@ JsRoutes.setup do |config|
 
   # Exclude internal Rails routes
   config.exclude = [
-    /rails_/
+    /rails_/,
+    /letter_opener/
   ]
 
   # Generate ESM module

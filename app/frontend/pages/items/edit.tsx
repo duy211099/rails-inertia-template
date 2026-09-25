@@ -13,7 +13,11 @@ type Props = {
 }
 
 export default function ItemEdit({ item }: Props) {
-  const { data, setData, patch, processing, errors } = useForm(item)
+  const { data, setData, patch, processing, errors } = useForm({
+    ...item,
+    description: item.description ?? '',
+    phoneNumber: item.phoneNumber ?? '',
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

@@ -23,7 +23,7 @@
 #  user_id  (user_id => users.id)
 #
 class ItemSerializer < BaseSerializer
-  object_as :item, model: "Item"
+  typelize_from Item
 
   attributes :id, :name, :description, :phone_number, :created_at, :updated_at
 end

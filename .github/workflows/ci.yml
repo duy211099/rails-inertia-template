@@ -61,6 +61,12 @@ jobs:
       - name: Install JS deps
         run: npm ci
 
+      - name: Prepare database and verify consistency
+        env:
+          RAILS_ENV: test
+          TYPELIZER: "false"
+        run: bin/rails db:prepare && bundle exec database_consistency
+
       - name: TypeScript and frontend lint
         run: npm run check && npm run lint
 

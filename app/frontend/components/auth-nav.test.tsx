@@ -21,7 +21,7 @@ function setPage(props: SharedProps) {
   } as ReturnType<typeof usePage>)
 }
 
-const user = { id: 1, name: 'Ada', email: 'ada@example.com' }
+const user = { id: 1, name: 'Ada', email: 'ada@example.com', avatarUrl: null }
 
 beforeEach(() => {
   setPage({})
