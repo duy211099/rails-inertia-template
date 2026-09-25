@@ -67,6 +67,15 @@ up. The commented admin example is not an enforced policy.
 
 ## Example JSON API
 
+Open **`/api/docs`** after signing in for Swagger UI. Expand an operation and use
+**Try it out → Execute** to call the API. Your session cookie and CSRF token are
+supplied automatically. These requests change real items in the current
+environment. Reload the docs page after signing in again.
+
+The underlying contract is available at **`/api/openapi.json`** (login required),
+served from `docs/openapi.yml`. Swagger UI assets are bundled locally with Vite;
+the browser does not need a CDN or external schema validator.
+
 The `/api/v1/items` endpoints reuse the existing Devise sessions, Alba serializers,
 Action Policy ownership rules, Pagy pagination, Discard soft deletes, and Paper
 Trail attribution. Inertia pages remain at `/items`. API controllers return JSON

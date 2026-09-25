@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Items API — Swagger UI</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= vite_client_tag %>
+    <%= vite_typescript_tag "api_docs" %>
+  </head>
+  <body>
+    <header class="api-docs-header">
+      <h1>Items API</h1>
+      <p>Try it out uses your signed-in account. Creating, updating, and deleting items changes your data.</p>
+      <p>Your session and CSRF token are supplied automatically. Reload this page after signing in again.</p>
+      <nav><%= link_to "Back to items", items_path %> · <%= link_to "OpenAPI JSON", api_openapi_path(format: :json) %></nav>
+    </header>
+    <main id="swagger-ui" data-schema-url="<%= api_openapi_path(format: :json) %>">Loading API documentation…</main>
+  </body>
+</html>
