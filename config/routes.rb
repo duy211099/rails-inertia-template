@@ -14,6 +14,12 @@ Rails.application.routes.draw do
   # Demo CRUD
   draw :items
 
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :items, only: %i[index show create update destroy]
+    end
+  end
+
   # Audit log
   resources :versions, only: %i[index]
 

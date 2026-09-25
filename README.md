@@ -30,6 +30,113 @@ mise exec -- bin/dev
 The app uses SQLite, so no separate database server is required. `bin/setup`
 installs dependencies and prepares the development database.
 
+## Jobs, cache, and realtime without Redis
+
+Production already uses Solid Queue, Solid Cache, and Solid Cable. Redis and
+Sidekiq are not dependencies. Each Solid adapter has a separate SQLite database
+under `storage/`, configured in `config/database.yml`; their schemas are checked
+in under `db/`. Solid Cache has a 256 MiB entry-size budget (not a hard limit on
+the SQLite file size).
+
+Prepare all databases with `RAILS_ENV=production bin/rails db:prepare` using the
+deployment environment. The Docker entrypoint does this when starting the Rails
+server. Kamal sets `SOLID_QUEUE_IN_PUMA=true`, so Puma starts the job supervisor.
+For a separate worker process on the same host/storage, omit that variable from
+the web process and run `RAILS_ENV=production bin/jobs`. Prepare databases before
+starting standalone workers; their command does not trigger the server entrypoint
+preparation. Do not set the Puma variable to the string `false`: the current
+configuration checks whether it is present.
+
+Development uses Rails' in-process async job adapter, memory cache, and async
+Action Cable; these do not need Redis either. Development jobs do not survive
+process restarts, and separate processes do not share the memory cache or cable
+broadcasts. Tests retain their lightweight test adapters. To exercise durable
+development jobs, follow the [Solid Queue development setup](https://github.com/rails/solid_queue#usage-in-development-and-other-non-production-environments)
+and add a development queue database, adapter configuration, and worker process.
+
+The SQLite deployment is designed around one host with persistent storage. Back
+up the primary and queue databases and test recovery. Separate machines with
+independent SQLite files do not share jobs or application data; use a shared
+database server when moving to multiple hosts. Monitor failed jobs, disk usage,
+and queue delay. Jobs need explicit retry/idempotency decisions, and enqueueing
+against a separate queue database needs transaction-boundary tests.
+
+The `/jobs` dashboard currently requires login, **not an admin role**. Restrict
+`config/initializers/mission_control.rb` before allowing untrusted users to sign
+up. The commented admin example is not an enforced policy.
+
+## Example JSON API
+
+The `/api/v1/items` endpoints reuse the existing Devise sessions, Alba serializers,
+Action Policy ownership rules, Pagy pagination, Discard soft deletes, and Paper
+Trail attribution. Inertia pages remain at `/items`. API controllers return JSON
+errors and do not apply the web controller's modern-browser restriction.
+
+| Method | Endpoint | Result |
+| --- | --- | --- |
+| GET | `/api/v1/items?page=1&limit=12` | Owned, kept items and `pagy` metadata |
+| GET | `/api/v1/items/:id` | One owned item |
+| POST | `/api/v1/items` | Create an item; 201 with a Location header |
+| PATCH / PUT | `/api/v1/items/:id` | Update supplied fields |
+| DELETE | `/api/v1/items/:id` | Soft-delete; 204 with no body |
+
+Lists sort by creation time then ID, descending. Page size defaults to 12 and is
+capped at 100; invalid pagination returns 400 and out-of-range pages are empty.
+Request attributes are `name`, `description`, and `phone_number`, nested under
+`item`. Responses use camelCase keys. Client-supplied ownership is ignored.
+
+Run `mise exec -- bin/dev`, register or sign in through the web app, then load
+`/items`. Open the browser developer console and paste this helper:
+
+```js
+async function itemsApi(path = '', method = 'GET', item) {
+  const response = await fetch(`/api/v1/items${path}`, {
+    method,
+    credentials: 'same-origin',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+    },
+    ...(item === undefined ? {} : { body: JSON.stringify({ item }) }),
+  })
+  const body = response.status === 204 ? null : await response.json()
+  if (!response.ok) throw new Error(JSON.stringify(body))
+  return body
+}
+
+await itemsApi('?page=1&limit=2')
+const created = await itemsApi('', 'POST', { name: 'API test', phone_number: '123' })
+await itemsApi(`/${created.item.id}`)
+await itemsApi(`/${created.item.id}`, 'PATCH', { name: 'Updated through API' })
+await itemsApi(`/${created.item.id}`, 'DELETE')
+```
+
+Reload the page after signing in to get the current CSRF token. Requests require
+an authenticated session; writes also require the token. This example has no
+bearer-token login or cross-origin browser access. Native/mobile token lifecycles
+and third-party OAuth should be designed when those clients are added.
+
+Errors use `{ "error": { "code": "...", "message": "...", "details": {} } }`.
+Unauthenticated requests return 401; inaccessible/deleted records return 404;
+malformed parameters return 400; validation or CSRF failures return 422. Validation
+`details` maps attribute names to message arrays. Policy denials return 403.
+
+[OpenAPI 3.1 contract](docs/openapi.yml) documents all six operations, inputs,
+authentication, pagination, and responses. [Skooma](https://github.com/evilmartians/skooma)
+is a test-only dependency checking the document and actual request/response
+contracts. The specs also exercise real Devise login and CSRF enforcement.
+
+```sh
+mise exec -- bin/test spec/requests/api
+```
+
+No extra serializer or API framework is needed. Add `rack-cors` only for browser
+clients on other origins, or Doorkeeper when third-party OAuth is required.
+Rate limiting, bearer-token auth, and retry/idempotency policies are not part of
+this session-authenticated example. Configure those for the intended clients
+before exposing a public API.
+
 ## Checks
 
 ```sh

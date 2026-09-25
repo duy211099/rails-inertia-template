@@ -95,6 +95,7 @@ group :test do
   gem "webmock", "~> 3.26"
   gem "test-prof", "~> 1.6"
   gem "n_plus_one_control", "~> 0.8"
+  gem "skooma", "~> 0.4.0"
 end
 
 gem "inertia_rails", "~> 3.16"
