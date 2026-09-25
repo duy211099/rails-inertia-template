@@ -4,6 +4,8 @@ source "https://rubygems.org"
 
 ruby file: ".ruby-version"
 
+# --- Rails core -------------------------------------------------------------
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.4"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
@@ -25,6 +27,8 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "solid_cache", "~> 1.0"
 gem "solid_queue", "~> 1.4"
 gem "solid_cable", "~> 4.0"
+# Solid Queue web UI
+gem "mission_control-jobs", "~> 1.1"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", "~> 1.23", require: false
@@ -34,6 +38,54 @@ gem "thruster", "~> 0.1", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.0"
+# S3-compatible storage (for Cloudflare R2)
+gem "aws-sdk-s3", "~> 1.180", require: false
+
+# --- Inertia / frontend ------------------------------------------------------
+
+gem "inertia_rails", "~> 3.16"
+gem "vite_rails", "~> 3.0"
+
+# Serialization
+gem "oj", "~> 3.17"
+gem "alba", "~> 4.0"
+gem "alba-inertia", "~> 0.1.4"
+gem "typelizer", "~> 0.13.1"
+
+# Frontend routes
+gem "js-routes", "2.4.1"
+
+# --- Auth & authorization ----------------------------------------------------
+
+gem "devise", "~> 5.0"
+gem "omniauth-google-oauth2", "~> 1.2"
+gem "omniauth-rails_csrf_protection", "~> 2.0"
+gem "action_policy", "~> 0.7"
+
+# --- Data & persistence -------------------------------------------------------
+
+# Audit trail / versioning
+gem "paper_trail", "~> 17.0"
+# Pagination
+gem "pagy", "~> 43.5"
+# Soft deletes
+gem "discard", "~> 2.0"
+# JSON store enhancements
+gem "store_attribute", "~> 2.0"
+gem "store_model", "~> 4.4"
+# Flags unsafe migrations before they run
+gem "strong_migrations", "~> 2.4"
+
+# --- Ops / config -------------------------------------------------------------
+
+# Structured production request logs
+gem "lograge", "~> 0.15"
+# Typed, validated application configuration
+gem "anyway_config", "~> 2.7"
+# Parses Accept-Language headers for locale resolution
+gem "http_accept_language", "~> 2.1"
+
+# --- Development & test -------------------------------------------------------
 
 group :development, :test do
   gem "rspec-rails", "~> 8.0"
@@ -101,55 +153,3 @@ group :test do
   gem "n_plus_one_control", "~> 0.8"
   gem "skooma", "~> 0.4.0"
 end
-
-gem "inertia_rails", "~> 3.16"
-
-gem "vite_rails", "~> 3.0"
-
-# Authentication
-gem "devise", "~> 5.0"
-gem "omniauth-google-oauth2", "~> 1.2"
-gem "omniauth-rails_csrf_protection", "~> 2.0"
-
-# Serialization
-gem "oj", "~> 3.17"
-gem "alba", "~> 4.0"
-gem "alba-inertia", "~> 0.1.4"
-gem "typelizer", "~> 0.13.1"
-
-# Frontend routes
-gem "js-routes", "2.4.1"
-
-# Authorization
-gem "action_policy", "~> 0.7"
-
-# Audit trail / versioning
-gem "paper_trail", "~> 17.0"
-
-# Pagination
-gem "pagy", "~> 43.5"
-
-# Soft deletes
-gem "discard", "~> 2.0"
-
-# JSON store enhancements
-gem "store_attribute", "~> 2.0"
-gem "store_model", "~> 4.4"
-
-# Solid Queue web UI
-gem "mission_control-jobs", "~> 1.1"
-
-# S3-compatible storage (for Cloudflare R2)
-gem "aws-sdk-s3", "~> 1.180", require: false
-
-# Structured production request logs
-gem "lograge", "~> 0.15"
-
-# Typed, validated application configuration
-gem "anyway_config", "~> 2.7"
-
-# Flags unsafe migrations before they run
-gem "strong_migrations", "~> 2.4"
-
-# Parses Accept-Language headers for locale resolution
-gem "http_accept_language", "~> 2.1"
