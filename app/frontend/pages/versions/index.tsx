@@ -54,8 +54,6 @@ export default function VersionsIndex({ versions, pagy }: Props) {
     router.get(versionsPath(), { page }, { preserveState: true })
   }
 
-  console.log(versions)
-
   return (
     <div className="min-h-screen bg-background">
       <Head title={t('pageTitle')} />
@@ -107,8 +105,8 @@ export default function VersionsIndex({ versions, pagy }: Props) {
                   {changes && changes.length > 0 && (
                     <CardContent>
                       <div className="space-y-2">
-                        {changes.map((change, i) => (
-                          <div key={i.toString()} className="text-sm">
+                        {changes.map((change) => (
+                          <div key={change.field} className="text-sm">
                             <span className="font-medium capitalize">{change.field}:</span>{' '}
                             {version.event === 'create' ? (
                               <span className="text-green-600 dark:text-green-400">
