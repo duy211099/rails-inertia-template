@@ -42,6 +42,7 @@ class User < ApplicationRecord
   enum :role, { member: 0, admin: 1 }
 
   validates :uid, uniqueness: { scope: :provider }, allow_nil: true
+  validates :jti, presence: true, uniqueness: true
 
   def versions
     PaperTrail::Version.where(whodunnit: id.to_s).order(created_at: :desc)

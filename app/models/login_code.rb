@@ -23,6 +23,9 @@
 class LoginCode < ApplicationRecord
   belongs_to :user
 
+  validates :code, presence: true, uniqueness: true
+  validates :expires_at, presence: true
+
   scope :active, -> { where("expires_at > ?", Time.current) }
 
   # Atomically finds and consumes a code, returning the associated user
