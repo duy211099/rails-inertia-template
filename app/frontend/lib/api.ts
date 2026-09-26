@@ -35,7 +35,8 @@ export async function api(path: string, options: RequestInit = {}) {
   if (response.status === 204) return null
   const body = await response.json().catch(() => null)
   if (!response.ok) {
-    throw new Error(body?.error?.message || body?.error?.details?.name?.[0] || 'Request failed')
+    const firstDetail = Object.values(body?.error?.details ?? {})[0] as string[] | undefined
+    throw new Error(body?.error?.message || firstDetail?.[0] || 'Request failed')
   }
   return body
 }
