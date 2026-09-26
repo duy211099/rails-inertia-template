@@ -74,21 +74,9 @@ RSpec.describe "Sessions API", type: :request do
   end
 
   describe "POST /api/v1/session/exchange" do
-    # Test env runs Rails.cache as :null_store (writes are no-ops), but the
-    # exchange flow is fundamentally built on the cache actually holding the
-    # code between requests, so swap in a real store just for this block.
-    around do |example|
-      original_cache = Rails.cache
-      Rails.cache = ActiveSupport::Cache::MemoryStore.new
-      example.run
-    ensure
-      Rails.cache = original_cache
-    end
-
     def issue_code(user)
       code = SecureRandom.urlsafe_base64(24)
-      Rails.cache.write(Api::V1::SessionsController.login_code_cache_key(code), user.id,
-        expires_in: Api::V1::SessionsController::LOGIN_CODE_TTL)
+      user.login_codes.create!(code: code, expires_at: Api::V1::SessionsController::LOGIN_CODE_TTL.from_now)
       code
     end
 

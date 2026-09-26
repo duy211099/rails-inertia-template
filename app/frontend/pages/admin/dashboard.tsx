@@ -2,6 +2,7 @@ import { Head, router } from '@inertiajs/react'
 import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { adminRootPath } from '@/lib/routes'
 import type { Item, Pagy } from '@/types'
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 
 export default function AdminDashboard({ items, pagy }: Props) {
   const goToPage = (page: number | null = 1) => {
-    router.get('/admin', { page }, { preserveState: true })
+    router.get(adminRootPath(), { page }, { preserveState: true })
   }
 
   return (

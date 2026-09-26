@@ -14,7 +14,7 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
-#  role                   :integer          default(0), not null
+#  role                   :integer          default("member"), not null
 #  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -37,6 +37,7 @@ class User < ApplicationRecord
          omniauth_providers: [ :google_oauth2 ], jwt_revocation_strategy: self
 
   has_many :items, dependent: :destroy
+  has_many :login_codes, dependent: :destroy
 
   enum :role, { member: 0, admin: 1 }
 

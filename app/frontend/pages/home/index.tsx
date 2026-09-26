@@ -1,11 +1,24 @@
 import { Head } from '@inertiajs/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { ItemsPanel } from './ItemsPanel'
 import { LoginCard } from './LoginCard'
 import { useClientAuth } from './useClientAuth'
 import { useItems } from './useItems'
 
+// Scoped to this page only — the rest of the app is server-driven Inertia
+// and has no client-side data cache to manage.
+const queryClient = new QueryClient()
+
 export default function Home() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HomeContent />
+    </QueryClientProvider>
+  )
+}
+
+function HomeContent() {
   const items = useItems()
   const auth = useClientAuth(items.loadItems)
   const error = auth.error ?? items.error
