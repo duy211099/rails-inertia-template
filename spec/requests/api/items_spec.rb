@@ -219,4 +219,30 @@ RSpec.describe "Items API", type: :request do
       expect(response).to conform_response_schema(:not_found)
     end
   end
+
+  context "when signed in as an admin" do
+    before { sign_in users(:one).tap { |u| u.update!(role: :admin) } }
+
+    it "lists every user's items, not just their own" do
+      get "/api/v1/items", as: :json
+      expect(response.parsed_body.fetch("items").pluck("id")).to include(items(:three).id)
+    end
+
+    it "shows another user's item" do
+      get "/api/v1/items/#{items(:three).id}", as: :json
+      expect(response).to conform_response_schema(:ok)
+    end
+
+    it "updates another user's item" do
+      patch "/api/v1/items/#{items(:three).id}", params: { item: { name: "Fixed by admin" } }, as: :json
+      expect(response).to conform_response_schema(:ok)
+      expect(items(:three).reload.name).to eq("Fixed by admin")
+    end
+
+    it "deletes another user's item" do
+      delete "/api/v1/items/#{items(:three).id}", as: :json
+      expect(response).to conform_response_schema(:no_content)
+      expect(Item.unscoped.find(items(:three).id)).to be_discarded
+    end
+  end
 end

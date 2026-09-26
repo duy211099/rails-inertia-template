@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { getCsrfToken } from '@/lib/csrf'
 
 export default function Login() {
   const { t } = useTranslation('auth/login')
@@ -17,13 +18,7 @@ export default function Login() {
 
         <div className="space-y-4">
           <form action="/users/auth/google_oauth2" method="post">
-            <input
-              type="hidden"
-              name="authenticity_token"
-              value={
-                document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''
-              }
-            />
+            <input type="hidden" name="authenticity_token" value={getCsrfToken()} />
             <Button type="submit" className="w-full" size="lg">
               <svg className="mr-2 size-5" viewBox="0 0 24 24" aria-label="Google logo">
                 <title>Google</title>

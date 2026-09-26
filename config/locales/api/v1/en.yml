@@ -7,4 +7,6 @@ en:
         bad_request: "Invalid request parameters."
         invalid_csrf_token: "A valid CSRF token is required."
         unauthorized: "Sign in to continue."
+        invalid_credentials: "Invalid email or password."
+        invalid_or_expired_code: "This login link is invalid or has already been used. Please sign in again."
         validation_failed: "Item could not be saved."

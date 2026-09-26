@@ -10,11 +10,13 @@ require "rails_helper"
 #  avatar_url             :string
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
+#  jti                    :string           not null
 #  name                   :string
 #  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
+#  role                   :integer          default(0), not null
 #  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -22,6 +24,7 @@ require "rails_helper"
 # Indexes
 #
 #  index_users_on_email                 (email) UNIQUE
+#  index_users_on_jti                   (jti) UNIQUE
 #  index_users_on_provider_and_uid      (provider,uid) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
@@ -96,5 +99,17 @@ RSpec.describe User, type: :model do
     users(:one).destroy!
     expect(Item.unscoped.where(id: owned_ids)).to be_empty
     expect(Item.exists?(items(:three).id)).to be(true)
+  end
+
+  describe "#role" do
+    it "defaults new users to member" do
+      expect(users(:one)).to be_member
+      expect(users(:one)).not_to be_admin
+    end
+
+    it "promotes to admin via the enum" do
+      users(:one).admin!
+      expect(users(:one).reload).to be_admin
+    end
   end
 end

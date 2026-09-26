@@ -7,7 +7,10 @@ module Api
       include Pagy::Method
       include SetsLocale
 
-      protect_from_forgery with: :exception
+      # CSRF only matters for cookie-based (browser session) requests: a
+      # Bearer token isn't attached automatically by the browser, so a
+      # request authenticating that way can't be forged cross-site.
+      protect_from_forgery with: :exception, unless: -> { request.headers["Authorization"].present? }
       prepend_before_action :require_api_user!
       before_action :set_paper_trail_whodunnit
       authorize :user, through: :current_user
