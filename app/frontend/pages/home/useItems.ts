@@ -1,12 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type { Item } from '@/types'
 
 const ITEMS_KEY = ['items']
 
 export function useItems() {
-  const queryClient = useQueryClient()
-
   const itemsQuery = useQuery({
     queryKey: ITEMS_KEY,
     queryFn: async (): Promise<Item[]> => {
@@ -14,18 +12,21 @@ export function useItems() {
       return data.items
     },
     // Only fetch once the caller has a token — LoginCard flips this on.
+    // queryClient.refetchQueries/invalidateQueries both skip disabled
+    // queries by design, so refetching this one has to go through the
+    // observer's own refetch() (itemsQuery.refetch), never those.
     enabled: false,
   })
 
   const createMutation = useMutation({
     mutationFn: (name: string) =>
       api('/items', { method: 'POST', body: JSON.stringify({ item: { name } }) }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ITEMS_KEY }),
+    onSuccess: () => itemsQuery.refetch(),
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api(`/items/${id}`, { method: 'DELETE' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ITEMS_KEY }),
+    onSuccess: () => itemsQuery.refetch(),
   })
 
   const error =
@@ -37,7 +38,9 @@ export function useItems() {
   return {
     items: itemsQuery.data ?? [],
     error,
-    loadItems: () => queryClient.refetchQueries({ queryKey: ITEMS_KEY }),
+    loadItems: async () => {
+      await itemsQuery.refetch()
+    },
     // Callers (ItemsPanel) fire-and-forget these — errors surface via
     // mutation.error above, so swallow the rejection here to avoid an
     // unhandled promise rejection on top of that.
