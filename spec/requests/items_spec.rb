@@ -110,4 +110,30 @@ RSpec.describe "Items", type: :request do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  context "when signed in as an admin" do
+    before { sign_in users(:one).tap { |u| u.update!(role: :admin) } }
+
+    it "can show another user's item" do
+      get item_path(items(:three))
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "can update another user's item" do
+      patch item_path(items(:three)), params: { item: { name: "Fixed by admin" } }
+      expect(response).to redirect_to(items_path)
+      expect(items(:three).reload.name).to eq("Fixed by admin")
+    end
+
+    it "can delete another user's item" do
+      expect { delete item_path(items(:three)) }.to change(Item, :count).by(-1)
+      expect(response).to redirect_to(items_path)
+    end
+
+    it "sees every user's items in the index, not just their own" do
+      get items_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
+      body = response.parsed_body
+      expect(body.dig("props", "items").map { |item| item["id"] }).to include(items(:three).id)
+    end
+  end
 end

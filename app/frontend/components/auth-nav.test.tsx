@@ -36,10 +36,7 @@ describe('AuthNav', () => {
 
   it('shows the signed-in profile and submits logout with method override and CSRF token', () => {
     setPage({ user: { ...user, avatarUrl: 'https://example.com/avatar.png' } })
-    const meta = document.createElement('meta')
-    meta.name = 'csrf-token'
-    meta.content = 'test-csrf-token'
-    document.head.append(meta)
+    document.cookie = 'XSRF-TOKEN=test-csrf-token'
     render(<AuthNav />)
     expect(screen.getByText('Ada')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Ada' })).toHaveAttribute(
@@ -59,7 +56,8 @@ describe('AuthNav', () => {
     expect(data.get('authenticity_token')).toBe('test-csrf-token')
   })
 
-  it('handles missing avatars and CSRF metadata', () => {
+  it('handles missing avatars and a missing CSRF cookie', () => {
+    document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     setPage({ user })
     render(<AuthNav />)
     expect(screen.queryByRole('img')).not.toBeInTheDocument()

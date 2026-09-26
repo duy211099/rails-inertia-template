@@ -9,7 +9,10 @@ StrongMigrations.statement_timeout = 1.hour
 
 # Analyze tables after indexes are added
 # Outdated statistics can sometimes hurt performance
-StrongMigrations.auto_analyze = true
+# (SQLite, used in dev/test here, has no ANALYZE hook in this strong_migrations
+# version, so leave auto-analyze off for it rather than aborting every
+# add_index migration.)
+StrongMigrations.auto_analyze = ActiveRecord::Base.connection_db_config.adapter != "sqlite3"
 
 # Set the version of the production database
 # so the right checks are run in development

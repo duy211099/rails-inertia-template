@@ -5,17 +5,17 @@ Rails.application.routes.draw do
 
   draw :public
 
-  # Demo inertia
-  draw :demo
+  draw :home
 
   # Authentication
   draw :devise
 
-  # Demo CRUD
   draw :items
 
   draw :api
   draw :api_docs
+
+  draw :admin
 
   draw :versions
   draw :jobs

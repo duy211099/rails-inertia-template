@@ -21,6 +21,16 @@
 			"formatter": {
 				"enabled": false
 			}
+		},
+		{
+			"includes": ["app/frontend/**/*.test.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noDocumentCookie": "off"
+					}
+				}
+			}
 		}
 	],
 	"formatter": {

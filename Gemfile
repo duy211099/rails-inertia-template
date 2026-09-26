@@ -62,6 +62,12 @@ gem "omniauth-google-oauth2", "~> 1.2"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
 gem "action_policy", "~> 0.7"
 
+# JWT auth for the JSON API (mobile / cross-origin SPA clients)
+gem "devise-jwt", "~> 0.12"
+
+# CORS for the JSON API, so a cross-origin web SPA can call it
+gem "rack-cors", "~> 2.0"
+
 # --- Data & persistence -------------------------------------------------------
 
 # Audit trail / versioning

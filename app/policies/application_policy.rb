@@ -9,13 +9,17 @@ class ApplicationPolicy < ActionPolicy::Base
     record.user_id == user.id
   end
 
+  def admin?
+    user.admin?
+  end
+
   # Default rules - deny everything by default
   def index?
     true
   end
 
   def show?
-    owner?
+    owner? || admin?
   end
 
   def create?
@@ -27,7 +31,7 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def update?
-    owner?
+    owner? || admin?
   end
 
   def edit?
@@ -35,11 +39,11 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def destroy?
-    owner?
+    owner? || admin?
   end
 
   # Define scopes for collections
   relation_scope do |relation|
-    relation.where(user: user)
+    admin? ? relation : relation.where(user: user)
   end
 end

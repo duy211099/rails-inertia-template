@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
+import { getCsrfToken } from '@/lib/csrf'
 import type { SharedProps } from '@/types'
 
 export function AuthNav() {
@@ -16,13 +17,7 @@ export function AuthNav() {
         </div>
         <form action="/users/sign_out" method="post">
           <input type="hidden" name="_method" value="delete" />
-          <input
-            type="hidden"
-            name="authenticity_token"
-            value={
-              document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || ''
-            }
-          />
+          <input type="hidden" name="authenticity_token" value={getCsrfToken()} />
           <Button type="submit" variant="outline" size="sm">
             Sign out
           </Button>

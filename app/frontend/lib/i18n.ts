@@ -2,8 +2,6 @@ import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import authLogin from '@/locales/auth/login/en.json'
 import common from '@/locales/common/en.json'
-import inertiaExampleDemo from '@/locales/inertia_example/demo/en.json'
-import inertiaExampleIndex from '@/locales/inertia_example/index/en.json'
 import itemsEdit from '@/locales/items/edit/en.json'
 import itemsForm from '@/locales/items/form/en.json'
 import itemsIndex from '@/locales/items/index/en.json'
@@ -27,8 +25,6 @@ const resources = {
     'items/new': itemsNew,
     'items/edit': itemsEdit,
     'versions/index': versionsIndex,
-    'inertia_example/index': inertiaExampleIndex,
-    'inertia_example/demo': inertiaExampleDemo,
   },
 }
 

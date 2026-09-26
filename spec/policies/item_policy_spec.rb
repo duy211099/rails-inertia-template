@@ -26,4 +26,19 @@ RSpec.describe ItemPolicy, type: :policy do
     policy = described_class.new(Item, user: users(:one))
     expect(policy.apply_scope(Item.all, type: :active_record_relation)).to contain_exactly(items(:one))
   end
+
+  context "when the user is an admin" do
+    let(:admin) { users(:two).tap { |u| u.update!(role: :admin) } }
+
+    %i[show? update? edit? destroy?].each do |rule|
+      it "allows #{rule} on another user's item" do
+        expect(described_class.new(items(:one), user: admin).apply(rule)).to be(true)
+      end
+    end
+
+    it "scopes the collection to every user's items, not just their own" do
+      policy = described_class.new(Item, user: admin)
+      expect(policy.apply_scope(Item.all, type: :active_record_relation)).to include(items(:one), items(:three))
+    end
+  end
 end

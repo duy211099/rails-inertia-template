@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class AdminController < ApplicationController
+class AdminController < InertiaController
   before_action :authenticate_admin!
 
   private
 
   def authenticate_admin!
     authenticate_user!
-    # Add your admin check here, for example:
-    # redirect_to root_path, alert: "Access denied" unless current_user.admin?
+    redirect_to root_path, alert: I18n.t("admin.access_denied") unless current_user.admin?
   end
 end

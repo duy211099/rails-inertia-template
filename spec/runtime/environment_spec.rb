@@ -21,7 +21,7 @@ RSpec.describe "Runtime integrations" do
       require "rack/mock"
       request = Rack::MockRequest.new(Rails.application)
       request.get("/up", "HTTP_HOST" => "example.com")
-      request.post("/demo/fetch?password=secret-marker", "HTTP_HOST" => "example.com",
+      request.post("/api/v1/session?password=secret-marker", "HTTP_HOST" => "example.com",
         "HTTP_X_REQUEST_ID" => "logging-check")
       raise "development inbox leaked" if Rails.application.routes.routes.any? { |route| route.path.spec.to_s.include?("letter_opener") }
     RUBY
@@ -30,7 +30,7 @@ RSpec.describe "Runtime integrations" do
     rescue JSON::ParserError
       nil
     end
-    expect(logs).to include(hash_including("method" => "POST", "path" => "/demo/fetch", "request_id" => "logging-check"))
+    expect(logs).to include(hash_including("method" => "POST", "path" => "/api/v1/session", "request_id" => "logging-check"))
     expect(logs).not_to include(hash_including("path" => "/up"))
     expect(output).not_to include("secret-marker")
   end
@@ -38,7 +38,7 @@ RSpec.describe "Runtime integrations" do
   it "honors the production log level for request summaries" do
     output = expect_run_in("production", <<~RUBY, { "RAILS_LOG_LEVEL" => "warn" })
       require "rack/mock"
-      Rack::MockRequest.new(Rails.application).post("/demo/fetch", "HTTP_HOST" => "example.com",
+      Rack::MockRequest.new(Rails.application).post("/api/v1/session", "HTTP_HOST" => "example.com",
         "HTTP_X_REQUEST_ID" => "quiet-request")
     RUBY
     expect(output).not_to include('"request_id":"quiet-request"')
