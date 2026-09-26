@@ -37,6 +37,7 @@ class User < ApplicationRecord
          omniauth_providers: [ :google_oauth2 ], jwt_revocation_strategy: self
 
   has_many :items, dependent: :destroy
+  has_many :login_codes, dependent: :destroy
 
   enum :role, { member: 0, admin: 1 }
 

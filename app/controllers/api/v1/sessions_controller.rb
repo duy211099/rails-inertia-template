@@ -49,10 +49,7 @@ module Api
       # would be — sign_in here is what makes devise-jwt append the actual
       # Authorization header on the response.
       def exchange
-        key = self.class.login_code_cache_key(params[:code])
-        user_id = Rails.cache.read(key)
-        Rails.cache.delete(key)
-        user = user_id && User.find_by(id: user_id)
+        user = LoginCode.redeem(params[:code])
 
         if user
           sign_in(user, store: false)
@@ -60,12 +57,6 @@ module Api
         else
           render_error :invalid_or_expired_code, "api.v1.errors.invalid_or_expired_code", :unauthorized
         end
-      end
-
-      # Shared with Users::OmniauthCallbacksController, which writes the
-      # code/user-id pair this action redeems.
-      def self.login_code_cache_key(code)
-        "api/v1/session/login_code/#{code}"
       end
     end
   end

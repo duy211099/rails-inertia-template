@@ -54,8 +54,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # address bar/history would grant 30 days of API access.
   def client_redirect_url(user)
     code = SecureRandom.urlsafe_base64(24)
-    Rails.cache.write(Api::V1::SessionsController.login_code_cache_key(code), user.id,
-      expires_in: Api::V1::SessionsController::LOGIN_CODE_TTL)
+    user.login_codes.create!(code: code, expires_at: Api::V1::SessionsController::LOGIN_CODE_TTL.from_now)
     "/##{{ code: code }.to_query}"
   end
 end
