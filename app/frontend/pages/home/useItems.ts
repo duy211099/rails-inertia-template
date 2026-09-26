@@ -1,7 +1,7 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type { Item } from '@/types'
+import { useApiMutation } from './useApiMutation'
 
 const ITEMS_KEY = ['items']
 
@@ -19,24 +19,14 @@ export function useItems() {
     enabled: false,
   })
 
-  // This CRUD hits /api/v1 via fetch, not an Inertia visit, so it never
-  // gets the flash prop the entrypoint's router.on('flash', ...) toasts —
-  // fire the toast here instead.
-  const createMutation = useMutation({
-    mutationFn: (name: string) =>
-      api('/items', { method: 'POST', body: JSON.stringify({ item: { name } }) }),
-    onSuccess: () => {
-      toast.success('Item created')
-      itemsQuery.refetch()
-    },
-  })
+  const createMutation = useApiMutation(
+    (name: string) => api('/items', { method: 'POST', body: JSON.stringify({ item: { name } }) }),
+    { successMessage: 'Item created', onSuccess: () => itemsQuery.refetch() }
+  )
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => api(`/items/${id}`, { method: 'DELETE' }),
-    onSuccess: () => {
-      toast.success('Item deleted')
-      itemsQuery.refetch()
-    },
+  const deleteMutation = useApiMutation((id: number) => api(`/items/${id}`, { method: 'DELETE' }), {
+    successMessage: 'Item deleted',
+    onSuccess: () => itemsQuery.refetch(),
   })
 
   const error =
