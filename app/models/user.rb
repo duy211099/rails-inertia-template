@@ -39,6 +39,8 @@ class User < ApplicationRecord
   has_many :items, dependent: :destroy
   has_many :login_codes, dependent: :destroy
 
+  before_validation :ensure_jti, on: :create
+
   enum :role, { member: 0, admin: 1 }
 
   validates :uid, uniqueness: { scope: :provider }, allow_nil: true
@@ -55,5 +57,11 @@ class User < ApplicationRecord
       user.name = name
       user.avatar_url = avatar_url
     end
+  end
+
+  private
+
+  def ensure_jti
+    self.jti ||= SecureRandom.uuid
   end
 end
