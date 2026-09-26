@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,13 +48,21 @@ export default function Home() {
   useEffect(() => {
     // Google login redirects back here with a one-time code (and any error)
     // in the URL fragment, since a full-page OAuth redirect can't return a
-    // response body a fetch() call could read.
+    // response body a fetch() call could read. Inertia's own history layer
+    // re-applies window.location.hash onto the URL asynchronously on initial
+    // load (it preserves hashes across visits by design), which races and
+    // overwrites a plain history.replaceState() call made from here — so the
+    // cleanup has to happen inside the `navigate` event, which fires only
+    // after Inertia's own history write has settled.
     const hash = new URLSearchParams(window.location.hash.slice(1))
     const codeFromGoogle = hash.get('code')
     const errorFromGoogle = hash.get('error')
 
     if (codeFromGoogle || errorFromGoogle) {
-      window.history.replaceState(null, '', window.location.pathname)
+      const stopListening = router.on('navigate', () => {
+        window.history.replaceState(null, '', window.location.pathname)
+        stopListening()
+      })
     }
 
     if (errorFromGoogle) {
