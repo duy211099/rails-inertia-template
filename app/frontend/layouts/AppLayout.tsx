@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { AppShell } from '@/components/patterns/app-shell'
 import type { NavSection } from '@/components/patterns/app-sidebar'
+import ThemeToggle from '@/components/theme-toggle'
 import { getCsrfToken } from '@/lib/csrf'
 import { adminRootPath, itemsPath, versionsPath } from '@/lib/routes'
 import type { SharedProps } from '@/types'
@@ -58,7 +59,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         avatarUrl: props.user?.avatarUrl ?? undefined,
         menu: [[{ label: 'Sign out', icon: LogOutIcon, onSelect: signOut }]],
       }}
-      headerActions={<LocaleSwitcher />}
+      headerActions={
+        <>
+          <ThemeToggle />
+          <LocaleSwitcher />
+        </>
+      }
     >
       {children}
     </AppShell>
