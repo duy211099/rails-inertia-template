@@ -88,7 +88,7 @@ jobs:
         run: bin/rails db:prepare && bundle exec database_consistency
 
       - name: TypeScript and frontend lint
-        run: npm run check && npm run lint
+        run: npm run check && npm run biome:check && npm run lint:tailwind
 
       - name: Frontend unit tests
         run: npm test

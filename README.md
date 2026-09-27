@@ -1,17 +1,17 @@
 # Rails + Inertia template
 
-Rails 8.1, SQLite, Inertia, React, TypeScript, Vite, and Tailwind CSS.
+Rails 8.1, SQLite, Inertia, React, TypeScript, Vite, Tailwind CSS.
 
 ## Setup
 
-Requires Ruby 4.0.7 and Node 24.21.0 (see `.ruby-version` / `mise.toml`; [mise](https://mise.jdx.dev/) installs and pins both automatically via `mise trust && mise install`).
+Need Ruby 4.0.7, Node 24.21.0 (see `.ruby-version` / `mise.toml`; [mise](https://mise.jdx.dev/) install + pin both auto via `mise trust && mise install`).
 
 ```sh
 bin/setup
 ```
 
-- Keep `.ruby-version` and the Dockerfile runtime args in sync. CI reads Ruby from `.ruby-version`, Node range from `package.json`.
-- Versions are locked in `Gemfile.lock` / `package-lock.json`.
+- Keep `.ruby-version` + Dockerfile runtime args synced. CI read Ruby from `.ruby-version`, Node range from `package.json`.
+- Versions locked in `Gemfile.lock` / `package-lock.json`.
 
 ## Development
 
@@ -19,23 +19,23 @@ bin/setup
 bin/dev
 ```
 
-SQLite, so no separate database server. `bin/setup` installs deps and preps the dev database.
+SQLite, no separate DB server. `bin/setup` install deps + prep dev DB.
 
-## Jobs, cache, and realtime without Redis
+## Jobs, cache, realtime without Redis
 
-Production uses Solid Queue, Solid Cache, Solid Cable — no Redis/Sidekiq. Each adapter has its own SQLite database under `storage/` (see `config/database.yml`); schemas are checked in under `db/`. Solid Cache has a 256 MiB entry-size budget, not a file-size limit.
+Production use Solid Queue, Solid Cache, Solid Cable — no Redis/Sidekiq. Each adapter own SQLite DB under `storage/` (see `config/database.yml`); schemas checked in under `db/`. Solid Cache 256 MiB entry-size budget, not file-size limit.
 
-- Prepare DBs: `RAILS_ENV=production bin/rails db:prepare` (Docker entrypoint does this).
-- Kamal sets `SOLID_QUEUE_IN_PUMA=true` so Puma runs the job supervisor. For a separate worker on the same host, omit that var and run `RAILS_ENV=production bin/jobs` — prepare the DBs first, the worker command doesn't do it for you. Don't set the var to the string `false`; it's checked for presence, not value.
-- Dev uses Rails' async job adapter / memory cache / async Action Cable — no Redis, but jobs don't survive restarts and processes don't share cache/cable. For durable dev jobs, follow [Solid Queue's dev setup](https://github.com/rails/solid_queue#usage-in-development-and-other-non-production-environments).
-- SQLite deployment assumes one host with persistent storage. Back up primary + queue DBs. Multiple hosts need a shared database server instead.
-- `/jobs` dashboard requires login only, **not admin**. Lock down `config/initializers/mission_control.rb` before opening signups to untrusted users.
+- Prep DBs: `RAILS_ENV=production bin/rails db:prepare` (Docker entrypoint do this).
+- Kamal set `SOLID_QUEUE_IN_PUMA=true` so Puma run job supervisor. Separate worker same host → omit var, run `RAILS_ENV=production bin/jobs` — prep DBs first, worker command don't do it for you. Don't set var to string `false`; checked for presence, not value.
+- Dev use Rails async job adapter / memory cache / async Action Cable — no Redis, but jobs don't survive restart, processes don't share cache/cable. Durable dev jobs → follow [Solid Queue's dev setup](https://github.com/rails/solid_queue#usage-in-development-and-other-non-production-environments).
+- SQLite deployment assume one host + persistent storage. Back up primary + queue DBs. Multiple hosts need shared DB server instead.
+- `/jobs` dashboard need login only, **not admin**. Lock down `config/initializers/mission_control.rb` before open signups to untrusted users.
 
 ## Example JSON API
 
-Open **`/api/docs`** after signing in for Swagger UI (session cookie + CSRF supplied automatically — requests act on real data). Contract lives at **`/api/openapi.json`** (login required), served from `docs/openapi.yml`. Swagger UI assets are bundled locally, no CDN needed.
+Open **`/api/docs`** after sign in for Swagger UI (session cookie + CSRF auto-supplied — requests act on real data). Contract at **`/api/openapi.json`** (login required), served from `docs/openapi.yml`. Swagger UI assets bundled local, no CDN needed.
 
-`/api/v1/items` reuses existing Devise sessions, Alba serializers, Action Policy, Pagy, Discard, Paper Trail. Inertia pages stay at `/items`; API returns JSON errors and skips the web controller's modern-browser check.
+`/api/v1/items` reuse existing Devise sessions, Alba serializers, Action Policy, Pagy, Discard, Paper Trail. Inertia pages stay at `/items`; API return JSON errors, skip web controller's modern-browser check.
 
 | Method | Endpoint | Result |
 | --- | --- | --- |
@@ -45,9 +45,9 @@ Open **`/api/docs`** after signing in for Swagger UI (session cookie + CSRF supp
 | PATCH / PUT | `/api/v1/items/:id` | Update supplied fields |
 | DELETE | `/api/v1/items/:id` | Soft-delete; 204 |
 
-Sorted by creation time then ID, descending. Page size defaults 12, capped 100. Fields: `name`, `description`, `phone_number` nested under `item`. camelCase responses. Client-supplied ownership ignored.
+Sorted by creation time then ID, descending. Page size default 12, capped 100. Fields: `name`, `description`, `phone_number` nested under `item`. camelCase responses. Client-supplied ownership ignored.
 
-Console helper (after signing in, on `/items`):
+Console helper (after sign in, on `/items`):
 
 ```js
 async function itemsApi(path = '', method = 'GET', item) {
@@ -77,15 +77,17 @@ Session + CSRF only — no bearer tokens or cross-origin access yet; design thos
 
 Errors: `{ "error": { "code": "...", "message": "...", "details": {} } }`. 401 unauthenticated, 404 inaccessible/deleted, 400 malformed params, 422 validation/CSRF (details map attribute → messages), 403 policy denial.
 
-[OpenAPI 3.1 contract](docs/openapi.yml) covers all six operations. [Skooma](https://github.com/evilmartians/skooma) (test-only) checks the doc against real request/response contracts; specs also exercise real Devise login + CSRF.
+[OpenAPI 3.1 contract](docs/openapi.yml) cover all six ops. [Skooma](https://github.com/evilmartians/skooma) (test-only) check doc against real request/response contracts; specs also exercise real Devise login + CSRF.
 
 ```sh
 bin/test spec/requests/api
 ```
 
-No extra API framework needed. Add `rack-cors` for cross-origin browser clients, or Doorkeeper for third-party OAuth. Rate limiting / bearer auth / retry-idempotency are out of scope for this session-authenticated example.
+No extra API framework needed. Add `rack-cors` for cross-origin browser clients, or Doorkeeper for third-party OAuth. Rate limiting / bearer auth / retry-idempotency out of scope this session-authenticated example.
 
 ## Checks
+
+Biome checks handwritten JS/TS across the repo, including UI, layout, pattern components, design tools, and root configs. Generated routes and serializer types stay excluded. `npm run biome:check` checks lint, formatting, and imports; `npm run lint:tailwind` checks Tailwind classes. CI and Git hooks run both.
 
 ```sh
 bin/test
@@ -109,7 +111,7 @@ bin/test
 PARALLEL_TEST_PROCESSORS=4 bin/test
 ```
 
-`bin/test` preps a separate SQLite DB per worker (`storage/test.sqlite3`, `test2.sqlite3`, ...), checks generated types, builds test assets once, runs specs. Reloads test schemas every run; doesn't touch dev data. Transactional fixtures roll back each example.
+`bin/test` prep separate SQLite DB per worker (`storage/test.sqlite3`, `test2.sqlite3`, ...), check generated types, build test assets once, run specs. Reload test schemas every run; don't touch dev data. Transactional fixtures roll back each example.
 
 Specs: `spec/models`, `spec/policies`, `spec/serializers`, `spec/requests`. Fixtures in `spec/fixtures`, factories in `spec/factories`. No browser/system tests currently.
 
@@ -127,7 +129,7 @@ npm run test:watch
 npm test -- app/frontend/components/auth-nav.test.tsx
 ```
 
-GitHub Actions, `bin/ci`, and the pre-push hook run both suites.
+GitHub Actions, `bin/ci`, pre-push hook run both suites.
 
 ## Production image
 
@@ -135,45 +137,45 @@ GitHub Actions, `bin/ci`, and the pre-push hook run both suites.
 docker build -t rails_inertia_template .
 ```
 
-Build stage installs Node + builds Vite assets; final image is Ruby + prod gems + compiled assets only. Supply `RAILS_MASTER_KEY`. Storage is Cloudflare R2 — needs `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
+Build stage install Node + build Vite assets; final image Ruby + prod gems + compiled assets only. Supply `RAILS_MASTER_KEY`. Storage is Cloudflare R2 — need `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
 
 ## Serialization and Inertia props
 
-Alba serializers define the JSON contract; Typelizer generates matching TypeScript. Extend `BaseSerializer`, use `typelize_from Model` for model fields, `typelize` for computed ones. camelCase keys (audit snapshots keep original keys); nullable DB values → `T | null`; timestamps are strings.
+Alba serializers define JSON contract; Typelizer generate matching TypeScript. Extend `BaseSerializer`, use `typelize_from Model` for model fields, `typelize` for computed ones. camelCase keys (audit snapshots keep original keys); nullable DB values → `T | null`; timestamps are strings.
 
-Page resources extend `ApplicationResource`. Collections pass `Resource.new({ ... }).to_inertia` so partial reloads only evaluate requested props — authorize/scope in the controller first. Other responses use `Serializer.new(record).serializable_hash`.
+Page resources extend `ApplicationResource`. Collections pass `Resource.new({ ... }).to_inertia` so partial reloads only eval requested props — authorize/scope in controller first. Other responses use `Serializer.new(record).serializable_hash`.
 
 ```sh
 npm run generate:types
 RAILS_ENV=test bin/check-types
 ```
 
-Prep the target env's DB before generating. Commit output under `app/frontend/types/serializers`, import via `@/types`. `bin/check-types` fails on drift without rewriting checked-in output; `bin/test` runs it once before parallel workers start.
+Prep target env's DB before generating. Commit output under `app/frontend/types/serializers`, import via `@/types`. `bin/check-types` fail on drift without rewriting checked-in output; `bin/test` run it once before parallel workers start.
 
 ## Email and request logs
 
-Dev mail via Letter Opener Web at `/letter_opener` (dev-only route, no SMTP needed). Tests keep Action Mailer `:test` delivery; production SMTP is a deployment concern.
+Dev mail via Letter Opener Web at `/letter_opener` (dev-only route, no SMTP needed). Tests keep Action Mailer `:test` delivery; production SMTP a deployment concern.
 
 Production request logs: Lograge JSON on stdout (method, path, status, duration, request ID — no query strings/params). `/up` stays silent.
 
 ## Test and database tooling
 
-- WebMock blocks external HTTP in backend specs (localhost open for browser tests). Stub with `stub_request`, or record real cassettes with VCR under `spec/fixtures/vcr_cassettes` for things like Google OAuth.
+- WebMock block external HTTP in backend specs (localhost open for browser tests). Stub with `stub_request`, or record real cassettes with VCR under `spec/fixtures/vcr_cassettes` for things like Google OAuth.
 - FactoryBot factories in `spec/factories`; fixtures/parallel workers still available for existing specs.
 - N+1 regression specs cover item/audit listings at multiple sizes. Bullet still runs in dev.
-- `strong_migrations` flags unsafe migrations (non-null column with no default, renaming a column in use, etc.) before they hit a real DB.
-- `anyway_config` is available for typed, validated config classes under `app/configs` once plain `ENV[]` reads outgrow themselves.
+- `strong_migrations` flag unsafe migrations (non-null column no default, renaming column in use, etc.) before hit real DB.
+- `anyway_config` available for typed, validated config classes under `app/configs` once plain `ENV[]` reads outgrow themselves.
 
 ```sh
 EVENT_PROF=sql.active_record bundle exec rspec spec/requests   # TestProf, opt-in
 RAILS_ENV=test bundle exec database_consistency
 ```
 
-CI runs `database_consistency` against a prepared test DB, with narrow exceptions for Devise's conditional email validation and its reset-token index.
+CI run `database_consistency` against prepared test DB, narrow exceptions for Devise's conditional email validation + reset-token index.
 
 ## Gemfile of dreams comparison
 
-Tracks the [Evil Martians article](https://evilmartians.com/chronicles/gemfile-of-dreams-libraries-we-use-to-build-rails-apps). It lists alternatives and app-specific tools, so absence ≠ missing capability.
+Tracks [Evil Martians article](https://evilmartians.com/chronicles/gemfile-of-dreams-libraries-we-use-to-build-rails-apps). List alternatives + app-specific tools, absence ≠ missing capability.
 
 | Area | Template decision |
 | --- | --- |
@@ -183,5 +185,5 @@ Tracks the [Evil Martians article](https://evilmartians.com/chronicles/gemfile-o
 | Dev and security | Vite, Bootsnap, Bullet, rack-mini-profiler, Brakeman, bundler-audit |
 | Testing and safety | Lograge, Letter Opener Web, WebMock, VCR, FactoryBot, strong_migrations, anyway_config, TestProf, rubocop-rspec, n_plus_one_control |
 | Database checks | database_consistency enforced in CI |
-| Database and assets | SQLite + Node/npm for now; Postgres tools (e.g. pghero) and Bundlebun are the swap-in once the app moves to Postgres |
-| Add when needed | AI, GraphQL, payment, feature-flag, and metrics tools |
+| Database and assets | SQLite + Node/npm for now; Postgres tools (e.g. pghero) and Bundlebun swap-in once app moves to Postgres |
+| Add when needed | AI, GraphQL, payment, feature-flag, metrics tools |

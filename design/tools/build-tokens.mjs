@@ -4,51 +4,75 @@
 //   @import tailwindcss + tw-animate-css · @custom-variant dark · @theme inline (utilities → CSS variables)
 //   :root / .dark variables · @font-face · @layer base
 // --no-vars omits the :root/.dark blocks and @font-face (used when another file supplies the variables).
-import fs from 'node:fs';
+import fs from 'node:fs'
 
-const args = process.argv.slice(2);
-const [src = 'design/tokens.json', out = 'globals.css'] = args.filter((a) => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--fonts'));
-const noVars = args.includes('--no-vars');
-const fontsUrl = args.includes('--fonts-url') ? args[args.indexOf('--fonts-url') + 1] : '/fonts/';
-const t = JSON.parse(fs.readFileSync(src, 'utf8'));
-const themes = t.color.themes.map((x) => x.id);
-const first = themes[0];
-const val = (v, th) => (typeof v === 'string' ? v : v[th] ?? v[first]);
-const css = (v) => v.replace(/^\{(.+)\}$/, 'var(--$1)');
-const primitive = (n) => /^(gray|teal|red|amber|green|blue)-\d+$/.test(n);
-const semantic = t.color.tokens.filter((x) => !primitive(x.name));
+const args = process.argv.slice(2)
+const [src = 'design/tokens.json', out = 'globals.css'] = args.filter(
+  (a) => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--fonts')
+)
+const noVars = args.includes('--no-vars')
+const fontsUrl = args.includes('--fonts-url') ? args[args.indexOf('--fonts-url') + 1] : '/fonts/'
+const t = JSON.parse(fs.readFileSync(src, 'utf8'))
+const themes = t.color.themes.map((x) => x.id)
+const first = themes[0]
+const val = (v, th) => (typeof v === 'string' ? v : (v[th] ?? v[first]))
+const css = (v) => v.replace(/^\{(.+)\}$/, 'var(--$1)')
+const primitive = (n) => /^(gray|teal|red|amber|green|blue)-\d+$/.test(n)
+const semantic = t.color.tokens.filter((x) => !primitive(x.name))
 
-const L = [];
-L.push('/* GENERATED from design/tokens.json by design/tools/build-tokens.mjs — do not edit by hand. */');
-L.push('@import "tailwindcss";', '@import "tw-animate-css";', '@import "shadcn/tailwind.css";', '', '@custom-variant dark (&:is(.dark *));', '');
-L.push('@theme inline {');
-L.push('  /* Keel: only semantic colours exist as utilities (no bg-gray-200 / text-red-500). */');
-L.push('  --color-*: initial;', '  --color-white: #fff;', '  --color-black: #000;', '  --color-transparent: transparent;', '  --color-current: currentColor;');
-for (const tok of semantic) L.push(`  --color-${tok.name}: var(--${tok.name});`);
-L.push('  --font-sans: var(--font-ui);', '  --font-mono: var(--font-code);');
-L.push('  --radius-sm: calc(var(--radius) * 0.6);', '  --radius-md: calc(var(--radius) * 0.8);', '  --radius-lg: var(--radius);', '  --radius-xl: calc(var(--radius) * 1.4);');
-L.push('}', '');
+const L = []
+L.push(
+  '/* GENERATED from design/tokens.json by design/tools/build-tokens.mjs — do not edit by hand. */'
+)
+L.push(
+  '@import "tailwindcss";',
+  '@import "tw-animate-css";',
+  '@import "shadcn/tailwind.css";',
+  '',
+  '@custom-variant dark (&:is(.dark *));',
+  ''
+)
+L.push('@theme inline {')
+L.push('  /* Keel: only semantic colours exist as utilities (no bg-gray-200 / text-red-500). */')
+L.push(
+  '  --color-*: initial;',
+  '  --color-white: #fff;',
+  '  --color-black: #000;',
+  '  --color-transparent: transparent;',
+  '  --color-current: currentColor;'
+)
+for (const tok of semantic) L.push(`  --color-${tok.name}: var(--${tok.name});`)
+L.push('  --font-sans: var(--font-ui);', '  --font-mono: var(--font-code);')
+L.push(
+  '  --radius-sm: calc(var(--radius) * 0.6);',
+  '  --radius-md: calc(var(--radius) * 0.8);',
+  '  --radius-lg: var(--radius);',
+  '  --radius-xl: calc(var(--radius) * 1.4);'
+)
+L.push('}', '')
 
 if (!noVars) {
   for (const th of themes) {
-    const sel = th === first ? ':root' : `.${th}, [data-theme="${th}"]`;
-    const lines = [];
+    const sel = th === first ? ':root' : `.${th}, [data-theme="${th}"]`
+    const lines = []
     if (th === first) {
       for (const [fam, body] of Object.entries(t)) {
-        if (['name', 'version', 'color', 'type'].includes(fam) || !body?.tokens) continue;
-        for (const tok of body.tokens) lines.push(`  --${tok.name}: ${tok.value};`);
+        if (['name', 'version', 'color', 'type'].includes(fam) || !body?.tokens) continue
+        for (const tok of body.tokens) lines.push(`  --${tok.name}: ${tok.value};`)
       }
-      for (const [k, v] of Object.entries(t.type.families)) lines.push(`  --font-${k}: ${v};`);
+      for (const [k, v] of Object.entries(t.type.families)) lines.push(`  --font-${k}: ${v};`)
     }
     for (const tok of t.color.tokens) {
-      if (th !== first && (typeof tok.value === 'string' || !(th in tok.value))) continue;
-      lines.push(`  --${tok.name}: ${css(val(tok.value, th))};`);
+      if (th !== first && (typeof tok.value === 'string' || !(th in tok.value))) continue
+      lines.push(`  --${tok.name}: ${css(val(tok.value, th))};`)
     }
-    L.push(`${sel} {`, ...lines, '}', '');
+    L.push(`${sel} {`, ...lines, '}', '')
   }
   for (const f of t.type.fonts)
-    L.push(`@font-face { font-family: "${f.family}"; src: url("${fontsUrl}${f.file.replace(/^fonts\//, '')}") format("woff2"); font-weight: ${f.weight}; font-style: ${f.style ?? 'normal'}; font-display: swap; }`);
-  L.push('');
+    L.push(
+      `@font-face { font-family: "${f.family}"; src: url("${fontsUrl}${f.file.replace(/^fonts\//, '')}") format("woff2"); font-weight: ${f.weight}; font-style: ${f.style ?? 'normal'}; font-display: swap; }`
+    )
+  L.push('')
 }
 
 L.push(`@layer base {
@@ -62,6 +86,6 @@ L.push(`@layer base {
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
-`);
-fs.writeFileSync(out, L.join('\n'));
-console.log('wrote', out);
+`)
+fs.writeFileSync(out, L.join('\n'))
+console.log('wrote', out)

@@ -203,7 +203,7 @@ function NavUser({
             align="start"
           >
             {user.menu.map((group, gi) => (
-              <React.Fragment key={gi}>
+              <React.Fragment key={JSON.stringify(group.map((action) => action.label))}>
                 {gi > 0 && <DropdownMenuSeparator />}
                 {group.map((a) => (
                   <DropdownMenuItem key={a.label} onSelect={a.onSelect}>

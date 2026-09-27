@@ -173,7 +173,7 @@ function SetupGuide({
                   type="button"
                   aria-expanded={open}
                   onClick={() => setOpenId(open ? undefined : s.id)}
-                  className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <span
                     className={cn(

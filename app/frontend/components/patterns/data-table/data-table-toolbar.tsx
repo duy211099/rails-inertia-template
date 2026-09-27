@@ -71,6 +71,7 @@ function DataTableFacetedFilter({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-1" align="start" aria-label={`${title} filter`}>
+        {/* biome-ignore lint/a11y/useSemanticElements: This is a generic group of filter buttons. */}
         <div role="group" aria-label={title} className="flex flex-col">
           {options.map((o) => {
             const on = selected.includes(o.value)
@@ -89,7 +90,7 @@ function DataTableFacetedFilter({
               >
                 <span
                   className={cn(
-                    'flex size-4 items-center justify-center rounded-[4px] border border-input',
+                    'flex size-4 items-center justify-center rounded-lg border border-input',
                     on && 'border-primary bg-primary text-primary-foreground'
                   )}
                 >
@@ -147,6 +148,7 @@ function DataTableToolbar({
   className?: string
 }) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Preserve the div ref/props API of this composable wrapper.
     <div
       role="search"
       data-slot="data-table-toolbar"

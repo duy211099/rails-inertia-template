@@ -1,88 +1,80 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"includes": [
-			"app/frontend/**/*.{js,jsx,ts,tsx}"
-		]
-	},
-	"overrides": [
-		{
-			"includes": ["app/frontend/lib/routes.js", "app/frontend/lib/routes.d.ts", "app/frontend/types/serializers/**"],
-			"assist": { "enabled": false },
-			"linter": {
-				"enabled": false
-			},
-			"formatter": {
-				"enabled": false
-			}
-		},
-		{
-			"includes": [
-				"app/frontend/components/ui/**",
-				"app/frontend/components/layout/**",
-				"app/frontend/components/patterns/**"
-			],
-			"linter": {
-				"enabled": false
-			}
-		},
-		{
-			"includes": ["app/frontend/**/*.test.{ts,tsx}"],
-			"linter": {
-				"rules": {
-					"suspicious": {
-						"noDocumentCookie": "off"
-					}
-				}
-			}
-		}
-	],
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "space",
-		"indentWidth": 2,
-		"lineWidth": 100
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"correctness": {
-				"useExhaustiveDependencies": "warn",
-				"useHookAtTopLevel": "error"
-			},
-			"a11y": {
-				"recommended": true
-			},
-			"suspicious": {
-				"noExplicitAny": "off",
-				"noDoubleEquals": "off"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single",
-			"jsxQuoteStyle": "double",
-			"semicolons": "asNeeded",
-			"trailingCommas": "es5"
-		},
-		"globals": [
-			"React"
-		]
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["**/*.{js,jsx,ts,tsx,mjs,cjs}"]
+  },
+  "overrides": [
+    {
+      "includes": [
+        "app/frontend/lib/routes.js",
+        "app/frontend/lib/routes.d.ts",
+        "app/frontend/types/serializers/**"
+      ],
+      "assist": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["app/frontend/**/*.test.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noDocumentCookie": "off"
+          }
+        }
+      }
+    }
+  ],
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error"
+      },
+      "a11y": {
+        "preset": "recommended"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noDoubleEquals": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "es5"
+    },
+    "globals": ["React"]
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
 }
