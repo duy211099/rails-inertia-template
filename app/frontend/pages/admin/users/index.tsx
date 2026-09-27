@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { UsersIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DataTable, DataTablePagination, DataTableToolbar } from '@/components/patterns/data-table'
 import {
@@ -20,6 +20,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { adminUserPath, adminUsersPath } from '@/lib/routes'
 import type { Pagy, User } from '@/types'
 
@@ -33,15 +34,18 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
   const { t } = useTranslation('admin/users/index')
   const [rowSelection, setRowSelection] = useState({})
   const [query, setQuery] = useState(q ?? '')
+  const debouncedQuery = useDebouncedValue(query, 300)
+  const lastSentQuery = useRef(q ?? '')
 
-  const handleQueryChange = (value: string) => {
-    setQuery(value)
+  useEffect(() => {
+    if (debouncedQuery === lastSentQuery.current) return
+    lastSentQuery.current = debouncedQuery
     router.get(
       adminUsersPath(),
-      { q: value || undefined },
+      { q: debouncedQuery || undefined },
       { preserveState: true, preserveScroll: true, replace: true }
     )
-  }
+  }, [debouncedQuery])
 
   const columns: ColumnDef<User, any>[] = [
     {
@@ -97,7 +101,7 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
         toolbar={
           <DataTableToolbar
             query={query}
-            onQueryChange={handleQueryChange}
+            onQueryChange={setQuery}
             searchPlaceholder={t('searchPlaceholder')}
           />
         }
