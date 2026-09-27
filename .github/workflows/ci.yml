@@ -43,6 +43,26 @@ jobs:
       - name: RuboCop
         run: bin/rubocop -f github
 
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: TypeScript and frontend lint
+        run: npm run check && npm run biome:check && npm run lint:tailwind
+
+      - name: Frontend unit tests
+        run: npm test
+
   test:
     runs-on: ubuntu-latest
 
@@ -87,11 +107,11 @@ jobs:
           TYPELIZER: "false"
         run: bin/rails db:prepare && bundle exec database_consistency
 
-      - name: TypeScript and frontend lint
-        run: npm run check && npm run biome:check && npm run lint:tailwind
-
-      - name: Frontend unit tests
-        run: npm test
+      - name: Cache Vite test build
+        uses: actions/cache@v6
+        with:
+          path: public/vite-test
+          key: vite-test-${{ runner.os }}-${{ hashFiles('package-lock.json', 'vite.config.*', 'config/vite.json', 'app/frontend/**') }}
 
       - name: Backend specs (parallel)
         env:
