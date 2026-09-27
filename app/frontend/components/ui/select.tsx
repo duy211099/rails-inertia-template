@@ -68,8 +68,11 @@ function SelectContent({
         <SelectPrimitive.Viewport
           className={cn(
             'p-1',
-            position === 'popper' &&
-              'h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1'
+            // Keel: no h-(--radix-select-trigger-height) clamp — that locks the
+            // viewport to the trigger's own height, so any content taller than the
+            // trigger flashes Radix's scroll-up/down buttons in and out during the
+            // open animation.
+            position === 'popper' && 'w-full min-w-(--radix-select-trigger-width) scroll-my-1'
           )}
         >
           {children}

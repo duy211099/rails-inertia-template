@@ -8,7 +8,7 @@ const { mockReload } = vi.hoisted(() => ({ mockReload: vi.fn() }))
 
 vi.mock('@inertiajs/react', () => ({
   router: { reload: mockReload },
-  usePage: () => ({ props: { availableLocales: ['en'] } }),
+  usePage: () => ({ props: { availableLocales: ['en', 'vi'] } }),
 }))
 
 beforeAll(async () => {
@@ -27,17 +27,19 @@ beforeEach(() => {
 describe('LocaleSwitcher', () => {
   it('renders the current locale as selected', () => {
     render(<LocaleSwitcher />)
-    expect(screen.getByRole('combobox')).toHaveValue('en')
+    expect(screen.getByRole('combobox')).toHaveTextContent('EN')
   })
 
-  it('renders an option for every available locale from Inertia props', () => {
+  it('renders an option for every available locale from Inertia props', async () => {
     render(<LocaleSwitcher />)
-    expect(screen.getAllByRole('option')).toHaveLength(1)
+    await userEvent.click(screen.getByRole('combobox'))
+    expect(screen.getAllByRole('option')).toHaveLength(2)
   })
 
   it('PATCHes the locale endpoint with a CSRF token and reloads on success', async () => {
     render(<LocaleSwitcher />)
-    await userEvent.selectOptions(screen.getByRole('combobox'), 'en')
+    await userEvent.click(screen.getByRole('combobox'))
+    await userEvent.click(screen.getByRole('option', { name: 'Tiếng Việt' }))
 
     expect(fetch).toHaveBeenCalledWith(
       '/locale',
