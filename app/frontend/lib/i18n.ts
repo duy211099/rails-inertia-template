@@ -2,6 +2,7 @@ import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import authLogin from '@/locales/auth/login/en.json'
 import common from '@/locales/common/en.json'
+import homeIndex from '@/locales/home/index/en.json'
 import itemsEdit from '@/locales/items/edit/en.json'
 import itemsForm from '@/locales/items/form/en.json'
 import itemsIndex from '@/locales/items/index/en.json'
@@ -19,6 +20,7 @@ const resources = {
   en: {
     common,
     'auth/login': authLogin,
+    'home/index': homeIndex,
     'items/index': itemsIndex,
     'items/show': itemsShow,
     'items/form': itemsForm,

@@ -1,0 +1,7 @@
+{
+  "pageTitle": "Home",
+  "heading": "Rails + Inertia Template",
+  "tagline": "A batteries-included starting point for Rails 8 and React, wired together with Inertia.js.",
+  "viewItems": "View Items",
+  "signInPrompt": "Sign in to start managing your items."
+}
