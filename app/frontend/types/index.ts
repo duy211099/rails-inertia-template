@@ -8,7 +8,7 @@ export type FlashData = {
 
 export type SharedProps = {
   flash?: FlashData
-  user?: User | null
+  currentUser?: User | null
 }
 
 // Import User type for SharedProps

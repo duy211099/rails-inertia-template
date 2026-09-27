@@ -4,16 +4,20 @@ import { getCsrfToken } from '@/lib/csrf'
 import type { SharedProps } from '@/types'
 
 export function AuthNav() {
-  const { user } = usePage<SharedProps>().props
+  const { currentUser } = usePage<SharedProps>().props
 
-  if (user) {
+  if (currentUser) {
     return (
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          {user.avatarUrl && (
-            <img src={user.avatarUrl} alt={user.name ?? ''} className="size-8 rounded-full" />
+          {currentUser.avatarUrl && (
+            <img
+              src={currentUser.avatarUrl}
+              alt={currentUser.name ?? ''}
+              className="size-8 rounded-full"
+            />
           )}
-          <span className="text-sm font-medium">{user.name}</span>
+          <span className="text-sm font-medium">{currentUser.name}</span>
         </div>
         <form action="/users/sign_out" method="post">
           <input type="hidden" name="_method" value="delete" />

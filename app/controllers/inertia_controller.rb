@@ -8,7 +8,7 @@ class InertiaController < ApplicationController
     }
   }
 
-  inertia_share user: -> {
+  inertia_share currentUser: -> {
     return nil unless current_user
 
     UserSerializer.new(current_user).serializable_hash

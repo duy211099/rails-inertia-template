@@ -10,7 +10,7 @@ import type { SharedProps } from '@/types'
 
 export default function Home() {
   const { t } = useTranslation('home/index')
-  const { user } = usePage<SharedProps>().props
+  const { currentUser } = usePage<SharedProps>().props
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,7 +29,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold">{t('heading')}</h2>
             <p className="max-w-md text-muted-foreground">{t('tagline')}</p>
 
-            {user ? (
+            {currentUser ? (
               <Link href={itemsPath()}>
                 <Button size="lg">{t('viewItems')}</Button>
               </Link>

@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react'
-import { HistoryIcon, LogOutIcon, PackageIcon, ShieldIcon } from 'lucide-react'
+import { HistoryIcon, LogOutIcon, PackageIcon, ShieldIcon, UsersIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
@@ -7,7 +7,7 @@ import { AppShell } from '@/components/patterns/app-shell'
 import type { NavSection } from '@/components/patterns/app-sidebar'
 import ThemeToggle from '@/components/theme-toggle'
 import { getCsrfToken } from '@/lib/csrf'
-import { adminRootPath, itemsPath, versionsPath } from '@/lib/routes'
+import { adminRootPath, adminUsersPath, itemsPath, versionsPath } from '@/lib/routes'
 import type { SharedProps } from '@/types'
 
 function signOut() {
@@ -32,11 +32,12 @@ function signOut() {
   form.submit()
 }
 
-function buildNavigation(isAdmin: boolean): NavSection[] {
+export function buildNavigation(isAdmin: boolean): NavSection[] {
   const items = [{ title: 'Items', url: itemsPath(), icon: PackageIcon }]
   if (isAdmin) {
     items.push(
       { title: 'Admin', url: adminRootPath(), icon: ShieldIcon },
+      { title: 'Users', url: adminUsersPath(), icon: UsersIcon },
       { title: 'Versions', url: versionsPath(), icon: HistoryIcon }
     )
   }
@@ -45,7 +46,7 @@ function buildNavigation(isAdmin: boolean): NavSection[] {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { url, props } = usePage<SharedProps>()
-  const isAdmin = props.user?.roles?.includes('admin') ?? false
+  const isAdmin = props.currentUser?.roles?.includes('admin') ?? false
   const navigation = useMemo(() => buildNavigation(isAdmin), [isAdmin])
 
   return (
@@ -54,9 +55,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       workspace={{ name: 'Rails Inertia Template' }}
       navigation={navigation}
       user={{
-        name: props.user?.name ?? props.user?.email ?? 'Guest',
-        email: props.user?.email,
-        avatarUrl: props.user?.avatarUrl ?? undefined,
+        name: props.currentUser?.name ?? props.currentUser?.email ?? 'Guest',
+        email: props.currentUser?.email,
+        avatarUrl: props.currentUser?.avatarUrl ?? undefined,
         menu: [[{ label: 'Sign out', icon: LogOutIcon, onSelect: signOut }]],
       }}
       headerActions={

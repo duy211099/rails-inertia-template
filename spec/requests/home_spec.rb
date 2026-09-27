@@ -9,12 +9,14 @@ RSpec.describe "Home", type: :request do
     get root_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
     expect(response).to have_http_status(:ok)
     expect(response.parsed_body).to include("component" => "home/index")
-    expect(response.parsed_body.dig("props", "user")).to be_nil
+    expect(response.parsed_body.dig("props", "currentUser")).to be_nil
   end
 
   it "shares the signed-in user's profile, same as any other Inertia page" do
     sign_in users(:one)
     get root_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
-    expect(response.parsed_body.dig("props", "user").keys).to contain_exactly("id", "name", "email", "avatarUrl", "roles")
+    expect(response.parsed_body.dig("props", "currentUser").keys).to contain_exactly(
+      "id", "name", "email", "avatarUrl", "createdAt", "roles"
+    )
   end
 end
