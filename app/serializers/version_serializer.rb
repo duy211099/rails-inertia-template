@@ -4,7 +4,7 @@ class VersionSerializer < BaseSerializer
   typelize_from PaperTrail::Version
 
   attributes :id, :item_type, :item_id, :event
-  typelize id: :number, item_id: :number, created_at: :string,
+  typelize id: :string, item_id: :string, created_at: :string,
     object: "Record<string, unknown> | null",
     object_changes: "Record<string, [unknown, unknown]> | null"
 

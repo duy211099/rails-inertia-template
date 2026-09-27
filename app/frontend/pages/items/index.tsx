@@ -14,7 +14,7 @@ type Props = {
 export default function ItemsIndex({ items, pagy }: Props) {
   const { t } = useTranslation('items/index')
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (confirm(t('confirmDelete'))) {
       router.delete(itemPath(id))
     }

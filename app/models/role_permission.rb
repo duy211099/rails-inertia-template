@@ -3,12 +3,13 @@
 # == Schema Information
 #
 # Table name: role_permissions
+# Database name: primary
 #
-#  id            :integer          not null, primary key
+#  id            :uuid             not null, primary key
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  permission_id :integer          not null
-#  role_id       :integer          not null
+#  permission_id :uuid             not null
+#  role_id       :uuid             not null
 #
 # Indexes
 #
@@ -18,8 +19,8 @@
 #
 # Foreign Keys
 #
-#  permission_id  (permission_id => permissions.id)
-#  role_id        (role_id => roles.id)
+#  fk_rails_...  (permission_id => permissions.id)
+#  fk_rails_...  (role_id => roles.id)
 #
 class RolePermission < ApplicationRecord
   belongs_to :role, touch: true

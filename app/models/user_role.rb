@@ -3,12 +3,13 @@
 # == Schema Information
 #
 # Table name: user_roles
+# Database name: primary
 #
-#  id         :integer          not null, primary key
+#  id         :uuid             not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  role_id    :integer          not null
-#  user_id    :integer          not null
+#  role_id    :uuid             not null
+#  user_id    :uuid             not null
 #
 # Indexes
 #
@@ -18,8 +19,8 @@
 #
 # Foreign Keys
 #
-#  role_id  (role_id => roles.id)
-#  user_id  (user_id => users.id)
+#  fk_rails_...  (role_id => roles.id)
+#  fk_rails_...  (user_id => users.id)
 #
 class UserRole < ApplicationRecord
   belongs_to :user

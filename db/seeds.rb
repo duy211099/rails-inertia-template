@@ -10,6 +10,13 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-Role.find_or_create_by!(name: "admin")
+admin_role = Role.find_or_create_by!(name: "admin")
 Role.find_or_create_by!(name: "dev")
 Role.find_or_create_by!(name: "member")
+
+manage_items = Permission.find_or_create_by!(name: "manage_items")
+manage_users = Permission.find_or_create_by!(name: "manage_users")
+
+[ manage_items, manage_users ].each do |permission|
+  RolePermission.find_or_create_by!(role: admin_role, permission: permission)
+end

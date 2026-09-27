@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Mark existing migrations as safe
-StrongMigrations.start_after = 20260925185512
+StrongMigrations.start_after = 20260927120000
 
 # Set timeouts for migrations
 StrongMigrations.lock_timeout = 10.seconds

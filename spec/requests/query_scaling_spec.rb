@@ -32,8 +32,8 @@ RSpec.describe "Listing query growth", type: :request do
     warmup { get versions_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest } }
 
     populate do |count|
-      count.times do |number|
-        PaperTrail::Version.create!(item_type: "Item", item_id: number + 1,
+      count.times do
+        PaperTrail::Version.create!(item_type: "Item", item_id: SecureRandom.uuid,
           event: "create", whodunnit: users(:one).id.to_s)
       end
     end

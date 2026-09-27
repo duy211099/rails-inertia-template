@@ -146,7 +146,7 @@ RSpec.describe "Items API", type: :request do
       expect do
         post "/api/v1/items", params: { item: { name: "API item", phone_number: "123", user_id: users(:two).id } }, as: :json
       end.to change(Item, :count).by(1)
-      created = Item.order(:id).last
+      created = Item.order(:created_at).last
       expect(created).to have_attributes(user_id: users(:one).id, phone_number: "123")
       expect(response).to conform_response_schema(:created)
       expect(response.headers["Location"]).to end_with("/api/v1/items/#{created.id}")
