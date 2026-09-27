@@ -101,6 +101,19 @@ RSpec.describe User, type: :model do
     expect(Item.exists?(items(:three).id)).to be(true)
   end
 
+  describe "default role assignment" do
+    it "assigns the member role to a newly created user" do
+      user = described_class.create!(email: "fresh@example.com", password: "password123")
+      expect(user.roles.pluck(:name)).to eq([ "member" ])
+    end
+
+    it "creates the member role on demand if it does not exist yet" do
+      Role.where(name: "member").destroy_all
+      user = described_class.create!(email: "fresh2@example.com", password: "password123")
+      expect(user.roles.pluck(:name)).to eq([ "member" ])
+    end
+  end
+
   describe "#at_least?" do
     it "treats a user with no roles as at least member" do
       expect(users(:one).roles).to be_empty
