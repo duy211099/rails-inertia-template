@@ -43,4 +43,5 @@ node_modules
 *.local
 .claude
 .playwright-mcp
+/.serena/
 /.vitest
