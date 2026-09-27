@@ -13,5 +13,7 @@ export default defineConfig({
     include: ['app/frontend/**/*.test.{ts,tsx}'],
     setupFiles: ['./app/frontend/test/setup.ts'],
     restoreMocks: true,
+    // Share one jsdom environment across files instead of recreating it per file.
+    isolate: false,
   },
 })
