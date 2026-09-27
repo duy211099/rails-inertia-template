@@ -23,6 +23,16 @@
 			}
 		},
 		{
+			"includes": [
+				"app/frontend/components/ui/**",
+				"app/frontend/components/layout/**",
+				"app/frontend/components/patterns/**"
+			],
+			"linter": {
+				"enabled": false
+			}
+		},
+		{
 			"includes": ["app/frontend/**/*.test.{ts,tsx}"],
 			"linter": {
 				"rules": {

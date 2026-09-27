@@ -1,8 +1,10 @@
 import { Head, Link, usePage } from '@inertiajs/react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import PublicLayout from '@/layouts/PublicLayout'
 import { itemsPath } from '@/lib/routes'
 import type { SharedProps } from '@/types'
 
@@ -40,3 +42,5 @@ export default function Home() {
     </div>
   )
 }
+
+Home.layout = (page: ReactNode) => <PublicLayout>{page}</PublicLayout>

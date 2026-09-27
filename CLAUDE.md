@@ -124,3 +124,73 @@ fields. Do not hand-edit generated types or duplicate Pagy types in the frontend
 - Test profiling: `EVENT_PROF=sql.active_record bundle exec rspec spec/requests`.
 - Database checks: `RAILS_ENV=test bundle exec database_consistency`.
 - `bin/test` checks generated types once before starting parallel workers.
+
+## Keel design system: instructions for UI work
+
+This app's UI is **Keel**, a SaaS/admin design system built on **shadcn/ui** (Radix primitives, Base UI for Combobox), **React 19**, **Tailwind CSS v4**, **Rails + Inertia**. Keel is shadcn with its own tokens, a few extra variants, and product patterns on top. Read this section before writing any UI.
+
+**Naming follows shadcn exactly.** Use shadcn component names, parts, props and token names: `Dialog`, `AlertDialog`, `Sheet`, `Separator`, `Progress`, `Field`, `Empty`, `Toaster` + `toast()`, `bg-primary`, `text-muted-foreground`. If shadcn has it, Keel uses shadcn's name.
+
+### Where things are
+
+| Path | What |
+| --- | --- |
+| `components.json` | shadcn CLI config: new-york, `@/components`, `@/components/ui`, `@/lib/utils`, `@/hooks`, lucide |
+| `app/frontend/components/ui/` | shadcn/ui components (Keel-edited, marked `// Keel:`) and Keel additions: `number-input`, `autocomplete`, `date-picker`, `description-list` |
+| `app/frontend/components/layout/` | Keel primitives: `stack.tsx` (`Stack`, `Inline`), `grid.tsx`, `container.tsx`, `text.tsx` |
+| `app/frontend/components/patterns/` | Keel blocks: `app-shell`, `app-sidebar`, `page-header`, `detail-layout`, `resource-index`, `data-table/`, `save-bar`, `settings`, `dashboard` |
+| `app/frontend/components/app-link.tsx` | `AppLink` = Inertia `Link`. The only file that imports Inertia |
+| `app/frontend/styles/globals.css` | **Generated** from `design/tokens.json`. Never edit by hand |
+| `design/tokens.json`, `design/tools/` | Token source; `build-tokens.mjs` (tokens → globals.css); `keelify.mjs` (the codemod for new shadcn files) |
+| `app/frontend/layouts/AppLayout.tsx` | Persistent layout wrapping `AppShell`, fed from Inertia shared props |
+| `app/frontend/layouts/PublicLayout.tsx` | Bare layout (Toaster only) for pages outside the app shell (marketing, auth) |
+
+Import from each file, shadcn-style: `import { Button } from "@/components/ui/button"`.
+
+### Before building a screen
+
+1. Identify its template: Dashboard, Resource index, Resource detail, Create, Edit, Settings, Auth, Onboarding, Empty account, Error.
+2. Compose in this order: patterns (`Page`, `PageHeader`, `ResourceIndex`, `DataTable`, `DataTableToolbar`, `DetailLayout`, `SettingsLayout`, `SettingsSection`, `SaveBar`, `MetricStrip`), then shadcn components, then layout primitives.
+3. `app/frontend/pages/items/index.tsx` and `show.tsx` are the reference implementation of the Resource index / Resource detail templates in this app — follow their structure for new resources.
+
+### Adding a shadcn component that isn't here yet
+
+```bash
+npx shadcn@latest add accordion
+node design/tools/keelify.mjs app/frontend/components/ui/accordion.tsx
+```
+
+Always run keelify after `shadcn add`. It rewrites import aliases, the focus ring, `dark:` utilities, shadows and outline controls to Keel's rules. Never `shadcn add --overwrite` a file that has `// Keel:` edits without re-applying them.
+
+### Hard rules (a PR that breaks one is wrong)
+
+- **Colours only via shadcn/Keel token utilities**: `bg-background`, `bg-card`, `bg-muted`, `bg-surface`, `text-foreground`, `text-muted-foreground`, `border-border`, `border-input`, `text-destructive`, `bg-success-muted text-success`, `bg-selected`… Never `bg-gray-*`, `text-red-*`, hex, `bg-[#…]` or inline style colours. The raw Tailwind palette is removed on purpose.
+- **No `dark:` variants.** Dark mode is the `.dark` class on `<html>` plus tokens.
+- **Spacing**: `Stack` / `Inline` / `Grid` with `gap` (`2xs` 4 · `xs` 8 · `sm` 12 · `md` 16 · `lg` 24 · `xl` 32), or shadcn's own containers (`CardContent`, `FieldGroup`). No margins on children, no off-scale values like `mt-[13px]`.
+- **Typography**: `Text variant` or Tailwind's scale (body `text-sm`). Weights 400/500/600 only. Sentence case.
+- **Buttons**: one `variant="default"` (filled) button per context: page header, card, dialog or form end. Others are `outline`, `ghost` or `link`. Icon-only buttons are `size="icon"` with `aria-label` plus a `Tooltip`. Labels are verb + noun ("Create customer"), never "Submit", "OK" or "Yes". Loading means `disabled` plus `<Spinner />`.
+- **Status**: `Badge variant="success|warning|destructive|info|secondary|outline"`. The word always carries the meaning, not just the colour.
+- **Not everything is a card.** Cards hold one object or one field group. Page headers, alerts and metrics sit on the background. Never nest cards. No shadows on resting surfaces.
+- **Destructive actions**: `variant="destructive-outline"` (or a destructive `DropdownMenuItem`) → `AlertDialog` whose `AlertDialogAction variant="destructive"` repeats the action ("Delete 3 orders"). Reversible actions (archive) happen immediately with an Undo `toast()` and no confirmation.
+- **Forms**: every control sits in a `Field` with a `FieldLabel`, an optional `FieldDescription` and a `FieldError`. Errors say what's wrong and how to fix it. Mark optional fields "(optional)", not required ones.
+- **Overlays**: `Dialog` for short focused tasks, `AlertDialog` for confirmations, `Sheet` for side panels, `Popover` for small anchored editors, `DropdownMenu` for action lists.
+- **Feedback**: `Alert` for a page or section condition, `toast()` for completed actions, `Skeleton` for loading regions. No full-page spinners.
+- **Every data region designs its states**: loading, empty (`Empty`), no results, error, partial.
+- **Accessibility**: real `<button>`/`<a>`; never remove focus rings; keep Radix's keyboard and ARIA behaviour; check both themes against WCAG AA.
+- **Don't fork components for one screen.** Add a generic variant to the shadcn file with a `// Keel:` comment, or ask.
+
+### Inertia / Rails conventions
+
+- `AppShell` lives in `AppLayout`, mounted as the default Inertia persistent layout in `app/frontend/entrypoints/inertia.tsx`; `currentPath = usePage().url`. Shell data (user, workspace, nav) comes from shared props (`InertiaController`).
+- Wrap the root in `<TooltipProvider>`; `AppShell` already renders `<Toaster />`.
+- Links: `AppLink` with `asChild` (`<Button asChild>`, `<SidebarMenuButton asChild>`, `<BreadcrumbLink asChild>`).
+- Index pages: filters, search, sort, view and page are **URL query params**. Changes call `router.get(url, params, { preserveState: true, preserveScroll: true, replace: true })`. `DataTable` is TanStack Table with `manualSorting`/`manualPagination`.
+- Forms: `useForm`. Rails 422 errors map to `FieldError` by attribute, and an `Alert` at the top summarises them. Edit pages use `SaveBar open={form.isDirty}`; create pages end with `Cancel` · **Create …**. Guard unsaved changes with `useUnsavedChangesGuard` (`app/frontend/hooks/use-unsaved-changes-guard.ts`).
+- Flash messages go to `toast()` (wired globally in `inertia.tsx` via `router.on('flash', …)`).
+- Components never fetch page data or import Inertia (except `app-link.tsx`). Pages translate component events into visits.
+
+### Definition of done for UI work
+
+- `npm run check` passes; no raw colours, `dark:` or arbitrary values were added.
+- Works in light and `.dark`, at 375px and 1440px, and with the keyboard only.
+- Loading, empty and error states exist for every data region.
