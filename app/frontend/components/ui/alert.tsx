@@ -1,16 +1,19 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
-
 import { cn } from '@/lib/utils'
 
 const alertVariants = cva(
-  'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
+  'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
   {
     variants: {
       variant: {
         default: 'bg-card text-card-foreground',
+        // Keel: tinted tones — text stays foreground for readability, the icon carries the tone.
         destructive:
-          'bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current',
+          'border-destructive/30 bg-destructive-muted text-foreground [&>svg]:text-destructive',
+        warning: 'border-warning/30 bg-warning-muted text-foreground [&>svg]:text-warning',
+        success: 'border-success/30 bg-success-muted text-foreground [&>svg]:text-success',
+        info: 'border-info/30 bg-info-muted text-foreground [&>svg]:text-info',
       },
     },
     defaultVariants: {

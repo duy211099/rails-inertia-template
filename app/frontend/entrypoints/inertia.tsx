@@ -5,7 +5,9 @@ import { createRoot } from 'react-dom/client'
 import snakecaseKeys from 'snakecase-keys'
 import { toast } from 'sonner'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import Layout from '@/components/Layout'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import AppLayout from '@/layouts/AppLayout'
+import PublicLayout from '@/layouts/PublicLayout'
 import { initI18n, syncLocale } from '@/lib/i18n'
 
 const MissingPage: any = () =>
@@ -24,7 +26,7 @@ const MissingPage: any = () =>
     )
   )
 
-MissingPage.layout = (page: ReactNode) => createElement(Layout, null, page)
+MissingPage.layout = (page: ReactNode) => createElement(PublicLayout, null, page)
 
 createInertiaApp({
   title: (title) => (title ? `${title} - WithDui` : 'WithDui'),
@@ -47,7 +49,7 @@ createInertiaApp({
     const Component = page.default ?? page
 
     if (!Component.layout) {
-      Component.layout = (page: ReactNode) => createElement(Layout, null, page)
+      Component.layout = (page: ReactNode) => createElement(AppLayout, null, page)
     }
 
     return Component
@@ -61,7 +63,13 @@ createInertiaApp({
           ;(el as any).__reactRoot = createRoot(el)
         }
         const root = (el as any).__reactRoot
-        root.render(createElement(ErrorBoundary, null, createElement(App, props)))
+        root.render(
+          createElement(
+            ErrorBoundary,
+            null,
+            createElement(TooltipProvider, null, createElement(App, props))
+          )
+        )
       })
     } else {
       console.error(

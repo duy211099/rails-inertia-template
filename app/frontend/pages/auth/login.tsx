@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import PublicLayout from '@/layouts/PublicLayout'
 import { getCsrfToken } from '@/lib/csrf'
 
 export default function Login() {
@@ -53,3 +55,5 @@ export default function Login() {
     </div>
   )
 }
+
+Login.layout = (page: ReactNode) => <PublicLayout>{page}</PublicLayout>

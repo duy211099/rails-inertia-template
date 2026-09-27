@@ -1,10 +1,12 @@
 {
-  "back": "Back",
-  "heading": "Item Details",
-  "phoneNumberLabel": "Phone Number",
-  "created": "Created: {{date}}",
-  "updated": "Updated: {{date}}",
-  "edit": "Edit",
-  "delete": "Delete",
-  "confirmDelete": "Are you sure you want to delete this item?"
+  "heading": "Item details",
+  "descriptionLabel": "Description",
+  "phoneNumberLabel": "Phone number",
+  "createdLabel": "Created",
+  "updatedLabel": "Updated",
+  "edit": "Edit item",
+  "delete": "Delete item",
+  "cancel": "Cancel",
+  "confirmDeleteTitle": "Delete {{name}}?",
+  "confirmDeleteDescription": "This item will be permanently deleted. This can't be undone."
 }
