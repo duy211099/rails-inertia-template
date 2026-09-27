@@ -79,7 +79,7 @@ function Autocomplete({
           }}
           className={cn(
             'h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none placeholder:text-muted-foreground md:text-sm',
-            'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring aria-invalid:border-destructive disabled:cursor-not-allowed disabled:opacity-50',
+            'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive',
             className
           )}
           {...props}
@@ -93,23 +93,26 @@ function Autocomplete({
           onCloseAutoFocus={(e) => e.preventDefault()}
           className="z-50 w-(--radix-popover-trigger-width) min-w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none"
         >
-          <ul id={listId} className="m-0 max-h-64 list-none overflow-y-auto p-0">
+          <div role="listbox" id={listId} className="m-0 max-h-64 list-none overflow-y-auto p-0">
             {loading && (
-              <li
+              <div
                 role="presentation"
                 className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground"
               >
                 <Spinner /> Searching…
-              </li>
+              </div>
             )}
             {!loading && suggestions.length === 0 && (
-              <li role="presentation" className="px-2 py-1.5 text-sm text-muted-foreground">
+              <div role="presentation" className="px-2 py-1.5 text-sm text-muted-foreground">
                 {emptyMessage}
-              </li>
+              </div>
             )}
             {!loading &&
               suggestions.map((s, i) => (
-                <li
+                // biome-ignore lint/a11y/useFocusableInteractive: Focus stays on the input using aria-activedescendant.
+                // biome-ignore lint/a11y/useKeyWithClickEvents: Keyboard selection is handled by the combobox input via aria-activedescendant.
+                <div
+                  role="option"
                   key={s.value}
                   id={`${listId}-${i}`}
                   aria-selected={i === active}
@@ -125,9 +128,9 @@ function Autocomplete({
                   {s.description && (
                     <span className="block text-xs text-muted-foreground">{s.description}</span>
                   )}
-                </li>
+                </div>
               ))}
-          </ul>
+          </div>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>

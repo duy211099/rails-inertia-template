@@ -9,12 +9,12 @@ describe('cn', () => {
   })
 
   it('lets later Tailwind utilities override conflicting values', () => {
-    expect(cn('px-2 py-4 text-red-500', 'px-6 text-blue-500')).toBe('py-4 px-6 text-blue-500')
+    expect(cn('text-red-500 px-2 py-4', 'text-blue-500 px-6')).toBe('py-4 text-blue-500 px-6')
   })
 
   it('keeps responsive and state variants independent', () => {
-    expect(cn('p-2 hover:bg-red-500 md:p-4', 'p-6 hover:bg-blue-500')).toBe(
-      'md:p-4 p-6 hover:bg-blue-500'
+    expect(cn('hover:bg-red-500 p-2 md:p-4', 'hover:bg-blue-500 p-6')).toBe(
+      'md:p-4 hover:bg-blue-500 p-6'
     )
   })
 

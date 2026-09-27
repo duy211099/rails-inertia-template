@@ -5,12 +5,16 @@ pre-commit:
   parallel: true
   commands:
     biome:
-      glob: "app/frontend/**/*.{ts,tsx}"
+      glob: "**/*.{js,jsx,ts,tsx,mjs,cjs}"
       run: npx biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
 
+    tailwind:
+      glob: "app/frontend/**/*.{ts,tsx}"
+      run: npx eslint {staged_files}
+
     rubocop:
-      glob: "**/*.rb"
+      glob: "{**/*.rb,**/*.rake,Gemfile,Rakefile,config.ru}"
       exclude:
         - "db/schema.rb"
         - "vendor/**/*"
@@ -18,7 +22,7 @@ pre-commit:
       stage_fixed: true
 
     typescript:
-      glob: "app/frontend/**/*.{ts,tsx}"
+      glob: "**/*.{ts,tsx}"
       run: npm run check
 
 pre-push:
@@ -32,3 +36,6 @@ pre-push:
 
     biome-lint:
       run: npm run biome:check
+
+    tailwind-lint:
+      run: npm run lint:tailwind

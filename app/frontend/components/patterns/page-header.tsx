@@ -80,7 +80,7 @@ function PageHeaderHeading({
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <h1
         data-slot="page-header-heading"
-        className={cn('m-0 text-xl font-semibold break-words text-foreground', className)}
+        className={cn('m-0 text-xl font-semibold wrap-break-word text-foreground', className)}
         {...props}
       >
         {children}

@@ -149,7 +149,7 @@ function DataTable<TData>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {rowActions(row.original).map((group, gi) => (
-                <React.Fragment key={gi}>
+                <React.Fragment key={JSON.stringify(group.map((action) => action.label))}>
                   {gi > 0 && <DropdownMenuSeparator />}
                   {group.map((a) => (
                     <DropdownMenuItem
@@ -196,6 +196,7 @@ function DataTable<TData>({
   return (
     <div data-slot="data-table" className="relative">
       {count > 0 && (
+        // biome-ignore lint/a11y/useSemanticElements: Preserve the div ref/props API of this composable wrapper.
         <div
           role="region"
           aria-label="Bulk actions"
@@ -295,6 +296,7 @@ function DataTable<TData>({
         <TableBody>
           {loading ? (
             Array.from({ length: Math.max(data.length, 6) }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: Loading placeholders have no record identity or state.
               <TableRow key={`sk${i}`} className="hover:bg-transparent">
                 {table.getVisibleFlatColumns().map((c, ci) => (
                   <TableCell key={c.id} className={hide(c.columnDef.meta?.hideBelow)}>

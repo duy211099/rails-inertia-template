@@ -83,8 +83,8 @@ function SettingsNav({
 }) {
   return (
     <nav aria-label="Settings" data-slot="settings-nav" className={cn('max-lg:hidden', className)}>
-      {groups.map((g, i) => (
-        <div key={i} className="mb-4">
+      {groups.map((g) => (
+        <div key={JSON.stringify(g.items.map((item) => item.url))} className="mb-4">
           {g.label && (
             <h2 className="m-0 px-2 pb-1 text-xs font-medium text-muted-foreground">{g.label}</h2>
           )}

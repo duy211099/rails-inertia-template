@@ -22,11 +22,12 @@ function SaveBar({
 }) {
   if (!open) return null
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Preserve the div ref/props API of this composable wrapper.
     <div
       role="region"
       aria-label="Unsaved changes"
       data-slot="save-bar"
-      className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-b bg-foreground px-4 text-background shadow-sm md:left-[var(--sidebar-width,0px)]"
+      className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-b bg-foreground px-4 text-background shadow-sm md:left-(--sidebar-width,0px)"
     >
       <div className="flex w-full items-center justify-between gap-3">
         <p className="m-0 flex items-center gap-2 text-sm font-semibold">

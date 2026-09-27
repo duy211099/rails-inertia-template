@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Preserve the div ref/props API of this composable wrapper.
     <div
       data-slot="input-group"
       role="group"
@@ -60,6 +61,8 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: This only focuses the adjacent input, which is already keyboard focusable.
+    // biome-ignore lint/a11y/useSemanticElements: Preserve the div ref/props API of this composable wrapper.
     <div
       role="group"
       data-slot="input-group-addon"

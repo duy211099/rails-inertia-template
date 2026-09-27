@@ -1,10 +1,10 @@
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'vite'
-import RubyPlugin from 'vite-plugin-ruby'
-import FullReload from 'vite-plugin-full-reload'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import FullReload from 'vite-plugin-full-reload'
+import RubyPlugin from 'vite-plugin-ruby'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -43,8 +43,12 @@ export default defineConfig({
           if (id.includes('node_modules/@radix-ui') || id.includes('node_modules/lucide-react')) {
             return 'vendor-ui'
           }
-          if (id.includes('node_modules/axios') || id.includes('node_modules/clsx') ||
-              id.includes('node_modules/class-variance-authority') || id.includes('node_modules/date-fns')) {
+          if (
+            id.includes('node_modules/axios') ||
+            id.includes('node_modules/clsx') ||
+            id.includes('node_modules/class-variance-authority') ||
+            id.includes('node_modules/date-fns')
+          ) {
             return 'vendor-common'
           }
         },

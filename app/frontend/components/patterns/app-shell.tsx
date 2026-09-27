@@ -35,6 +35,7 @@ function SiteHeader({
 /** Closes the mobile sidebar Sheet after each visit. */
 function CloseMobileOnNavigate({ path }: { path: string }) {
   const { setOpenMobile } = useSidebar()
+  // biome-ignore lint/correctness/useExhaustiveDependencies: A path change intentionally closes mobile navigation.
   React.useEffect(() => setOpenMobile(false), [path, setOpenMobile])
   return null
 }
@@ -59,6 +60,7 @@ function AppShell({
   ...sidebar
 }: AppShellProps) {
   const first = React.useRef(true)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Restore focus after navigation, keyed by the current path.
   React.useEffect(() => {
     if (first.current) {
       first.current = false

@@ -113,12 +113,12 @@ export default function VersionsIndex({ versions, pagy }: Props) {
                                 {String(change.to)}
                               </span>
                             ) : version.event === 'destroy' ? (
-                              <span className="text-red-600 line-through dark:text-red-400">
+                              <span className="text-red-600 dark:text-red-400 line-through">
                                 {String(change.from)}
                               </span>
                             ) : (
                               <>
-                                <span className="text-red-600 line-through dark:text-red-400">
+                                <span className="text-red-600 dark:text-red-400 line-through">
                                   {String(change.from)}
                                 </span>
                                 {' → '}

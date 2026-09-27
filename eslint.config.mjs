@@ -1,8 +1,9 @@
 // ESLint here is scoped to eslint-plugin-tailwindcss only.
 // Biome (biome.json) remains the sole linter/formatter for general JS/TS.
-import tailwindcss from 'eslint-plugin-tailwindcss'
-import { defineConfig } from 'eslint/config'
+
 import babelParser from '@babel/eslint-parser'
+import { defineConfig } from 'eslint/config'
+import tailwindcss from 'eslint-plugin-tailwindcss'
 
 export default defineConfig([
   tailwindcss.configs.recommended,

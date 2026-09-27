@@ -49,9 +49,15 @@ function DatePicker({
   placeholder = 'YYYY-MM-DD',
   ...props
 }: DatePickerProps) {
-  const fmt = (iso: string | null) =>
-    fromISO(iso)?.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' }) ??
-    ''
+  const fmt = React.useCallback(
+    (iso: string | null) =>
+      fromISO(iso)?.toLocaleDateString(locale, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }) ?? '',
+    [locale]
+  )
   const [text, setText] = React.useState(fmt(value))
   const [openState, setOpenState] = React.useState(false)
   const open = openProp ?? openState
@@ -67,6 +73,8 @@ function DatePicker({
     if (iso) onValueChange?.(toISO(iso))
   }
   const selected = fromISO(value)
+  const minDate = fromISO(min)
+  const maxDate = fromISO(max)
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverAnchor asChild>
@@ -100,8 +108,8 @@ function DatePicker({
           selected={selected}
           defaultMonth={selected}
           disabled={[
-            ...(min ? [{ before: fromISO(min)! }] : []),
-            ...(max ? [{ after: fromISO(max)! }] : []),
+            ...(minDate ? [{ before: minDate }] : []),
+            ...(maxDate ? [{ after: maxDate }] : []),
           ]}
           onSelect={(d) => {
             if (d) {

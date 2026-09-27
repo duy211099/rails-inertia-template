@@ -45,7 +45,7 @@ function NumberInput({
 }: NumberInputProps) {
   const controlled = value !== undefined
   const [inner, setInner] = React.useState<number | null>(defaultValue)
-  const current = controlled ? value! : inner
+  const current = value !== undefined ? value : inner
   const [text, setText] = React.useState(current == null ? '' : String(current))
   React.useEffect(() => setText(current == null ? '' : String(current)), [current])
   const commit = (n: number | null) => {
