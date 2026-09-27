@@ -59,13 +59,12 @@ RSpec.describe "Admin::Users", type: :request do
   end
 
   describe "GET /admin/users/:id" do
-    it "shows a user's detail with items_count to an admin" do
+    it "shows a user's detail to an admin" do
       sign_in_admin
       inertia_get admin_user_path(users(:two))
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to include("component" => "admin/users/show")
       expect(response.parsed_body.dig("props", "user", "email")).to eq(users(:two).email)
-      expect(response.parsed_body.dig("props", "user", "itemsCount")).to eq(1)
     end
 
     it "404s for an unknown id" do

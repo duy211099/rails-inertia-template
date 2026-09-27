@@ -16,7 +16,7 @@ RSpec.describe "Home", type: :request do
     sign_in users(:one)
     get root_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
     expect(response.parsed_body.dig("props", "user").keys).to contain_exactly(
-      "id", "name", "email", "avatarUrl", "createdAt", "roles", "itemsCount"
+      "id", "name", "email", "avatarUrl", "createdAt", "roles"
     )
   end
 end
