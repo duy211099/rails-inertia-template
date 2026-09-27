@@ -10,7 +10,7 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def admin?
-    user.admin?
+    user.at_least?(:admin)
   end
 
   # Default rules - deny everything by default

@@ -112,7 +112,10 @@ RSpec.describe "Items", type: :request do
   end
 
   context "when signed in as an admin" do
-    before { sign_in users(:one).tap { |u| u.update!(role: :admin) } }
+    before do
+      UserRole.create!(user: users(:one), role: Role.create!(name: "admin"))
+      sign_in User.find(users(:one).id)
+    end
 
     it "can show another user's item" do
       get item_path(items(:three))

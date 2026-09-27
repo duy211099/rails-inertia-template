@@ -19,8 +19,8 @@ RSpec.describe "Admin", type: :request do
   end
 
   it "shows every user's items to a signed-in admin" do
-    users(:one).update!(role: :admin)
-    sign_in users(:one)
+    UserRole.create!(user: users(:one), role: Role.create!(name: "admin"))
+    sign_in User.find(users(:one).id)
     get admin_root_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
     expect(response).to have_http_status(:ok)
     expect(response.parsed_body).to include("component" => "admin/dashboard")

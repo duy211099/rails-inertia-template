@@ -16,7 +16,6 @@ require "rails_helper"
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
-#  role                   :integer          default("member"), not null
 #  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -101,15 +100,28 @@ RSpec.describe User, type: :model do
     expect(Item.exists?(items(:three).id)).to be(true)
   end
 
-  describe "#role" do
-    it "defaults new users to member" do
-      expect(users(:one)).to be_member
-      expect(users(:one)).not_to be_admin
+  describe "#at_least?" do
+    it "treats a user with no roles as at least member" do
+      expect(users(:one).roles).to be_empty
+      expect(users(:one).at_least?(:member)).to be(true)
+      expect(users(:one).at_least?(:dev)).to be(false)
+      expect(users(:one).at_least?(:admin)).to be(false)
     end
 
-    it "promotes to admin via the enum" do
-      users(:one).admin!
-      expect(users(:one).reload).to be_admin
+    it "grants dev but not admin when assigned the dev role" do
+      UserRole.create!(user: users(:one), role: Role.create!(name: "dev"))
+      user = described_class.find(users(:one).id)
+
+      expect(user.at_least?(:dev)).to be(true)
+      expect(user.at_least?(:admin)).to be(false)
+    end
+
+    it "grants dev and admin when assigned the admin role" do
+      UserRole.create!(user: users(:one), role: Role.create!(name: "admin"))
+      user = described_class.find(users(:one).id)
+
+      expect(user.at_least?(:dev)).to be(true)
+      expect(user.at_least?(:admin)).to be(true)
     end
   end
 end

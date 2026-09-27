@@ -7,6 +7,6 @@ class AdminController < InertiaController
 
   def authenticate_admin!
     authenticate_user!
-    redirect_to root_path, alert: I18n.t("admin.access_denied") unless current_user.admin?
+    redirect_to root_path, alert: I18n.t("admin.access_denied") unless current_user.role?("admin")
   end
 end

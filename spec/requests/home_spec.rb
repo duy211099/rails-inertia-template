@@ -15,6 +15,6 @@ RSpec.describe "Home", type: :request do
   it "shares the signed-in user's profile, same as any other Inertia page" do
     sign_in users(:one)
     get root_path, headers: { "X-Inertia" => "true", "X-Inertia-Version" => ViteRuby.digest }
-    expect(response.parsed_body.dig("props", "user").keys).to contain_exactly("id", "name", "email", "avatarUrl")
+    expect(response.parsed_body.dig("props", "user").keys).to contain_exactly("id", "name", "email", "avatarUrl", "roles")
   end
 end

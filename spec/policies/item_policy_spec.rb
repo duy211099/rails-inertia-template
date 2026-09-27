@@ -28,7 +28,10 @@ RSpec.describe ItemPolicy, type: :policy do
   end
 
   context "when the user is an admin" do
-    let(:admin) { users(:two).tap { |u| u.update!(role: :admin) } }
+    let(:admin) do
+      UserRole.create!(user: users(:two), role: Role.create!(name: "admin"))
+      User.find(users(:two).id)
+    end
 
     %i[show? update? edit? destroy?].each do |rule|
       it "allows #{rule} on another user's item" do
