@@ -1,5 +1,12 @@
 import { router, usePage } from '@inertiajs/react'
 import { useTranslation } from 'react-i18next'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { localePath } from '@/lib/routes'
 
 interface LocaleSwitcherPageProps {
@@ -16,8 +23,7 @@ export default function LocaleSwitcher() {
   // shows an error dialog instead of running onSuccess. A plain fetch with
   // the CSRF token (same pattern as the demo page's client-fetch example)
   // avoids that entirely.
-  const handleChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const locale = event.target.value
+  const handleChange = async (locale: string) => {
     const csrfToken =
       document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
     await fetch(localePath(), {
@@ -29,19 +35,17 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <span className="sr-only">{t('switcher.label')}</span>
-      <select
-        value={i18n.language}
-        onChange={handleChange}
-        className="rounded border bg-background px-2 py-1 text-sm"
-      >
+    <Select value={i18n.language} onValueChange={handleChange}>
+      <SelectTrigger size="sm" aria-label={t('switcher.label')}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent position="popper" align="end">
         {availableLocales.map((locale) => (
-          <option key={locale} value={locale}>
+          <SelectItem key={locale} value={locale}>
             {locale.toUpperCase()}
-          </option>
+          </SelectItem>
         ))}
-      </select>
-    </label>
+      </SelectContent>
+    </Select>
   )
 }

@@ -2,3 +2,15 @@
 
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
+
+/* `html { scrollbar-gutter: stable }` in globals.css already reserves the
+   scrollbar's width permanently. Radix's scroll lock (react-remove-scroll-bar,
+   used by Select/DropdownMenu/Dialog/Popover) doesn't know that: on every open
+   it measures the live scrollbar width and sets `body[data-scroll-locked] {
+   margin-right: <gap>px !important }` via a <style> tag it injects at runtime,
+   reserving that space a second time on top of the gutter — the page visibly
+   shifts open/close. That tag lands after this stylesheet, so an equally
+   specific override loses on source order; add `html` to out-specify it. */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+}
