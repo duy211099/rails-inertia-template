@@ -42,6 +42,7 @@ class User < ApplicationRecord
   has_many :roles, through: :user_roles
 
   before_validation :ensure_jti, on: :create
+  after_create :assign_default_role
 
   validates :uid, uniqueness: { scope: :provider }, allow_nil: true
   validates :jti, presence: true, uniqueness: true
@@ -71,5 +72,9 @@ class User < ApplicationRecord
 
   def ensure_jti
     self.jti ||= SecureRandom.uuid
+  end
+
+  def assign_default_role
+    user_roles.create!(role: Role.find_or_create_by!(name: "member"))
   end
 end
