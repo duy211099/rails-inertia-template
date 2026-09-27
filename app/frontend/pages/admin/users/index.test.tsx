@@ -93,4 +93,66 @@ describe('AdminUsersIndex search debounce', () => {
     expect(mockGet).not.toHaveBeenCalled()
     vi.useRealTimers()
   })
+
+  it('sorts by a column when its header is clicked', () => {
+    mockGet.mockClear()
+    render(<AdminUsersIndex users={users} pagy={pagy} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }))
+
+    expect(mockGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ sort: 'name', direction: 'asc' }),
+      expect.objectContaining({ preserveState: true, preserveScroll: true, replace: true })
+    )
+  })
+
+  it('sorts by the Joined column using the snake_case DB column name', () => {
+    mockGet.mockClear()
+    render(<AdminUsersIndex users={users} pagy={pagy} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Joined' }))
+
+    expect(mockGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ sort: 'created_at', direction: 'asc' }),
+      expect.anything()
+    )
+  })
+
+  it('reverses sort direction on a second click of the same header', () => {
+    mockGet.mockClear()
+    render(<AdminUsersIndex users={users} pagy={pagy} sort="name" direction="asc" />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }))
+
+    expect(mockGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ sort: 'name', direction: 'desc' }),
+      expect.anything()
+    )
+  })
+
+  it('filters by role when a role option is selected', async () => {
+    mockGet.mockClear()
+    render(<AdminUsersIndex users={users} pagy={pagy} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Roles' }))
+    await userEvent.click(screen.getByRole('menuitemcheckbox', { name: 'Admin' }))
+
+    expect(mockGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ role: ['admin'] }),
+      expect.anything()
+    )
+  })
+
+  it('clears search and role filter when Reset is clicked', async () => {
+    mockGet.mockClear()
+    render(<AdminUsersIndex users={users} pagy={pagy} q="ada" role={['admin']} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
+
+    expect(screen.getByPlaceholderText('Search by name or email')).toHaveValue('')
+  })
 })

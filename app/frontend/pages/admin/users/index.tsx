@@ -1,9 +1,16 @@
 import { Head, router } from '@inertiajs/react'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { UsersIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DataTable, DataTablePagination, DataTableToolbar } from '@/components/patterns/data-table'
+import { Inline } from '@/components/layout/stack'
+import {
+  DataTable,
+  DataTableColumnHeader,
+  DataTableFacetedFilter,
+  DataTablePagination,
+  DataTableToolbar,
+} from '@/components/patterns/data-table'
 import {
   Page,
   PageHeader,
@@ -11,6 +18,7 @@ import {
   PageHeaderHeading,
 } from '@/components/patterns/page-header'
 import { ResourceIndex } from '@/components/patterns/resource-index'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
   Empty,
@@ -28,49 +36,101 @@ type Props = {
   users: User[]
   pagy: Pagy
   q?: string
+  role?: string[]
+  sort?: string
+  direction?: string
 }
 
-export default function AdminUsersIndex({ users, pagy, q }: Props) {
+const ROLE_OPTIONS = [
+  { value: 'member', label: 'Member' },
+  { value: 'dev', label: 'Dev' },
+  { value: 'admin', label: 'Admin' },
+]
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+
+export default function AdminUsersIndex({ users, pagy, q, role, sort, direction }: Props) {
   const { t } = useTranslation('admin/users/index')
-  const [rowSelection, setRowSelection] = useState({})
   const [query, setQuery] = useState(q ?? '')
   const debouncedQuery = useDebouncedValue(query, 300)
-  const lastSentQuery = useRef(q ?? '')
+  const [roleFilter, setRoleFilter] = useState<string[]>(role ?? [])
+  const [sorting, setSorting] = useState<SortingState>(
+    sort ? [{ id: sort, desc: direction === 'desc' }] : []
+  )
+  const lastSentKey = useRef(
+    JSON.stringify({ q: q ?? '', role: [...(role ?? [])].sort(), sort, direction })
+  )
 
   useEffect(() => {
-    if (debouncedQuery === lastSentQuery.current) return
-    lastSentQuery.current = debouncedQuery
+    const activeSort = sorting[0]
+    const key = JSON.stringify({
+      q: debouncedQuery,
+      role: [...roleFilter].sort(),
+      sort: activeSort?.id,
+      direction: activeSort ? (activeSort.desc ? 'desc' : 'asc') : undefined,
+    })
+    if (key === lastSentKey.current) return
+    lastSentKey.current = key
     router.get(
       adminUsersPath(),
-      { q: debouncedQuery || undefined },
+      {
+        q: debouncedQuery || undefined,
+        role: roleFilter.length ? roleFilter : undefined,
+        sort: activeSort?.id,
+        direction: activeSort ? (activeSort.desc ? 'desc' : 'asc') : undefined,
+      },
       { preserveState: true, preserveScroll: true, replace: true }
     )
-  }, [debouncedQuery])
+  }, [debouncedQuery, roleFilter, sorting])
+
+  const isFiltered = query !== '' || roleFilter.length > 0
 
   const columns: ColumnDef<User, any>[] = [
     {
       accessorKey: 'name',
-      header: t('columnName'),
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columnName')} />,
       meta: { primary: true },
-      cell: ({ row }) => row.original.name || row.original.email,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Avatar className="size-6">
+            <AvatarImage src={row.original.avatarUrl ?? undefined} alt="" />
+            <AvatarFallback className="text-xs">
+              {initials(row.original.name || row.original.email)}
+            </AvatarFallback>
+          </Avatar>
+          <span>{row.original.name || row.original.email}</span>
+        </div>
+      ),
     },
-    { accessorKey: 'email', header: t('columnEmail'), meta: { hideBelow: 'md' } },
+    {
+      accessorKey: 'email',
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columnEmail')} />,
+      meta: { hideBelow: 'md' },
+    },
     {
       accessorKey: 'roles',
       header: t('columnRoles'),
+      enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex flex-wrap gap-1">
+        <Inline gap="2xs">
           {row.original.roles.map((role) => (
             <Badge key={role} variant="secondary">
               {role}
             </Badge>
           ))}
-        </div>
+        </Inline>
       ),
     },
     {
-      accessorKey: 'createdAt',
-      header: t('columnCreated'),
+      id: 'created_at',
+      accessorFn: (row) => row.createdAt,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t('columnCreated')} />,
       meta: { hideBelow: 'md' },
       cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
     },
@@ -103,6 +163,19 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
             query={query}
             onQueryChange={setQuery}
             searchPlaceholder={t('searchPlaceholder')}
+            isFiltered={isFiltered}
+            onReset={() => {
+              setQuery('')
+              setRoleFilter([])
+            }}
+            filters={
+              <DataTableFacetedFilter
+                title={t('columnRoles')}
+                options={ROLE_OPTIONS}
+                selected={roleFilter}
+                onSelectedChange={setRoleFilter}
+              />
+            }
           />
         }
         pagination={
@@ -122,8 +195,8 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
           data={users}
           getRowId={(user) => user.id}
           rowHref={(user) => adminUserPath(user.id)}
-          rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
+          sorting={sorting}
+          onSortingChange={setSorting}
           emptyState={
             <Empty>
               <EmptyHeader>

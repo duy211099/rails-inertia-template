@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react'
 import { useTranslation } from 'react-i18next'
+import { Inline } from '@/components/layout/stack'
 import { DetailLayout } from '@/components/patterns/detail-layout'
 import {
   Page,
@@ -32,7 +33,7 @@ export default function AdminUserShow({ user }: Props) {
       <Head title={displayName} />
       <PageHeader>
         <PageHeaderContent>
-          <PageHeaderBack href={adminUsersPath()} label={t('heading')} />
+          <PageHeaderBack href={adminUsersPath()} label={t('backLabel')} />
           <PageHeaderHeading>{displayName}</PageHeaderHeading>
         </PageHeaderContent>
       </PageHeader>
@@ -51,13 +52,13 @@ export default function AdminUserShow({ user }: Props) {
               <DescriptionItem>
                 <DescriptionTerm>{t('rolesLabel')}</DescriptionTerm>
                 <DescriptionDetails>
-                  <div className="flex flex-wrap gap-1">
+                  <Inline gap="2xs">
                     {user.roles.map((role) => (
                       <Badge key={role} variant="secondary">
                         {role}
                       </Badge>
                     ))}
-                  </div>
+                  </Inline>
                 </DescriptionDetails>
               </DescriptionItem>
               <DescriptionItem>
