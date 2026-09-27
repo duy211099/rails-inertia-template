@@ -87,7 +87,7 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
 
       <ResourceIndex
         label={t('heading')}
-        state={pagy.count === 0 && !query ? 'empty' : 'ready'}
+        state={pagy.count === 0 && !q ? 'empty' : 'ready'}
         empty={
           <Empty>
             <EmptyHeader>
