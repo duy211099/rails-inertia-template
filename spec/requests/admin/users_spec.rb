@@ -56,6 +56,40 @@ RSpec.describe "Admin::Users", type: :request do
       inertia_get admin_users_path, q: "no-such-user"
       expect(response.parsed_body.dig("props", "users")).to eq([])
     end
+
+    it "sorts by name ascending" do
+      sign_in_admin
+      # Backdated so default created_at order would put it LAST — only an
+      # actual name sort puts it first alphabetically.
+      user = User.create!(email: "aaa-first@example.com", password: "password123", name: "AAA First")
+      user.update_column(:created_at, 10.years.ago)
+
+      inertia_get admin_users_path, sort: "name", direction: "asc"
+      names = response.parsed_body.dig("props", "users").map { |u| u["name"] }
+      expect(names.first).to eq("AAA First")
+    end
+
+    it "sorts by created_at descending by default" do
+      sign_in_admin
+      inertia_get admin_users_path
+      ids = response.parsed_body.dig("props", "users").map { |u| u["id"] }
+      expect(ids).to eq(User.order(created_at: :desc).pluck(:id))
+    end
+
+    it "rejects an unknown sort column, falling back to created_at" do
+      sign_in_admin
+      inertia_get admin_users_path, sort: "encrypted_password", direction: "asc"
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body.dig("props", "sort")).to be_nil
+    end
+
+    it "filters by role" do
+      sign_in_admin
+      admin_role = Role.find_by(name: "admin")
+      inertia_get admin_users_path, role: [ "admin" ]
+      emails = response.parsed_body.dig("props", "users").map { |u| u["email"] }
+      expect(emails).to match_array(admin_role.users.map(&:email))
+    end
   end
 
   describe "GET /admin/users/:id" do
