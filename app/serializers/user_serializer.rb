@@ -29,8 +29,11 @@
 class UserSerializer < BaseSerializer
   typelize_from User
 
-  attributes :id, :name, :email, :avatar_url
+  attributes :id, :name, :email, :avatar_url, :created_at
 
   typelize roles: "string[]"
   attribute(:roles) { |user| user.roles.pluck(:name) }
+
+  typelize items_count: :number
+  attribute(:items_count) { |user| user.items.size }
 end
