@@ -1,0 +1,14 @@
+{
+  "pageTitle": "Users",
+  "heading": "Users",
+  "searchPlaceholder": "Search by name or email",
+  "columnName": "Name",
+  "columnEmail": "Email",
+  "columnRoles": "Roles",
+  "columnCreated": "Joined",
+  "userNoun": "user",
+  "userNounPlural": "users",
+  "showingRange": "{{from}}–{{to}} of {{count}}",
+  "empty": "No users found",
+  "emptyDescription": "Try a different search."
+}

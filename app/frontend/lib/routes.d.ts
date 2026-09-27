@@ -87,6 +87,28 @@ export declare const adminRootPath: ((
 
 /**
  * Generates rails route to
+ * /admin/users/:id(.:format)
+ * @param {any} id
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export declare const adminUserPath: ((
+  id: RequiredRouteParameter,
+  options?: {format?: OptionalRouteParameter} & RouteOptions
+) => string) & RouteHelperExtras;
+
+/**
+ * Generates rails route to
+ * /admin/users(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export declare const adminUsersPath: ((
+  options?: {format?: OptionalRouteParameter} & RouteOptions
+) => string) & RouteHelperExtras;
+
+/**
+ * Generates rails route to
  * /api/docs(.:format)
  * @param {object | undefined} options
  * @returns {string} route path
