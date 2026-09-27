@@ -268,6 +268,10 @@
   .dark, [data-theme="dark"] { color-scheme: dark; }
   /* Keel: product text defaults to 14/20 (text-sm), not the browser's 16px. */
   body { @apply bg-background font-sans text-sm text-foreground; }
+  /* Keel: html already reserves scrollbar space via scrollbar-gutter above, so Radix's
+     react-remove-scroll lock (Dialog/Sheet/DropdownMenu/Popover) must not also compensate
+     for a scrollbar — otherwise opening/closing any overlay shifts the layout by its width. */
+  html body[data-scroll-locked] { margin-right: 0 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
