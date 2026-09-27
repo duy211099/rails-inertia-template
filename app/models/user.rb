@@ -14,7 +14,6 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
-#  role                   :integer          default("member"), not null
 #  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -38,16 +37,24 @@ class User < ApplicationRecord
 
   has_many :items, dependent: :destroy
   has_many :login_codes, dependent: :destroy
+  has_many :user_roles, dependent: :destroy
+  has_many :roles, through: :user_roles
 
   before_validation :ensure_jti, on: :create
-
-  enum :role, { member: 0, admin: 1 }
 
   validates :uid, uniqueness: { scope: :provider }, allow_nil: true
   validates :jti, presence: true, uniqueness: true
 
   def versions
     PaperTrail::Version.where(whodunnit: id.to_s).order(created_at: :desc)
+  end
+
+  def role?(name)
+    roles.any? { |r| r.name == name.to_s }
+  end
+
+  def at_least?(role_name)
+    roles.map(&:level).max.to_i >= Role::LEVELS.fetch(role_name.to_s, 0)
   end
 
   def self.from_omniauth(provider:, uid:, email:, name:, avatar_url:)

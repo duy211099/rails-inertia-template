@@ -221,7 +221,10 @@ RSpec.describe "Items API", type: :request do
   end
 
   context "when signed in as an admin" do
-    before { sign_in users(:one).tap { |u| u.update!(role: :admin) } }
+    before do
+      UserRole.create!(user: users(:one), role: Role.create!(name: "admin"))
+      sign_in User.find(users(:one).id)
+    end
 
     it "lists every user's items, not just their own" do
       get "/api/v1/items", as: :json
