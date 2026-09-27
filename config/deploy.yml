@@ -66,7 +66,7 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
 
-# Use a persistent storage volume for sqlite database files and local Active Storage files.
+# Use a persistent storage volume for local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
   - "rails_inertia_template_storage:/rails/storage"
@@ -97,17 +97,14 @@ builder:
 # Use accessory services (secrets come from .kamal/secrets).
 # accessories:
 #   db:
-#     image: mysql:8.0
+#     image: postgres:17
 #     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
+#     # Change to 5432 to expose port to the world instead of just local network.
+#     port: "127.0.0.1:5432:5432"
 #     env:
 #       clear:
-#         MYSQL_ROOT_HOST: '%'
+#         POSTGRES_USER: rails_inertia_template
 #       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+#         - POSTGRES_PASSWORD
 #     directories:
-#       - data:/var/lib/mysql
+#       - data:/var/lib/postgresql/data

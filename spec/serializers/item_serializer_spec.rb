@@ -5,15 +5,16 @@ require "rails_helper"
 # == Schema Information
 #
 # Table name: items
+# Database name: primary
 #
-#  id           :integer          not null, primary key
+#  id           :uuid             not null, primary key
 #  description  :text
 #  discarded_at :datetime
 #  name         :string           not null
 #  phone_number :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  user_id      :integer          not null
+#  user_id      :uuid             not null
 #
 # Indexes
 #
@@ -22,7 +23,7 @@ require "rails_helper"
 #
 # Foreign Keys
 #
-#  user_id  (user_id => users.id)
+#  fk_rails_...  (user_id => users.id)
 #
 RSpec.describe ItemSerializer do
   fixtures :users, :items

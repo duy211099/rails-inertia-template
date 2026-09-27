@@ -92,8 +92,8 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          minimum: 1
+          type: string
+          format: uuid
     get:
       operationId: getItem
       summary: Show an owned, kept item
@@ -256,7 +256,8 @@ components:
       required: [id, name, description, phoneNumber, createdAt, updatedAt]
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
         name:
           type: string
         description:

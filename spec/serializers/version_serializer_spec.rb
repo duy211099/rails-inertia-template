@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe VersionSerializer do
   def serialize(object:, changes:)
-    version = PaperTrail::Version.new(id: 7, item_type: "Item", item_id: 3, event: "update",
+    version = PaperTrail::Version.new(id: SecureRandom.uuid, item_type: "Item", item_id: SecureRandom.uuid, event: "update",
       object: object, object_changes: changes, created_at: Time.utc(2026, 1, 2, 3, 4, 5))
     described_class.new(version).serializable_hash.stringify_keys
   end

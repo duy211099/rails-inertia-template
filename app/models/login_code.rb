@@ -3,13 +3,14 @@
 # == Schema Information
 #
 # Table name: login_codes
+# Database name: primary
 #
-#  id         :integer          not null, primary key
+#  id         :uuid             not null, primary key
 #  code       :string           not null
 #  expires_at :datetime         not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  user_id    :integer          not null
+#  user_id    :uuid             not null
 #
 # Indexes
 #
@@ -18,7 +19,7 @@
 #
 # Foreign Keys
 #
-#  user_id  (user_id => users.id)
+#  fk_rails_...  (user_id => users.id)
 #
 class LoginCode < ApplicationRecord
   belongs_to :user

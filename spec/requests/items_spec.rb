@@ -43,7 +43,7 @@ RSpec.describe "Items", type: :request do
       expect do
         post items_path, params: { item: { name: "New Item", description: "Details", phone_number: "123", user_id: users(:two).id } }
       end.to change(Item, :count).by(1)
-      expect(Item.order(:id).last).to have_attributes(name: "New Item", description: "Details", phone_number: "123", user_id: users(:one).id)
+      expect(Item.order(:created_at).last).to have_attributes(name: "New Item", description: "Details", phone_number: "123", user_id: users(:one).id)
       expect(response).to redirect_to(items_path)
     end
 
