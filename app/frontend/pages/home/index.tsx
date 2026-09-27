@@ -1,60 +1,41 @@
-import { Head } from '@inertiajs/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Head, Link, usePage } from '@inertiajs/react'
+import { useTranslation } from 'react-i18next'
+import { AuthNav } from '@/components/auth-nav'
 import { Button } from '@/components/ui/button'
-import { ItemsPanel } from './ItemsPanel'
-import { LoginCard } from './LoginCard'
-import { useClientAuth } from './useClientAuth'
-import { useItems } from './useItems'
-
-// Scoped to this page only — the rest of the app is server-driven Inertia
-// and has no client-side data cache to manage.
-const queryClient = new QueryClient()
+import { Card, CardContent } from '@/components/ui/card'
+import { itemsPath } from '@/lib/routes'
+import type { SharedProps } from '@/types'
 
 export default function Home() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <HomeContent />
-    </QueryClientProvider>
-  )
-}
-
-function HomeContent() {
-  const items = useItems()
-  const auth = useClientAuth(items.loadItems)
-  const error = auth.error ?? items.error
+  const { t } = useTranslation('home/index')
+  const { user } = usePage<SharedProps>().props
 
   return (
     <div className="min-h-screen bg-background">
-      <Head title="Home" />
+      <Head title={t('pageTitle')} />
 
-      <main className="container mx-auto max-w-2xl px-4 py-8">
-        <h1 className="mb-2 text-2xl font-bold">Items</h1>
-        <p className="mb-6 text-muted-foreground">
-          A React client talking to <code>/api/v1</code> with a JWT bearer token.
-        </p>
+      <header className="border-b">
+        <div className="container mx-auto flex items-center justify-between p-4">
+          <h1 className="text-2xl font-bold">{t('heading')}</h1>
+          <AuthNav />
+        </div>
+      </header>
 
-        {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
+      <main className="container mx-auto px-4 py-16">
+        <Card>
+          <CardContent className="flex flex-col items-center gap-6 py-16 text-center">
+            <h2 className="text-3xl font-bold">{t('heading')}</h2>
+            <p className="max-w-md text-muted-foreground">{t('tagline')}</p>
 
-        {!auth.user ? (
-          <LoginCard onLogin={auth.handleLogin} />
-        ) : (
-          <>
-            <div className="mb-6 flex items-center justify-between">
-              <p>
-                Signed in as <strong>{auth.user.email}</strong>
-              </p>
-              <Button variant="outline" onClick={auth.handleLogout}>
-                Log out
-              </Button>
-            </div>
-
-            <ItemsPanel
-              items={items.items}
-              onCreate={items.handleCreate}
-              onDelete={items.handleDelete}
-            />
-          </>
-        )}
+            {user ? (
+              <Link href={itemsPath()}>
+                <Button size="lg">{t('viewItems')}</Button>
+              </Link>
+            ) : (
+              <p className="text-sm text-muted-foreground">{t('signInPrompt')}</p>
+            )}
+          </CardContent>
+        </Card>
       </main>
     </div>
   )
