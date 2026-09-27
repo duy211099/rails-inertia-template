@@ -39,7 +39,7 @@ describe('LocaleSwitcher', () => {
   it('PATCHes the locale endpoint with a CSRF token and reloads on success', async () => {
     render(<LocaleSwitcher />)
     await userEvent.click(screen.getByRole('combobox'))
-    await userEvent.click(screen.getByRole('option', { name: 'VI' }))
+    await userEvent.click(screen.getByRole('option', { name: 'Tiếng Việt' }))
 
     expect(fetch).toHaveBeenCalledWith(
       '/locale',

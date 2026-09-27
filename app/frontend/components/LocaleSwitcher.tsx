@@ -1,4 +1,5 @@
 import { router, usePage } from '@inertiajs/react'
+import { GlobeIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
   Select,
@@ -12,6 +13,16 @@ import { localePath } from '@/lib/routes'
 interface LocaleSwitcherPageProps {
   availableLocales?: string[]
   [key: string]: unknown
+}
+
+// Each language names itself, in its own script — clearer in the menu than
+// a translated label, and avoids picking a language to translate the rest into.
+function localeAutonym(locale: string) {
+  try {
+    return new Intl.DisplayNames([locale], { type: 'language' }).of(locale) ?? locale.toUpperCase()
+  } catch {
+    return locale.toUpperCase()
+  }
 }
 
 export default function LocaleSwitcher() {
@@ -36,13 +47,18 @@ export default function LocaleSwitcher() {
 
   return (
     <Select value={i18n.language} onValueChange={handleChange}>
-      <SelectTrigger size="sm" aria-label={t('switcher.label')}>
-        <SelectValue />
+      <SelectTrigger
+        size="sm"
+        aria-label={t('switcher.label')}
+        className="h-7 gap-1.5 border-none bg-transparent px-2 shadow-none hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+      >
+        <GlobeIcon className="size-4 text-muted-foreground" />
+        <SelectValue>{i18n.language.toUpperCase()}</SelectValue>
       </SelectTrigger>
       <SelectContent position="popper" align="end">
         {availableLocales.map((locale) => (
           <SelectItem key={locale} value={locale}>
-            {locale.toUpperCase()}
+            {localeAutonym(locale)}
           </SelectItem>
         ))}
       </SelectContent>
