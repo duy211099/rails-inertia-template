@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script>
+      (function () {
+        var stored = localStorage.getItem('theme')
+        var dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.classList.toggle('dark', dark)
+      })()
+    </script>
     <title data-inertia><%= content_for(:title) || "Rails Inertia Template" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
