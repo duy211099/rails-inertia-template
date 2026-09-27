@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { AppShell } from './app-shell'
 
@@ -49,5 +50,16 @@ describe('AppShell focus management', () => {
     )
 
     expect(document.activeElement).toBe(searchInput)
+  })
+
+  it('does not focus main on the initial mount, even under StrictMode double-invoked effects', () => {
+    render(
+      <StrictMode>
+        <AppShell {...baseProps} currentPath="/admin/users">
+          <input placeholder="page content" />
+        </AppShell>
+      </StrictMode>
+    )
+    expect(document.activeElement).not.toBe(document.getElementById('main'))
   })
 })
