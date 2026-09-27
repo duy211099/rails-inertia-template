@@ -66,6 +66,11 @@ function AppShell({
       first.current = false
       return
     }
+    // A same-page visit (e.g. a live search reflecting its query in the URL)
+    // changes currentPath without the user leaving the field they're typing
+    // in — don't steal focus from it.
+    const active = document.activeElement
+    if (active?.closest('input,textarea,select,[contenteditable=true]')) return
     document.getElementById('main')?.focus({ preventScroll: true })
   }, [sidebar.currentPath])
   React.useEffect(() => {
