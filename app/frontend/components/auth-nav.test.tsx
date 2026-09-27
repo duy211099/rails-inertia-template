@@ -28,7 +28,6 @@ const user = {
   avatarUrl: null,
   roles: [],
   createdAt: '2026-01-01T00:00:00.000Z',
-  itemsCount: 0,
 }
 
 beforeEach(() => {
@@ -43,7 +42,7 @@ describe('AuthNav', () => {
   })
 
   it('shows the signed-in profile and submits logout with method override and CSRF token', () => {
-    setPage({ user: { ...user, avatarUrl: 'https://example.com/avatar.png' } })
+    setPage({ currentUser: { ...user, avatarUrl: 'https://example.com/avatar.png' } })
     document.cookie = 'XSRF-TOKEN=test-csrf-token'
     render(<AuthNav />)
     expect(screen.getByText('Ada')).toBeInTheDocument()
@@ -66,7 +65,7 @@ describe('AuthNav', () => {
 
   it('handles missing avatars and a missing CSRF cookie', () => {
     document.cookie = 'XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    setPage({ user })
+    setPage({ currentUser: user })
     render(<AuthNav />)
     expect(screen.queryByRole('img')).not.toBeInTheDocument()
     const form = screen.getByRole<HTMLButtonElement>('button', { name: 'Sign out' }).form

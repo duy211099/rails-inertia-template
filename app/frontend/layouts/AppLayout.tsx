@@ -46,7 +46,7 @@ export function buildNavigation(isAdmin: boolean): NavSection[] {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { url, props } = usePage<SharedProps>()
-  const isAdmin = props.user?.roles?.includes('admin') ?? false
+  const isAdmin = props.currentUser?.roles?.includes('admin') ?? false
   const navigation = useMemo(() => buildNavigation(isAdmin), [isAdmin])
 
   return (
@@ -55,9 +55,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       workspace={{ name: 'Rails Inertia Template' }}
       navigation={navigation}
       user={{
-        name: props.user?.name ?? props.user?.email ?? 'Guest',
-        email: props.user?.email,
-        avatarUrl: props.user?.avatarUrl ?? undefined,
+        name: props.currentUser?.name ?? props.currentUser?.email ?? 'Guest',
+        email: props.currentUser?.email,
+        avatarUrl: props.currentUser?.avatarUrl ?? undefined,
         menu: [[{ label: 'Sign out', icon: LogOutIcon, onSelect: signOut }]],
       }}
       headerActions={
