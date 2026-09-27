@@ -61,10 +61,6 @@ export default function AdminUserShow({ user }: Props) {
                 </DescriptionDetails>
               </DescriptionItem>
               <DescriptionItem>
-                <DescriptionTerm>{t('itemsLabel')}</DescriptionTerm>
-                <DescriptionDetails>{user.itemsCount}</DescriptionDetails>
-              </DescriptionItem>
-              <DescriptionItem>
                 <DescriptionTerm>{t('joinedLabel')}</DescriptionTerm>
                 <DescriptionDetails>{new Date(user.createdAt).toLocaleString()}</DescriptionDetails>
               </DescriptionItem>

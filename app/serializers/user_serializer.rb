@@ -33,7 +33,4 @@ class UserSerializer < BaseSerializer
 
   typelize roles: "string[]"
   attribute(:roles) { |user| user.roles.pluck(:name) }
-
-  typelize items_count: :number
-  attribute(:items_count) { |user| user.items.size }
 end
