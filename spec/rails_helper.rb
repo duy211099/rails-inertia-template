@@ -25,4 +25,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include FactoryBot::Syntax::Methods
+
+  # Rack::Attack's in-process cache persists across spec files within the
+  # same test run; without this, unrelated login attempts in other specs
+  # accumulate toward the throttle limit and cause flaky 429s.
+  config.before(:each, type: :request) { Rack::Attack.cache.store.clear }
 end

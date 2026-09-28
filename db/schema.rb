@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_28_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_141000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "auth_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id"
+    t.string "email"
+    t.integer "event_type", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_auth_events_on_created_at"
+    t.index ["event_type"], name: "index_auth_events_on_event_type"
+    t.index ["user_id"], name: "index_auth_events_on_user_id"
+  end
 
   create_table "items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
@@ -102,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_140000) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "auth_events", "users"
   add_foreign_key "items", "users"
   add_foreign_key "login_codes", "users"
   add_foreign_key "role_permissions", "permissions"
