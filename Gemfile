@@ -86,6 +86,8 @@ gem "strong_migrations", "~> 2.4"
 
 # Structured production request logs
 gem "lograge", "~> 0.15"
+# Throttle/block abusive requests (login brute-force protection)
+gem "rack-attack", "~> 6.7"
 # Typed, validated application configuration
 gem "anyway_config", "~> 2.7"
 # Parses Accept-Language headers for locale resolution
