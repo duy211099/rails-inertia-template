@@ -592,6 +592,23 @@ export const adminRootPath = /*#__PURE__*/ __route({"format":{}}, [2,[7,"/"],[2,
 
 /**
  * Generates rails route to
+ * /admin/users/:id(.:format)
+ * @param {any} id
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const adminUserPath = /*#__PURE__*/ __route({"id":{"r":true},"format":{}}, [2,[7,"/"],[2,[6,"admin"],[2,[7,"/"],[2,[6,"users"],[2,[7,"/"],[2,[3,"id"],[1,[2,[8,"."],[3,"format"]]]]]]]]]);
+
+/**
+ * Generates rails route to
+ * /admin/users(.:format)
+ * @param {object | undefined} options
+ * @returns {string} route path
+ */
+export const adminUsersPath = /*#__PURE__*/ __route({"format":{}}, [2,[7,"/"],[2,[6,"admin"],[2,[7,"/"],[2,[6,"users"],[1,[2,[8,"."],[3,"format"]]]]]]]);
+
+/**
+ * Generates rails route to
  * /api/docs(.:format)
  * @param {object | undefined} options
  * @returns {string} route path

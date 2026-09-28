@@ -59,13 +59,17 @@ function AppShell({
   children,
   ...sidebar
 }: AppShellProps) {
-  const first = React.useRef(true)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Restore focus after navigation, keyed by the current path.
+  const previousPath = React.useRef<string | null>(null)
   React.useEffect(() => {
-    if (first.current) {
-      first.current = false
-      return
-    }
+    if (previousPath.current === sidebar.currentPath) return
+    const isInitialMount = previousPath.current === null
+    previousPath.current = sidebar.currentPath
+    if (isInitialMount) return
+    // A same-page visit (e.g. a live search reflecting its query in the URL)
+    // changes currentPath without the user leaving the field they're typing
+    // in — don't steal focus from it.
+    const active = document.activeElement
+    if (active?.closest('input,textarea,select,[contenteditable=true]')) return
     document.getElementById('main')?.focus({ preventScroll: true })
   }, [sidebar.currentPath])
   React.useEffect(() => {

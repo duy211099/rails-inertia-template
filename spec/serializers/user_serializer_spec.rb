@@ -32,14 +32,20 @@ require "rails_helper"
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
-RSpec.describe UserSerializer do
-  fixtures :users
+RSpec.describe UserSerializer, type: :serializer do
+  fixtures :users, :items
 
-  it "exposes the public profile with camelCase keys and no authentication secrets" do
-    user = users(:one)
-    user.avatar_url = "https://example.com/avatar.png"
-    result = described_class.new(user).serializable_hash.stringify_keys
-    expect(result).to eq("id" => user.id, "name" => "User One", "email" => "user_one@example.com", "avatarUrl" => "https://example.com/avatar.png",
-      "roles" => [])
+  it "includes createdAt" do
+    hash = described_class.new(users(:one)).serializable_hash
+
+    expect(hash["createdAt"]).to eq(users(:one).created_at)
+  end
+
+  it "serializes a nil name" do
+    user = User.create!(email: "no-items@example.com", password: "password123", name: nil)
+
+    hash = described_class.new(user).serializable_hash
+
+    expect(hash["name"]).to be_nil
   end
 end

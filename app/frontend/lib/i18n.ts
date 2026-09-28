@@ -1,5 +1,7 @@
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import adminUsersIndex from '@/locales/admin/users/index/en.json'
+import adminUsersShow from '@/locales/admin/users/show/en.json'
 import authLogin from '@/locales/auth/login/en.json'
 import common from '@/locales/common/en.json'
 import homeIndex from '@/locales/home/index/en.json'
@@ -19,6 +21,8 @@ import versionsIndex from '@/locales/versions/index/en.json'
 const resources = {
   en: {
     common,
+    'admin/users/index': adminUsersIndex,
+    'admin/users/show': adminUsersShow,
     'auth/login': authLogin,
     'home/index': homeIndex,
     'items/index': itemsIndex,

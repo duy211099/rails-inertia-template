@@ -47,7 +47,7 @@ RSpec.describe "Omniauth callbacks", type: :request do
       expect(response).to redirect_to(root_path)
 
       inertia_get(root_path)
-      expect(response.parsed_body.dig("props", "user", "email")).to eq("new-google-user@example.com")
+      expect(response.parsed_body.dig("props", "currentUser", "email")).to eq("new-google-user@example.com")
     end
   end
 
