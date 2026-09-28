@@ -8,7 +8,12 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import AppLayout from '@/layouts/AppLayout'
 import PublicLayout from '@/layouts/PublicLayout'
+import { initAnalytics, trackPageview } from '@/lib/analytics'
 import { initI18n, syncLocale } from '@/lib/i18n'
+import { initSentry } from '@/lib/sentry'
+
+void initSentry()
+initAnalytics()
 
 const MissingPage: any = () =>
   createElement(
@@ -100,6 +105,8 @@ router.on('before', (event) => {
 router.on('navigate', (event) => {
   const locale = (event.detail.page.props as { locale?: string }).locale
   if (locale) syncLocale(locale)
+
+  trackPageview(event.detail.page.url)
 })
 
 const redirectToErrorPage = (event: Event) => {

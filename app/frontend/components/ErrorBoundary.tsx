@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { reportError } from '@/lib/sentry'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -21,6 +22,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Unhandled UI error', error, info)
+    reportError(error)
   }
 
   render() {

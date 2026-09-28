@@ -52,4 +52,11 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Fixed, non-secret keys so encryption works in CI without real credentials.
+  # Real environments (development/production) must set these via
+  # `bin/rails credentials:edit` (see docs) — never reuse these values there.
+  config.active_record.encryption.primary_key = "a" * 32
+  config.active_record.encryption.deterministic_key = "b" * 32
+  config.active_record.encryption.key_derivation_salt = "c" * 32
 end
