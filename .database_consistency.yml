@@ -27,8 +27,11 @@ User:
   email:
     ColumnPresenceChecker:
       enabled: false
-  # Devise generates collision-checked reset tokens; the unique index is the
-  # final race-safety constraint, not an input validation rule.
+  # Devise generates collision-checked reset/unlock tokens; the unique index
+  # is the final race-safety constraint, not an input validation rule.
   index_users_on_reset_password_token:
+    UniqueIndexChecker:
+      enabled: false
+  index_users_on_unlock_token:
     UniqueIndexChecker:
       enabled: false

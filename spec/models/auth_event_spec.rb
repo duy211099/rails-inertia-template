@@ -12,6 +12,12 @@ RSpec.describe AuthEvent, type: :model do
     expect(event).to be_valid
   end
 
+  it "requires event_type (column is NOT NULL)" do
+    event = described_class.new(email: "nobody@example.com", ip_address: "127.0.0.1")
+    expect(event).not_to be_valid
+    expect(event.errors[:event_type]).to be_present
+  end
+
   it "discards a value that doesn't look like an email before saving" do
     # A failed login's email param is whatever the client typed into that
     # field — sometimes a password pasted into the wrong box. Only persist

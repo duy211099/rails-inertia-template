@@ -4,6 +4,7 @@ class AuthEvent < ApplicationRecord
   belongs_to :user, optional: true
 
   enum :event_type, { success: 0, failure: 1 }
+  validates :event_type, presence: true
 
   # A failed login's email is whatever the client submitted in that field —
   # sometimes a password mistakenly typed into it. Only persist values
