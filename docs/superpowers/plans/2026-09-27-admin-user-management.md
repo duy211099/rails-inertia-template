@@ -1,10 +1,10 @@
 # Admin User Management (Sub-project #1: User Index/Detail) Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Give admins a paginated, searchable list of all users and a per-user detail page, as the read-only foundation later sub-projects (role/permission management, ban+revoke, presence/devices) will extend.
+**Goal:** Give admins paginated, searchable list of all users + per-user detail page — read-only foundation later sub-projects (role/permission mgmt, ban+revoke, presence/devices) extend.
 
-**Architecture:** Follow the existing `Admin::DashboardController` / `ItemsIndexResource` / `items/index.tsx` pattern exactly: a namespaced `Admin::UsersController` with `index`/`show`, a new `UserPolicy` (admin-only, no owner concept), an extended `UserSerializer`, a new `UsersIndexResource`, and two React pages using `DataTable`/`DataTableToolbar` for search and `DetailLayout`/`DescriptionList` for the detail view.
+**Architecture:** Follow existing `Admin::DashboardController` / `ItemsIndexResource` / `items/index.tsx` pattern exactly: namespaced `Admin::UsersController` with `index`/`show`, new `UserPolicy` (admin-only, no owner concept), extended `UserSerializer`, new `UsersIndexResource`, two React pages using `DataTable`/`DataTableToolbar` for search and `DetailLayout`/`DescriptionList` for detail view.
 
 **Tech Stack:** Rails 8.1 + Inertia + Alba/Typelizer serializers + ActionPolicy + Pagy (backend); React 19 + TanStack Table (`DataTable`) + react-i18next (frontend).
 
@@ -12,21 +12,21 @@
 
 ## Global Constraints
 
-- Admin-only access: `index?`/`show?` on `UserPolicy` return `admin?` (from `ApplicationPolicy`), not `owner?` — `User` has no `user_id` column.
-- No new database columns or migrations in this sub-project.
+- Admin-only access: `index?`/`show?` on `UserPolicy` return `admin?` (from `ApplicationPolicy`), not `owner?` — `User` got no `user_id` column.
+- No new DB columns/migrations this sub-project.
 - Frontend colors: Keel/shadcn token utilities only, no raw Tailwind palette, no `dark:` variants.
-- Search is a simple `ILIKE` on `name`/`email` via `params[:q]`, no search gem.
-- After changing `UserSerializer`, run `npm run generate:types` to regenerate `User.ts`/`UsersIndex.ts` — do not hand-edit generated files.
-- Index page state lives in the URL: search changes call `router.get(url, params, { preserveState: true, preserveScroll: true, replace: true })`.
+- Search: simple `ILIKE` on `name`/`email` via `params[:q]`, no search gem.
+- After changing `UserSerializer`, run `npm run generate:types` to regen `User.ts`/`UsersIndex.ts` — don't hand-edit generated files.
+- Index page state lives in URL: search changes call `router.get(url, params, { preserveState: true, preserveScroll: true, replace: true })`.
 - Follow `items/index.tsx` and `items/show.tsx` structurally: `Page` → `PageHeader` → `ResourceIndex`/`DetailLayout`.
 
 ## Review Focus
 
-- Non-admin (including no role at all, and a `dev`-role user) hitting `/admin/users` or `/admin/users/:id` directly must be redirected with the access-denied alert — same as `AdminController#authenticate_admin!` already does for the dashboard root.
-- `GET /admin/users/:id` with an id that doesn't exist must 404, not 500 (`ActiveRecord::RecordNotFound`).
-- Search with a query that matches nothing must render the empty state, not error.
-- A user with zero items must show `items_count: 0` (not `nil`) on both index and show.
-- A user with `name: nil` (omniauth users can have blank name) must still render sensibly in the `DataTable` primary column and page heading (fall back to email).
+- Non-admin (incl. no role at all, and `dev`-role user) hitting `/admin/users` or `/admin/users/:id` direct must redirect w/ access-denied alert — same as `AdminController#authenticate_admin!` already does for dashboard root.
+- `GET /admin/users/:id` w/ nonexistent id must 404, not 500 (`ActiveRecord::RecordNotFound`).
+- Search matching nothing must render empty state, not error.
+- User w/ zero items must show `items_count: 0` (not `nil`) on both index and show.
+- User w/ `name: nil` (omniauth users can have blank name) must still render sensibly in `DataTable` primary column + page heading (fall back to email).
 
 ---
 
@@ -40,7 +40,7 @@
 - Consumes: `User#items` (existing `has_many :items`).
 - Produces: `UserSerializer.new(user).serializable_hash` includes `created_at` (ISO8601 string, via existing `typelize_from User`) and `items_count` (integer).
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: Write failing test**
 
 ```ruby
 # spec/serializers/user_serializer_spec.rb
@@ -69,7 +69,7 @@ RSpec.describe UserSerializer, type: :serializer do
 end
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: Run test, verify fail**
 
 Run: `bundle exec rspec spec/serializers/user_serializer_spec.rb -v`
 Expected: FAIL — `created_at`/`items_count` keys absent from `serializable_hash`.
@@ -93,15 +93,15 @@ class UserSerializer < BaseSerializer
 end
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: Run test, verify pass**
 
 Run: `bundle exec rspec spec/serializers/user_serializer_spec.rb -v`
 Expected: PASS
 
-- [ ] **Step 5: Regenerate TypeScript types**
+- [ ] **Step 5: Regen TypeScript types**
 
 Run: `npm run generate:types`
-This rewrites `app/frontend/types/serializers/User.ts` to include `createdAt: string` and `itemsCount: number`. Verify with `RAILS_ENV=test bin/check-types` (should report no diff after regenerating).
+Rewrites `app/frontend/types/serializers/User.ts` to include `createdAt: string` and `itemsCount: number`. Verify w/ `RAILS_ENV=test bin/check-types` (should report no diff after regen).
 
 - [ ] **Step 6: Commit**
 
@@ -120,9 +120,9 @@ git commit -m "feat: add created_at and items_count to UserSerializer"
 
 **Interfaces:**
 - Consumes: `ApplicationPolicy#admin?` (existing, `user.at_least?(:admin)`).
-- Produces: `UserPolicy.new(User, user: current_user).apply(:index?)` / `UserPolicy.new(some_user, user: current_user).apply(:show?)` — both `true` only when `current_user` is admin.
+- Produces: `UserPolicy.new(User, user: current_user).apply(:index?)` / `UserPolicy.new(some_user, user: current_user).apply(:show?)` — both `true` only when `current_user` admin.
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: Write failing test**
 
 ```ruby
 # frozen_string_literal: true
@@ -147,7 +147,7 @@ RSpec.describe UserPolicy, type: :policy do
 end
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: Run test, verify fail**
 
 Run: `bundle exec rspec spec/policies/user_policy_spec.rb -v`
 Expected: FAIL — `uninitialized constant UserPolicy`.
@@ -168,7 +168,7 @@ class UserPolicy < ApplicationPolicy
 end
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: Run test, verify pass**
 
 Run: `bundle exec rspec spec/policies/user_policy_spec.rb -v`
 Expected: PASS
@@ -189,11 +189,11 @@ git commit -m "feat: add admin-only UserPolicy"
 
 **Interfaces:**
 - Consumes: `UserSerializer` (Task 1), `PagySerializer` (existing).
-- Produces: `UsersIndexResource.new({ users:, pagy: }).to_inertia` — an Inertia-ready props hash with keys `users` (array) and `pagy`.
+- Produces: `UsersIndexResource.new({ users:, pagy: }).to_inertia` — Inertia-ready props hash w/ keys `users` (array) and `pagy`.
 
-This resource is a thin declarative bundle with no branching logic, so it's covered by the controller request spec in Task 4 rather than its own unit test (mirrors `ItemsIndexResource`, which also has no dedicated spec).
+Thin declarative bundle, no branching logic — covered by controller request spec in Task 4 instead of own unit test (mirrors `ItemsIndexResource`, also no dedicated spec).
 
-- [ ] **Step 1: Write the implementation directly**
+- [ ] **Step 1: Write implementation direct**
 
 ```ruby
 # frozen_string_literal: true
@@ -222,9 +222,9 @@ git commit -m "feat: add UsersIndexResource"
 
 **Interfaces:**
 - Consumes: `AdminController#authenticate_admin!` (existing before_action), `UserPolicy` (Task 2), `UsersIndexResource` (Task 3), `UserSerializer` (Task 1).
-- Produces: `GET /admin/users` renders Inertia component `admin/users/index` with props `{ users:, pagy: }`; `GET /admin/users/:id` renders `admin/users/show` with props `{ user: }`.
+- Produces: `GET /admin/users` renders Inertia component `admin/users/index` w/ props `{ users:, pagy: }`; `GET /admin/users/:id` renders `admin/users/show` w/ props `{ user: }`.
 
-- [ ] **Step 1: Add the route**
+- [ ] **Step 1: Add route**
 
 ```ruby
 # config/routes/admin.rb
@@ -236,7 +236,7 @@ namespace :admin do
 end
 ```
 
-- [ ] **Step 2: Write the failing request spec**
+- [ ] **Step 2: Write failing request spec**
 
 ```ruby
 # frozen_string_literal: true
@@ -324,7 +324,7 @@ RSpec.describe "Admin::Users", type: :request do
 end
 ```
 
-- [ ] **Step 3: Run test to verify it fails**
+- [ ] **Step 3: Run test, verify fail**
 
 Run: `bundle exec rspec spec/requests/admin/users_spec.rb -v`
 Expected: FAIL — `uninitialized constant Admin::UsersController` / routing error.
@@ -359,7 +359,7 @@ class Admin::UsersController < AdminController
 end
 ```
 
-- [ ] **Step 5: Run test to verify it passes**
+- [ ] **Step 5: Run test, verify pass**
 
 Run: `bundle exec rspec spec/requests/admin/users_spec.rb -v`
 Expected: PASS
@@ -380,10 +380,10 @@ git commit -m "feat: add Admin::UsersController index/show with search"
 - Create: `app/frontend/locales/admin/users/index/en.json`
 
 **Interfaces:**
-- Consumes: `UsersIndex` type (regenerated in Task 1's `npm run generate:types`, shape `{ users: User[]; pagy: Pagy }`), `adminUsersPath`/`adminUserPath` (js-routes, auto-generated from the route added in Task 4 — run `npm run generate:types` again if `app/frontend/lib/routes.d.ts` doesn't yet list them), `DataTable`, `DataTableToolbar`, `DataTablePagination`, `ResourceIndex` (all existing, `app/frontend/components/patterns/`), `Badge` (existing).
+- Consumes: `UsersIndex` type (regen'd in Task 1's `npm run generate:types`, shape `{ users: User[]; pagy: Pagy }`), `adminUsersPath`/`adminUserPath` (js-routes, auto-gen from route added Task 4 — run `npm run generate:types` again if `app/frontend/lib/routes.d.ts` don't yet list them), `DataTable`, `DataTableToolbar`, `DataTablePagination`, `ResourceIndex` (all existing, `app/frontend/components/patterns/`), `Badge` (existing).
 - Produces: default-exported `AdminUsersIndex` component registered under Inertia component name `admin/users/index`.
 
-- [ ] **Step 1: Add the locale file**
+- [ ] **Step 1: Add locale file**
 
 ```json
 {
@@ -402,7 +402,7 @@ git commit -m "feat: add Admin::UsersController index/show with search"
 }
 ```
 
-- [ ] **Step 2: Write the page component**
+- [ ] **Step 2: Write page component**
 
 ```tsx
 import { Head, router } from '@inertiajs/react'
@@ -547,9 +547,9 @@ export default function AdminUsersIndex({ users, pagy, q }: Props) {
 }
 ```
 
-- [ ] **Step 3: Pass `q` through from the controller**
+- [ ] **Step 3: Pass `q` through from controller**
 
-Go back to `app/controllers/admin/users_controller.rb` (Task 4) and add `q: params[:q]` to the index props hash so the page can preselect the search box on reload:
+Back to `app/controllers/admin/users_controller.rb` (Task 4), add `q: params[:q]` to index props hash so page can preselect search box on reload:
 
 ```ruby
 render inertia: "admin/users/index", props: UsersIndexResource.new(
@@ -560,7 +560,7 @@ render inertia: "admin/users/index", props: UsersIndexResource.new(
 - [ ] **Step 4: Type-check**
 
 Run: `npm run check`
-Expected: no errors. If `adminUsersPath`/`adminUserPath` are missing from `@/lib/routes`, run `bin/rails app:js_routes:generate` (or restart `bin/dev`, which regenerates on boot) — these are generated by the `js-routes` gem from the route added in Task 4, not by `npm run generate:types`.
+Expected: no errors. If `adminUsersPath`/`adminUserPath` missing from `@/lib/routes`, run `bin/rails app:js_routes:generate` (or restart `bin/dev`, regens on boot) — gen'd by `js-routes` gem from route added Task 4, not by `npm run generate:types`.
 
 - [ ] **Step 5: Commit**
 
@@ -578,10 +578,10 @@ git commit -m "feat: add admin users index page with search"
 - Create: `app/frontend/locales/admin/users/show/en.json`
 
 **Interfaces:**
-- Consumes: `User` type (`{ id, name, email, avatarUrl, roles, createdAt, itemsCount }` after Task 1's regeneration), `adminUsersPath` (js-routes).
+- Consumes: `User` type (`{ id, name, email, avatarUrl, roles, createdAt, itemsCount }` after Task 1 regen), `adminUsersPath` (js-routes).
 - Produces: default-exported `AdminUserShow` component registered under Inertia component name `admin/users/show`.
 
-- [ ] **Step 1: Add the locale file**
+- [ ] **Step 1: Add locale file**
 
 ```json
 {
@@ -593,7 +593,7 @@ git commit -m "feat: add admin users index page with search"
 }
 ```
 
-- [ ] **Step 2: Write the page component**
+- [ ] **Step 2: Write page component**
 
 ```tsx
 import { Head } from '@inertiajs/react'
@@ -695,10 +695,10 @@ git commit -m "feat: add admin user detail page"
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Run the full backend suite**
+- [ ] **Step 1: Run full backend suite**
 
 Run: `bin/test`
-Expected: all specs pass, including the new `spec/serializers/user_serializer_spec.rb`, `spec/policies/user_policy_spec.rb`, `spec/requests/admin/users_spec.rb`.
+Expected: all specs pass, incl new `spec/serializers/user_serializer_spec.rb`, `spec/policies/user_policy_spec.rb`, `spec/requests/admin/users_spec.rb`.
 
 - [ ] **Step 2: Run frontend checks**
 
@@ -707,9 +707,9 @@ Expected: no type errors, no lint errors.
 
 - [ ] **Step 3: Manual smoke test**
 
-Run: `bin/dev`, sign in as a user with the `admin` role (create one via `rails console`: `UserRole.create!(user: User.first, role: Role.find_or_create_by!(name: "admin"))`), visit `/admin/users`, confirm the list renders, search narrows results, and clicking a row opens `/admin/users/:id` with correct roles/item count/joined date. Confirm both light and dark themes render without raw-color regressions.
+Run: `bin/dev`, sign in as user w/ `admin` role (create one via `rails console`: `UserRole.create!(user: User.first, role: Role.find_or_create_by!(name: "admin"))`), visit `/admin/users`, confirm list renders, search narrows results, clicking row opens `/admin/users/:id` w/ correct roles/item count/joined date. Confirm both light and dark themes render w/o raw-color regressions.
 
-- [ ] **Step 4: Commit (if any fixups were needed)**
+- [ ] **Step 4: Commit (if fixups needed)**
 
 ```bash
 git add -A

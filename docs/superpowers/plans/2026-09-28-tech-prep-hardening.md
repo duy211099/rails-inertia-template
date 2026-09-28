@@ -1,32 +1,32 @@
 # Tech-Prep Hardening Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Close the generic (non-business) Phase 0 infra gaps identified by auditing this repo against a WBS: login throttling/lockout, auth event logging, virus-scanned uploads, PII-encryption scaffolding, error tracking, transactional email delivery, and GA4 pageview tracking.
+**Goal:** Close generic (non-business) Phase 0 infra gaps found by auditing repo against WBS: login throttling/lockout, auth event logging, virus-scanned uploads, PII-encryption scaffolding, error tracking, transactional email delivery, GA4 pageview tracking.
 
-**Architecture:** Each task is an independent vertical slice (gem/config + model/job/lib + test) with no cross-task dependencies — they can be implemented and reviewed in any order or in parallel. Backend tasks follow existing conventions (UUID PKs, fixtures over FactoryBot, request specs hitting real Devise routes). Frontend tasks follow the existing `app/frontend/lib/*.ts` + colocated `*.test.ts` vitest pattern already used for `csrf.ts`, `i18n.ts`, etc.
+**Architecture:** Each task independent vertical slice (gem/config + model/job/lib + test), no cross-task deps — implement/review any order or parallel. Backend tasks follow existing conventions (UUID PKs, fixtures over FactoryBot, request specs hitting real Devise routes). Frontend tasks follow existing `app/frontend/lib/*.ts` + colocated `*.test.ts` vitest pattern already used for `csrf.ts`, `i18n.ts`, etc.
 
 **Tech Stack:** Rails 8.1 / Devise 5 / Warden / Rack::Attack / ActiveStorage / Solid Queue / Active Record Encryption / Sentry / RSpec+fixtures; React 19 / Inertia / Vite / Vitest.
 
-**Spec:** This plan's own "Findings" section below (derived from a live repo audit — no separate spec doc exists). Business-specific WBS items (consent/export, SMS/Twilio, Supabase backups, DO Spaces vendor swap) are explicitly out of scope per user decision.
+**Spec:** Plan's own "Findings" section below (from live repo audit — no separate spec doc). Business-specific WBS items (consent/export, SMS/Twilio, Supabase backups, DO Spaces vendor swap) explicitly out of scope per user decision.
 
 ## Global Constraints
 
-- UUID primary keys on all new tables (`id: :uuid`), matching `db/migrate/20260927120000_create_initial_schema.rb`.
-- Backend tests use `fixtures :users` (not FactoryBot) — `users(:one)` has password `"password123"` (see `spec/fixtures/users.yml`).
+- UUID primary keys all new tables (`id: :uuid`), matching `db/migrate/20260927120000_create_initial_schema.rb`.
+- Backend tests use `fixtures :users` (not FactoryBot) — `users(:one)` password `"password123"` (see `spec/fixtures/users.yml`).
 - Frontend tests use Vitest + `@testing-library/react`, colocated `*.test.ts(x)` next to source, `vi.stubEnv` for `import.meta.env.VITE_*` vars.
-- New env vars follow the existing `.env.example` convention (plain `ENV[...]`, not `anyway_config`, matching `R2_*` / `API_CORS_ORIGINS`).
-- No CSP changes needed — `config/initializers/content_security_policy.rb` is entirely commented out (unenforced) in this template.
-- Migrations dated after `20260927130000`; use today's date `20260928` with incrementing times to keep ordering unambiguous.
-- Run `bin/rubocop -a` and `npm run lint:fix` before each commit per repo convention; every task's steps assume this is a final step even where not spelled out again.
+- New env vars follow existing `.env.example` convention (plain `ENV[...]`, not `anyway_config`, matching `R2_*` / `API_CORS_ORIGINS`).
+- No CSP changes needed — `config/initializers/content_security_policy.rb` fully commented out (unenforced) in this template.
+- Migrations dated after `20260927130000`; use today's date `20260928` w/ incrementing times, keep ordering unambiguous.
+- Run `bin/rubocop -a` and `npm run lint:fix` before each commit per repo convention; every task's steps assume final step even where not spelled out again.
 
 ## Review Focus
 
-- **Rack::Attack + lockable interaction**: a lockable test doing 6 login POSTs to the same email must not itself get 429'd by the email throttle — throttle limits are set to 10/period, above lockable's `maximum_attempts: 5`, verified by Task 2's test running exactly 6 requests.
-- **Failed login with unknown email**: `AuthEvent` failure logging must not blow up when `user` can't be resolved (no user association) — Task 3 test posts a failing login for a fixture email but never assumes a `user_id` is set for failures.
-- **Blob without an attachable owner**: virus scan job must handle a blob whose record was deleted before the job runs (`ActiveStorage::Blob.find_by(id:)` returns nil) — Task 4 test covers this by calling `perform` with a bogus id.
-- **Missing/blank env vars must no-op, not raise**: Sentry init, Resend SMTP config, and GA4 analytics must all leave default (test/dev) behavior untouched when their env var is absent — every task below has an explicit "absent env var" test case.
-- **Infected upload must not remain downloadable**: Task 4's job purges the blob (not just flags it) so a signed URL generated before the scan finishes can't later serve infected content once `perform` completes — covered by asserting `ActiveStorage::Blob.exists?` is false after an infected scan.
+- **Rack::Attack + lockable interaction**: lockable test doing 6 login POSTs to same email must not get 429'd by email throttle — throttle limits set 10/period, above lockable's `maximum_attempts: 5`, verified by Task 2's test running exactly 6 requests.
+- **Failed login w/ unknown email**: `AuthEvent` failure logging must not blow up when `user` can't be resolved (no user association) — Task 3 test posts failing login for fixture email but never assumes `user_id` set for failures.
+- **Blob without attachable owner**: virus scan job must handle blob whose record deleted before job runs (`ActiveStorage::Blob.find_by(id:)` returns nil) — Task 4 test covers via calling `perform` w/ bogus id.
+- **Missing/blank env vars must no-op, not raise**: Sentry init, Resend SMTP config, GA4 analytics all leave default (test/dev) behavior untouched when env var absent — every task below has explicit "absent env var" test case.
+- **Infected upload must not remain downloadable**: Task 4's job purges blob (not just flags) so signed URL generated before scan finishes can't later serve infected content once `perform` completes — covered by asserting `ActiveStorage::Blob.exists?` false after infected scan.
 
 ---
 
@@ -54,11 +54,11 @@
 
 **Interfaces:**
 - Consumes: nothing from other tasks.
-- Produces: `Rack::Attack` throttle rules named `"logins/ip"` and `"logins/email"`, both `limit: 10, period: 20.seconds`. Task 2's lockable test relies on this limit being `> 5` so its 6-request test isn't throttled first.
+- Produces: `Rack::Attack` throttle rules named `"logins/ip"` and `"logins/email"`, both `limit: 10, period: 20.seconds`. Task 2's lockable test relies on limit being `> 5` so its 6-request test isn't throttled first.
 
-- [x] **Step 1: Add the gem**
+- [x] **Step 1: Add gem**
 
-In `Gemfile`, under the `# --- Ops / config` section, add:
+In `Gemfile`, under `# --- Ops / config` section, add:
 
 ```ruby
 gem "rack-attack", "~> 6.7"
@@ -66,7 +66,7 @@ gem "rack-attack", "~> 6.7"
 
 Run `bundle install`.
 
-- [x] **Step 2: Write the failing test**
+- [x] **Step 2: Write failing test**
 
 ```ruby
 # spec/requests/rack_attack_spec.rb
@@ -87,12 +87,12 @@ RSpec.describe "Rack::Attack login throttling", type: :request do
 end
 ```
 
-- [x] **Step 2b: Run it to confirm it fails**
+- [x] **Step 2b: Run, confirm fail**
 
 Run: `bundle exec rspec spec/requests/rack_attack_spec.rb`
-Expected: FAIL — `NameError: uninitialized constant Rack::Attack` or a non-429 status, since no throttling exists yet.
+Expected: FAIL — `NameError: uninitialized constant Rack::Attack` or non-429 status, since no throttling exists yet.
 
-- [x] **Step 3: Implement the initializer**
+- [x] **Step 3: Implement initializer**
 
 ```ruby
 # config/initializers/rack_attack.rb
@@ -123,7 +123,7 @@ class Rack::Attack
 end
 ```
 
-- [x] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test, verify pass**
 
 Run: `bundle exec rspec spec/requests/rack_attack_spec.rb`
 Expected: PASS
@@ -147,9 +147,9 @@ git commit -m "feat: throttle repeated login attempts with rack-attack"
 
 **Interfaces:**
 - Consumes: Rack::Attack throttle limits from Task 1 (must stay `> 5` for this task's 6-request test to reach lockable logic instead of a 429).
-- Produces: `user.access_locked?` (from Devise `:lockable`), used nowhere else in this plan but available for any future admin/unlock UI.
+- Produces: `user.access_locked?` (from Devise `:lockable`), used nowhere else in plan but available for future admin/unlock UI.
 
-- [x] **Step 1: Write the failing migration test setup — write the request spec first**
+- [x] **Step 1: Write failing test setup — request spec first**
 
 ```ruby
 # spec/requests/users/sessions_lockable_spec.rb
@@ -183,12 +183,12 @@ RSpec.describe "Session lockout", type: :request do
 end
 ```
 
-- [x] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run, confirm fail**
 
 Run: `bundle exec rspec spec/requests/users/sessions_lockable_spec.rb`
 Expected: FAIL — `users(:one)` doesn't respond to `access_locked?` (no `:lockable` module, no columns yet).
 
-- [x] **Step 3: Add the migration**
+- [x] **Step 3: Add migration**
 
 ```ruby
 # db/migrate/20260928140000_add_lockable_to_users.rb
@@ -206,7 +206,7 @@ end
 
 Run: `bin/rails db:migrate db:test:prepare`
 
-- [x] **Step 4: Enable `:lockable` on the model**
+- [x] **Step 4: Enable `:lockable` on model**
 
 In `app/models/user.rb`, change:
 
@@ -226,9 +226,9 @@ devise :database_authenticatable, :registerable,
        omniauth_providers: [ :google_oauth2 ], jwt_revocation_strategy: self
 ```
 
-- [x] **Step 5: Configure lockable in the Devise initializer**
+- [x] **Step 5: Configure lockable in Devise initializer**
 
-In `config/initializers/devise.rb`, under `# ==> Configuration for :lockable`, uncomment and set:
+In `config/initializers/devise.rb`, under `# ==> Configuration for :lockable`, uncomment, set:
 
 ```ruby
 config.lock_strategy = :failed_attempts
@@ -239,14 +239,14 @@ config.unlock_in = 1.hour
 config.last_attempt_warning = true
 ```
 
-- [x] **Step 6: Run test to verify it passes**
+- [x] **Step 6: Run test, verify pass**
 
 Run: `bundle exec rspec spec/requests/users/sessions_lockable_spec.rb`
 Expected: PASS
 
-- [x] **Step 7: Update the annotated schema comment and commit**
+- [x] **Step 7: Update annotated schema comment, commit**
 
-Run `bundle exec annotaterb models` (repo convention per `annotaterb` gem) or manually add the three new columns to the schema comment block atop `app/models/user.rb`.
+Run `bundle exec annotaterb models` (repo convention per `annotaterb` gem) or manually add three new columns to schema comment block atop `app/models/user.rb`.
 
 ```bash
 git add app/models/user.rb config/initializers/devise.rb db/migrate/20260928140000_add_lockable_to_users.rb db/schema.rb spec/requests/users/sessions_lockable_spec.rb
@@ -266,9 +266,9 @@ git commit -m "feat: lock accounts after repeated failed sign-in attempts"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `AuthEvent` model with `enum event_type: { success: 0, failure: 1 }`, columns `user_id (nullable)`, `email`, `ip_address`, `user_agent`, `created_at`. Available for a future admin audit view (out of scope here).
+- Produces: `AuthEvent` model w/ `enum event_type: { success: 0, failure: 1 }`, columns `user_id (nullable)`, `email`, `ip_address`, `user_agent`, `created_at`. Available for future admin audit view (out of scope here).
 
-- [x] **Step 1: Write the failing model spec**
+- [x] **Step 1: Write failing model spec**
 
 ```ruby
 # spec/models/auth_event_spec.rb
@@ -288,12 +288,12 @@ RSpec.describe AuthEvent, type: :model do
 end
 ```
 
-- [x] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run, confirm fail**
 
 Run: `bundle exec rspec spec/models/auth_event_spec.rb`
 Expected: FAIL — `uninitialized constant AuthEvent`
 
-- [x] **Step 3: Add the migration**
+- [x] **Step 3: Add migration**
 
 ```ruby
 # db/migrate/20260928141000_create_auth_events.rb
@@ -317,7 +317,7 @@ end
 
 Run: `bin/rails db:migrate db:test:prepare`
 
-- [x] **Step 4: Implement the model**
+- [x] **Step 4: Implement model**
 
 ```ruby
 # app/models/auth_event.rb
@@ -330,12 +330,12 @@ class AuthEvent < ApplicationRecord
 end
 ```
 
-- [x] **Step 5: Run the model spec to verify it passes**
+- [x] **Step 5: Run model spec, verify pass**
 
 Run: `bundle exec rspec spec/models/auth_event_spec.rb`
 Expected: PASS
 
-- [x] **Step 6: Write the failing request spec**
+- [x] **Step 6: Write failing request spec**
 
 ```ruby
 # spec/requests/auth_event_logging_spec.rb
@@ -366,12 +366,12 @@ RSpec.describe "Auth event logging", type: :request do
 end
 ```
 
-- [x] **Step 7: Run it to confirm it fails**
+- [x] **Step 7: Run, confirm fail**
 
 Run: `bundle exec rspec spec/requests/auth_event_logging_spec.rb`
 Expected: FAIL — count doesn't change, no Warden hooks registered yet.
 
-- [x] **Step 8: Implement the Warden hooks**
+- [x] **Step 8: Implement Warden hooks**
 
 ```ruby
 # config/initializers/warden_hooks.rb
@@ -402,7 +402,7 @@ Warden::Manager.before_failure do |env, _opts|
 end
 ```
 
-- [x] **Step 9: Run test to verify it passes**
+- [x] **Step 9: Run test, verify pass**
 
 Run: `bundle exec rspec spec/requests/auth_event_logging_spec.rb`
 Expected: PASS
@@ -427,17 +427,17 @@ git commit -m "feat: log sign-in success/failure events via Warden hooks"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `blob.clean?` / `blob.infected?` (reads `blob.metadata["virus_scan"]`), for any future upload UI to gate downloads on.
+- Produces: `blob.clean?` / `blob.infected?` (reads `blob.metadata["virus_scan"]`), for future upload UI to gate downloads on.
 
-- [x] **Step 1: Add the gem**
+- [x] **Step 1: Add gem**
 
 ```ruby
 gem "clamby", "~> 1.6"
 ```
 
-Run `bundle install`. (No ClamAV daemon needed for dev/test — all specs stub `Clamby.virus?`; only production needs `clamd`/`clamscan` installed on the host.)
+Run `bundle install`. (No ClamAV daemon needed for dev/test — all specs stub `Clamby.virus?`; only production needs `clamd`/`clamscan` installed on host.)
 
-- [x] **Step 2: Write the failing job spec**
+- [x] **Step 2: Write failing job spec**
 
 ```ruby
 # spec/jobs/virus_scan_job_spec.rb
@@ -479,12 +479,12 @@ RSpec.describe VirusScanJob, type: :job do
 end
 ```
 
-- [x] **Step 3: Run it to confirm it fails**
+- [x] **Step 3: Run, confirm fail**
 
 Run: `bundle exec rspec spec/jobs/virus_scan_job_spec.rb`
 Expected: FAIL — `uninitialized constant VirusScanJob`
 
-- [x] **Step 4: Implement the blob extension**
+- [x] **Step 4: Implement blob extension**
 
 ```ruby
 # app/models/active_storage/blob.rb
@@ -511,7 +511,7 @@ module ActiveStorage
 end
 ```
 
-- [x] **Step 5: Implement the job**
+- [x] **Step 5: Implement job**
 
 ```ruby
 # app/jobs/virus_scan_job.rb
@@ -536,12 +536,12 @@ class VirusScanJob < ApplicationJob
 end
 ```
 
-- [x] **Step 6: Run test to verify it passes**
+- [x] **Step 6: Run test, verify pass**
 
 Run: `bundle exec rspec spec/jobs/virus_scan_job_spec.rb`
 Expected: PASS
 
-- [x] **Step 7: Write and pass the blob-extension spec**
+- [x] **Step 7: Write and pass blob-extension spec**
 
 ```ruby
 # spec/models/active_storage/blob_spec.rb
@@ -579,9 +579,9 @@ git commit -m "feat: scan uploads for viruses and quarantine infected blobs"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: working `ActiveRecord::Encryption.encrypt_message` / `.decrypt_message`, so any future model can add `encrypts :field` with zero further setup.
+- Produces: working `ActiveRecord::Encryption.encrypt_message` / `.decrypt_message`, so any future model can add `encrypts :field` w/ zero further setup.
 
-- [x] **Step 1: Write the failing spec**
+- [x] **Step 1: Write failing spec**
 
 ```ruby
 # spec/lib/active_record_encryption_spec.rb
@@ -599,14 +599,14 @@ RSpec.describe "Active Record encryption", type: :model do
 end
 ```
 
-- [x] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run, confirm fail**
 
 Run: `bundle exec rspec spec/lib/active_record_encryption_spec.rb`
 Expected: FAIL — `ActiveRecord::Encryption::Errors::Configuration: Missing Active Record encryption credential`
 
 - [x] **Step 3: Configure deterministic test keys**
 
-In `config/environments/test.rb`, add (near the other test-only settings):
+In `config/environments/test.rb`, add (near other test-only settings):
 
 ```ruby
 # Fixed, non-secret keys so encryption works in CI without real credentials.
@@ -617,14 +617,14 @@ config.active_record.encryption.deterministic_key = "b" * 32
 config.active_record.encryption.key_derivation_salt = "c" * 32
 ```
 
-- [x] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test, verify pass**
 
 Run: `bundle exec rspec spec/lib/active_record_encryption_spec.rb`
 Expected: PASS
 
-- [x] **Step 5: Document the manual credential step (development/production)**
+- [x] **Step 5: Document manual credential step (development/production)**
 
-This step has no automated test — it's a one-time secret-generation command each engineer/deploy target runs themselves, same category as setting `GOOGLE_CLIENT_SECRET`.
+No automated test — one-time secret-generation command each engineer/deploy target runs themselves, same category as setting `GOOGLE_CLIENT_SECRET`.
 
 Run once per environment:
 
@@ -632,7 +632,7 @@ Run once per environment:
 bin/rails db:encryption:init
 ```
 
-This prints three lines like:
+Prints three lines like:
 
 ```ruby
 active_record_encryption:
@@ -641,7 +641,7 @@ active_record_encryption:
   key_derivation_salt: ...
 ```
 
-Paste them into that environment's credentials:
+Paste into that environment's credentials:
 
 ```bash
 bin/rails credentials:edit                          # development
@@ -672,9 +672,9 @@ git commit -m "feat: scaffold Active Record encryption keys for test env"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `Observability::SentryConfig.enabled?(dsn)` (Ruby); `initSentry(): void` and `reportError(error: unknown): void` (TS), the latter called from `ErrorBoundary#componentDidCatch`.
+- Produces: `Observability::SentryConfig.enabled?(dsn)` (Ruby); `initSentry(): void` and `reportError(error: unknown): void` (TS), latter called from `ErrorBoundary#componentDidCatch`.
 
-- [x] **Step 1: Add the gems**
+- [x] **Step 1: Add gems**
 
 ```ruby
 gem "sentry-ruby", "~> 5.22"
@@ -683,7 +683,7 @@ gem "sentry-rails", "~> 5.22"
 
 Run `bundle install`.
 
-- [x] **Step 2: Write the failing Ruby spec**
+- [x] **Step 2: Write failing Ruby spec**
 
 ```ruby
 # spec/lib/observability/sentry_config_spec.rb
@@ -705,12 +705,12 @@ RSpec.describe Observability::SentryConfig do
 end
 ```
 
-- [x] **Step 3: Run it to confirm it fails**
+- [x] **Step 3: Run, confirm fail**
 
 Run: `bundle exec rspec spec/lib/observability/sentry_config_spec.rb`
 Expected: FAIL — `uninitialized constant Observability`
 
-- [x] **Step 4: Implement the gate and initializer**
+- [x] **Step 4: Implement gate and initializer**
 
 ```ruby
 # app/lib/observability/sentry_config.rb
@@ -740,18 +740,18 @@ if Observability::SentryConfig.enabled?(dsn)
 end
 ```
 
-- [x] **Step 5: Run test to verify it passes**
+- [x] **Step 5: Run test, verify pass**
 
 Run: `bundle exec rspec spec/lib/observability/sentry_config_spec.rb`
 Expected: PASS
 
-- [x] **Step 6: Add the frontend dependency**
+- [x] **Step 6: Add frontend dependency**
 
 ```bash
 npm install @sentry/react
 ```
 
-- [x] **Step 7: Write the failing frontend test**
+- [x] **Step 7: Write failing frontend test**
 
 ```ts
 // app/frontend/lib/sentry.test.ts
@@ -811,12 +811,12 @@ describe('reportError', () => {
 })
 ```
 
-- [x] **Step 8: Run it to confirm it fails**
+- [x] **Step 8: Run, confirm fail**
 
 Run: `npx vitest run app/frontend/lib/sentry.test.ts`
 Expected: FAIL — cannot find module `./sentry`
 
-- [x] **Step 9: Implement the frontend module**
+- [x] **Step 9: Implement frontend module**
 
 ```ts
 // app/frontend/lib/sentry.ts
@@ -838,14 +838,14 @@ export function reportError(error: unknown): void {
 }
 ```
 
-- [x] **Step 10: Run test to verify it passes**
+- [x] **Step 10: Run test, verify pass**
 
 Run: `npx vitest run app/frontend/lib/sentry.test.ts`
 Expected: PASS
 
-- [x] **Step 11: Wire it into the app**
+- [x] **Step 11: Wire into app**
 
-In `app/frontend/entrypoints/inertia.tsx`, add near the top of the file (after imports, before `createInertiaApp`):
+In `app/frontend/entrypoints/inertia.tsx`, add near top (after imports, before `createInertiaApp`):
 
 ```ts
 import { initSentry } from '@/lib/sentry'
@@ -866,10 +866,10 @@ componentDidCatch(error: Error, info: ErrorInfo) {
 }
 ```
 
-- [x] **Step 12: Run the existing ErrorBoundary test to confirm no regression**
+- [x] **Step 12: Run existing ErrorBoundary test, confirm no regression**
 
 Run: `npx vitest run app/frontend/components/ErrorBoundary.test.tsx`
-Expected: PASS (unchanged — `reportError` no-ops with no DSN in test env)
+Expected: PASS (unchanged — `reportError` no-ops w/ no DSN in test env)
 
 - [x] **Step 13: Commit**
 
@@ -890,9 +890,9 @@ git commit -m "feat: add Sentry error tracking for Rails and React"
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `Mailers::ResendSmtp.settings_for(api_key:, domain: "resend.dev")` returning an ActionMailer SMTP settings hash.
+- Produces: `Mailers::ResendSmtp.settings_for(api_key:, domain: "resend.dev")` returning ActionMailer SMTP settings hash.
 
-- [x] **Step 1: Write the failing spec**
+- [x] **Step 1: Write failing spec**
 
 ```ruby
 # spec/lib/mailers/resend_smtp_spec.rb
@@ -924,7 +924,7 @@ RSpec.describe Mailers::ResendSmtp do
 end
 ```
 
-- [x] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run, confirm fail**
 
 Run: `bundle exec rspec spec/lib/mailers/resend_smtp_spec.rb`
 Expected: FAIL — `uninitialized constant Mailers`
@@ -963,12 +963,12 @@ if (api_key = ENV["RESEND_API_KEY"]).present?
 end
 ```
 
-- [x] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test, verify pass**
 
 Run: `bundle exec rspec spec/lib/mailers/resend_smtp_spec.rb`
 Expected: PASS
 
-- [x] **Step 5: Document the env vars**
+- [x] **Step 5: Document env vars**
 
 In `.env.example`, add:
 
@@ -999,7 +999,7 @@ git commit -m "feat: configure production email delivery via Resend SMTP"
 - Consumes: nothing.
 - Produces: `initAnalytics(): void`, `trackPageview(path: string): void`, called from `inertia.tsx`'s existing `router.on('navigate', ...)` handler.
 
-- [x] **Step 1: Write the failing test**
+- [x] **Step 1: Write failing test**
 
 ```ts
 // app/frontend/lib/analytics.test.ts
@@ -1047,7 +1047,7 @@ describe('trackPageview', () => {
 })
 ```
 
-- [x] **Step 2: Run it to confirm it fails**
+- [x] **Step 2: Run, confirm fail**
 
 Run: `npx vitest run app/frontend/lib/analytics.test.ts`
 Expected: FAIL — cannot find module `./analytics`
@@ -1095,12 +1095,12 @@ export function __resetAnalyticsForTests(): void {
 }
 ```
 
-- [x] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test, verify pass**
 
 Run: `npx vitest run app/frontend/lib/analytics.test.ts`
 Expected: PASS
 
-- [x] **Step 5: Wire it into the app**
+- [x] **Step 5: Wire into app**
 
 In `app/frontend/entrypoints/inertia.tsx`:
 
@@ -1110,7 +1110,7 @@ import { initAnalytics, trackPageview } from '@/lib/analytics'
 initAnalytics()
 ```
 
-Extend the existing navigate handler (do not add a second `router.on('navigate', ...)` — append to the one that already syncs locale):
+Extend existing navigate handler (don't add second `router.on('navigate', ...)` — append to the one already syncing locale):
 
 ```ts
 router.on('navigate', (event) => {
@@ -1121,7 +1121,7 @@ router.on('navigate', (event) => {
 })
 ```
 
-- [x] **Step 6: Document the env var**
+- [x] **Step 6: Document env var**
 
 In `.env.example`, add:
 
@@ -1143,8 +1143,8 @@ git commit -m "feat: track pageviews with GA4 on Inertia navigation"
 
 **1. Findings coverage:** All 8 rows in "Findings this plan addresses" map 1:1 to Tasks 1–8. ✅
 
-**2. Placeholder scan:** No TBD/TODO, every step has literal code or an exact shell command. ✅
+**2. Placeholder scan:** No TBD/TODO, every step has literal code or exact shell command. ✅
 
-**3. Type consistency:** `initSentry`/`reportError` and `initAnalytics`/`trackPageview`/`__resetAnalyticsForTests` names match between implementation and test steps and the wiring step in `inertia.tsx`. `Mailers::ResendSmtp.settings_for(api_key:, domain:)` signature matches across spec, implementation, and initializer call. `AuthEvent` enum values (`success`/`failure`) match across model, model spec, and request spec. ✅
+**3. Type consistency:** `initSentry`/`reportError` and `initAnalytics`/`trackPageview`/`__resetAnalyticsForTests` names match between implementation, test steps, wiring step in `inertia.tsx`. `Mailers::ResendSmtp.settings_for(api_key:, domain:)` signature matches across spec, implementation, initializer call. `AuthEvent` enum values (`success`/`failure`) match across model, model spec, request spec. ✅
 
-**4. Review Focus:** all 5 items each have an owning task and an explicit test step, as listed above. ✅
+**4. Review Focus:** all 5 items each have owning task and explicit test step, as listed above. ✅

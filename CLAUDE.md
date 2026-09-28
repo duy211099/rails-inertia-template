@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code (claude.ai/code) working in this repo.
+Guide for Claude Code (claude.ai/code) work in repo.
 
 ## Common Commands
 
@@ -60,7 +60,7 @@ React pages live `app/frontend/pages/`, resolved by name in `app/frontend/entryp
 
 ### Routing
 
-Routes split into modular files under `config/routes/`:
+Routes split modular files under `config/routes/`:
 - `public.rb` — unauthenticated pages
 - `devise.rb` — auth routes
 - `demo.rb` — demo/example routes
@@ -79,7 +79,7 @@ JS route helpers gen by `js-routes` gem, live in `app/frontend/lib/`.
 
 **Soft deletes**: `Item` uses `Discard` gem. `default_scope` filters to `kept` records — use `Item.with_discarded` for soft-deleted records too.
 
-**Audit trail**: `Item` has `has_paper_trail` — all changes stored in `versions` table with `whodunnit` (user ID).
+**Audit trail**: `Item` has `has_paper_trail` — all changes stored in `versions` table w/ `whodunnit` (user ID).
 
 **Serialization**: Extend `BaseSerializer`, auto-converts keys camelCase. Add new serializers here when exposing new models to frontend. `BaseSerializer` at `app/serializers/base_serializer.rb`.
 
@@ -105,7 +105,7 @@ JS route helpers gen by `js-routes` gem, live in `app/frontend/lib/`.
 
 ### Environment Variables
 
-See `.env.example` for PostgreSQL vars (`DB_HOST`, `DB_PORT`, optional `DB_USERNAME`/`DB_PASSWORD`), Google OAuth creds (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`), prod Cloudflare R2 settings. Needs local PostgreSQL reachable via peer/trust auth for current OS user; dev email inbox needs no external service creds.
+See `.env.example` for PostgreSQL vars (`DB_HOST`, `DB_PORT`, optional `DB_USERNAME`/`DB_PASSWORD`), Google OAuth creds (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`), prod Cloudflare R2 settings. Need local PostgreSQL reachable via peer/trust auth for current OS user; dev email inbox needs no external service creds.
 
 ### Collection props and type safety
 
@@ -113,16 +113,16 @@ See `.env.example` for PostgreSQL vars (`DB_HOST`, `DB_PORT`, optional `DB_USERN
 
 ### Development tooling
 
-- Dev email inbox: `/letter_opener` (never mounted in production).
+- Dev email inbox: `/letter_opener` (never mounted prod).
 - Prod request summaries: Lograge JSON, no request params.
 - Backend HTTP: WebMock blocks external calls; stub requests explicitly.
 - Test profiling: `EVENT_PROF=sql.active_record bundle exec rspec spec/requests`.
 - DB checks: `RAILS_ENV=test bundle exec database_consistency`.
 - `bin/test` checks generated types once before starting parallel workers.
 
-## Keel design system: instructions for UI work
+## Keel design system: UI work instructions
 
-App UI is **Keel**, SaaS/admin design system on **shadcn/ui** (Radix primitives, Base UI for Combobox), **React 19**, **Tailwind CSS v4**, **Rails + Inertia**. Keel = shadcn w/ own tokens, extra variants, product patterns on top. Read this before writing any UI.
+App UI = **Keel**, SaaS/admin design system on **shadcn/ui** (Radix primitives, Base UI for Combobox), **React 19**, **Tailwind CSS v4**, **Rails + Inertia**. Keel = shadcn w/ own tokens, extra variants, product patterns on top. Read before writing any UI.
 
 **Naming follows shadcn exactly.** Use shadcn component names, parts, props, token names: `Dialog`, `AlertDialog`, `Sheet`, `Separator`, `Progress`, `Field`, `Empty`, `Toaster` + `toast()`, `bg-primary`, `text-muted-foreground`. shadcn has it → Keel uses shadcn's name.
 
@@ -142,13 +142,13 @@ App UI is **Keel**, SaaS/admin design system on **shadcn/ui** (Radix primitives,
 
 Import from each file, shadcn-style: `import { Button } from "@/components/ui/button"`.
 
-### Before building a screen
+### Before building screen
 
-1. ID its template: Dashboard, Resource index, Resource detail, Create, Edit, Settings, Auth, Onboarding, Empty account, Error.
+1. ID template: Dashboard, Resource index, Resource detail, Create, Edit, Settings, Auth, Onboarding, Empty account, Error.
 2. Compose order: patterns (`Page`, `PageHeader`, `ResourceIndex`, `DataTable`, `DataTableToolbar`, `DetailLayout`, `SettingsLayout`, `SettingsSection`, `SaveBar`, `MetricStrip`), then shadcn components, then layout primitives.
-3. `app/frontend/pages/items/index.tsx` and `show.tsx` = reference impl of Resource index / Resource detail templates in this app — follow structure for new resources.
+3. `app/frontend/pages/items/index.tsx` and `show.tsx` = reference impl of Resource index / Resource detail templates this app — follow structure for new resources.
 
-### Adding a shadcn component that isn't here yet
+### Adding shadcn component not here yet
 
 ```bash
 npx shadcn@latest add accordion
@@ -165,7 +165,7 @@ Always run keelify after `shadcn add`. Rewrites import aliases, focus ring, `dar
 - **Typography**: `Text variant` or Tailwind's scale (body `text-sm`). Weights 400/500/600 only. Sentence case.
 - **Buttons**: one `variant="default"` (filled) button per context: page header, card, dialog or form end. Others `outline`, `ghost` or `link`. Icon-only buttons = `size="icon"` w/ `aria-label` + `Tooltip`. Labels = verb+noun ("Create customer"), never "Submit", "OK" or "Yes". Loading = `disabled` + `<Spinner />`.
 - **Status**: `Badge variant="success|warning|destructive|info|secondary|outline"`. Word always carries meaning, not just colour.
-- **Not everything a card.** Cards hold one object or one field group. Page headers, alerts, metrics sit on background. Never nest cards. No shadows on resting surfaces.
+- **Not everything card.** Cards hold one object or one field group. Page headers, alerts, metrics sit on background. Never nest cards. No shadows on resting surfaces.
 - **Destructive actions**: `variant="destructive-outline"` (or destructive `DropdownMenuItem`) → `AlertDialog` whose `AlertDialogAction variant="destructive"` repeats action ("Delete 3 orders"). Reversible actions (archive) happen immediately w/ Undo `toast()`, no confirmation.
 - **Forms**: every control sits in `Field` w/ `FieldLabel`, optional `FieldDescription`, `FieldError`. Errors say what's wrong + how to fix. Mark optional fields "(optional)", not required ones.
 - **Overlays**: `Dialog` for short focused tasks, `AlertDialog` for confirmations, `Sheet` for side panels, `Popover` for small anchored editors, `DropdownMenu` for action lists.
@@ -184,8 +184,8 @@ Always run keelify after `shadcn add`. Rewrites import aliases, focus ring, `dar
 - Flash messages go to `toast()` (wired globally in `inertia.tsx` via `router.on('flash', …)`).
 - Components never fetch page data or import Inertia (except `app-link.tsx`). Pages translate component events into visits.
 
-### Definition of done for UI work
+### Definition of done, UI work
 
-- `npm run check` passes; no raw colours, `dark:` or arbitrary values added.
-- Works light + `.dark`, at 375px and 1440px, keyboard-only too.
-- Loading, empty, error states exist for every data region.
+- `npm run check` pass; no raw colours, `dark:` or arbitrary values added.
+- Work light + `.dark`, at 375px and 1440px, keyboard-only too.
+- Loading, empty, error states exist every data region.
