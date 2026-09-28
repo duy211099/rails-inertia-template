@@ -10,4 +10,12 @@ RSpec.describe "Rack::Attack login throttling", type: :request do
 
     expect(response).to have_http_status(:too_many_requests)
   end
+
+  it "throttles repeated login attempts against the JSON API login endpoint" do
+    11.times do
+      post api_v1_session_path, params: { email: "nonexistent@example.com", password: "wrong" }
+    end
+
+    expect(response).to have_http_status(:too_many_requests)
+  end
 end

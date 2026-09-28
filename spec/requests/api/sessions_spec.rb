@@ -35,6 +35,33 @@ RSpec.describe "Sessions API", type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
+    it "logs a failed attempt as an AuthEvent" do
+      expect {
+        post "/api/v1/session", params: { email: users(:one).email, password: "wrong" }, as: :json
+      }.to change(AuthEvent, :count).by(1)
+
+      expect(AuthEvent.last).to have_attributes(user_id: users(:one).id, email: users(:one).email, event_type: "failure")
+    end
+
+    it "logs a successful attempt as an AuthEvent" do
+      expect {
+        post "/api/v1/session", params: { email: users(:one).email, password: "password123" }, as: :json
+      }.to change(AuthEvent, :count).by(1)
+
+      expect(AuthEvent.last).to have_attributes(user_id: users(:one).id, event_type: "success")
+    end
+
+    it "locks the account after 5 failed attempts, blocking even the correct password" do
+      5.times do
+        post "/api/v1/session", params: { email: users(:one).email, password: "wrong" }, as: :json
+      end
+
+      expect(users(:one).reload).to be_access_locked
+
+      post "/api/v1/session", params: { email: users(:one).email, password: "password123" }, as: :json
+      expect(response).to have_http_status(:unauthorized)
+    end
+
     it "requires no CSRF token, unlike the cookie-based API flow" do
       post "/api/v1/session", params: { email: users(:one).email, password: "password123" },
         headers: { "X-CSRF-Token" => "" }, as: :json

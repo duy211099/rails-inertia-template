@@ -7,9 +7,13 @@ declare global {
 
 let initialized = false
 
-function pushToDataLayer(...args: unknown[]) {
+// gtag.js only recognizes a pushed `arguments` object as a command, not a
+// plain Array — a rest-args `(...args) => dataLayer.push(args)` shim gets
+// silently ignored by the real script.
+function pushToDataLayer() {
   window.dataLayer = window.dataLayer || []
-  window.dataLayer.push(args)
+  // biome-ignore lint/complexity/noArguments: gtag.js requires a real Arguments object, not an Array
+  window.dataLayer.push(arguments)
 }
 
 export function initAnalytics(): void {

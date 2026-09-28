@@ -24,6 +24,15 @@ describe('initAnalytics', () => {
     expect(document.querySelector('script[src*="G-TEST123"]')).not.toBeNull()
     expect(window.gtag).toBeInstanceOf(Function)
   })
+
+  it('pushes real arguments objects to dataLayer, not arrays, so gtag.js recognizes them as commands', () => {
+    // gtag.js only treats an `arguments` object pushed onto dataLayer as a
+    // command; pushing a real Array (e.g. from a rest-args `(...args) =>
+    // dataLayer.push(args)` shim) is silently ignored by the real script.
+    vi.stubEnv('VITE_GA4_MEASUREMENT_ID', 'G-TEST123')
+    initAnalytics()
+    expect(Array.isArray(window.dataLayer?.[0])).toBe(false)
+  })
 })
 
 describe('trackPageview', () => {

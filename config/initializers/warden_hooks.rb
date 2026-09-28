@@ -13,7 +13,7 @@ Warden::Manager.after_authentication do |user, warden, _opts|
 end
 
 Warden::Manager.before_failure do |env, opts|
-  next unless opts[:scope] == :user
+  next unless opts[:scope] == :user && opts[:attempted_path] == "/users/sign_in"
 
   request = ActionDispatch::Request.new(env)
 

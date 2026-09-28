@@ -22,4 +22,17 @@ RSpec.describe "Auth event logging", type: :request do
     event = AuthEvent.last
     expect(event).to have_attributes(user_id: nil, email: users(:one).email, event_type: "failure")
   end
+
+  it "does not log an auth event for unrelated authentication failures, like visiting a page while signed out" do
+    expect {
+      get items_path
+    }.not_to change(AuthEvent, :count)
+  end
+
+  it "does not block deleting a user who has signed in (and been logged)" do
+    post user_session_path, params: { user: { email: users(:one).email, password: "password123" } }
+
+    expect { users(:one).destroy }.not_to raise_error
+    expect(AuthEvent.count).to be >= 1
+  end
 end

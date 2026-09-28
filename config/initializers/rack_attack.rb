@@ -19,6 +19,15 @@ class Rack::Attack
     end
   end
 
+  # The web login form is Google-only (see app/frontend/pages/auth/login.tsx)
+  # — POST /users/sign_in has no UI path to it. The JSON API login
+  # (POST /api/v1/session) is the only password-login surface real clients
+  # use, so it needs the same IP throttle or the web-form throttles above
+  # protect nothing in practice.
+  throttle("api_logins/ip", limit: 10, period: 20.seconds) do |req|
+    req.ip if req.path == "/api/v1/session" && req.post?
+  end
+
   self.throttled_responder = lambda do |_request|
     [ 429, { "Content-Type" => "application/json" }, [ { error: "Too many attempts. Try again shortly." }.to_json ] ]
   end
