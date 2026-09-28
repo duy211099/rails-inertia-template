@@ -33,7 +33,12 @@ export function initAnalytics(): void {
 
 export function trackPageview(path: string): void {
   if (!initialized || !window.gtag) return
-  window.gtag('event', 'page_view', { page_path: path })
+
+  // page_location, not page_path, is the standard GA4 parameter. The
+  // query string is stripped rather than forwarded — Inertia visit URLs
+  // can carry tokens or search terms that shouldn't leave the app.
+  const pathname = path.split('?')[0]
+  window.gtag('event', 'page_view', { page_location: `${window.location.origin}${pathname}` })
 }
 
 export function __resetAnalyticsForTests(): void {

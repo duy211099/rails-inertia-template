@@ -23,7 +23,14 @@ class VirusScanJob < ApplicationJob
         blob.attachments.destroy_all
         blob.purge
       else
-        blob.update!(metadata: blob.metadata.merge("virus_scan" => "clean"))
+        # ActiveStorage's own AnalyzeJob does the same read-merge-write on
+        # metadata; without a lock, whichever of the two jobs writes last
+        # silently clobbers the other's key. with_lock re-reads the row
+        # under a DB row lock before the merge, so this job's write always
+        # starts from the latest committed metadata.
+        blob.with_lock do
+          blob.update!(metadata: blob.metadata.merge("virus_scan" => "clean"))
+        end
       end
     end
   end

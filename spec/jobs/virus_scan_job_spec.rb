@@ -46,6 +46,23 @@ RSpec.describe VirusScanJob, type: :job do
     expect(handler).not_to be_nil
   end
 
+  it "does not lose metadata written concurrently by ActiveStorage's own analyze job" do
+    blob = create_blob
+    allow(Clamby).to receive(:virus?) do
+      # Simulates AnalyzeJob (or anything else) committing a metadata
+      # change between this job's initial load and its own write.
+      concurrent = ActiveStorage::Blob.find(blob.id)
+      concurrent.update_columns(metadata: concurrent.metadata.merge("analyzed" => true))
+      false
+    end
+
+    described_class.new.perform(blob.id)
+
+    reloaded = blob.reload.metadata
+    expect(reloaded["virus_scan"]).to eq("clean")
+    expect(reloaded["analyzed"]).to be(true)
+  end
+
   it "destroys attachments so an infected file already attached to a record can't be served" do
     allow(Clamby).to receive(:virus?).and_return(true)
     blob = create_blob

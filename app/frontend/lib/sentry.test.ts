@@ -23,15 +23,22 @@ afterEach(() => {
 describe('initSentry', () => {
   it('does not initialize Sentry when no DSN is configured', async () => {
     const { initSentry } = await import('./sentry')
-    initSentry()
+    await initSentry()
     expect(mockInit).not.toHaveBeenCalled()
   })
 
   it('initializes Sentry once when a DSN is configured', async () => {
     vi.stubEnv('VITE_SENTRY_DSN', 'https://key@sentry.io/123')
     const { initSentry } = await import('./sentry')
-    initSentry()
-    initSentry()
+    await initSentry()
+    await initSentry()
+    expect(mockInit).toHaveBeenCalledTimes(1)
+  })
+
+  it('initializes Sentry once even when called twice before either resolves', async () => {
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://key@sentry.io/123')
+    const { initSentry } = await import('./sentry')
+    await Promise.all([initSentry(), initSentry()])
     expect(mockInit).toHaveBeenCalledTimes(1)
   })
 })
@@ -46,7 +53,7 @@ describe('reportError', () => {
   it('forwards errors to Sentry once initialized', async () => {
     vi.stubEnv('VITE_SENTRY_DSN', 'https://key@sentry.io/123')
     const { initSentry, reportError } = await import('./sentry')
-    initSentry()
+    await initSentry()
     const error = new Error('boom')
     reportError(error)
     expect(mockCaptureException).toHaveBeenCalledWith(error)

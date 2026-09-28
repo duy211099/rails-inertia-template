@@ -12,7 +12,7 @@ import { initAnalytics, trackPageview } from '@/lib/analytics'
 import { initI18n, syncLocale } from '@/lib/i18n'
 import { initSentry } from '@/lib/sentry'
 
-initSentry()
+void initSentry()
 initAnalytics()
 
 const MissingPage: any = () =>

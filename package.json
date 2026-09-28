@@ -1,4 +1,5 @@
 {
+  "name": "rails-inertia-template",
   "private": true,
   "type": "module",
   "devDependencies": {

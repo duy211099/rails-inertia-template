@@ -41,11 +41,23 @@ describe('trackPageview', () => {
     expect(window.gtag).toBeUndefined()
   })
 
-  it('pushes a page_view event once analytics is initialized', () => {
+  it('pushes a page_view event with the standard GA4 page_location parameter', () => {
     vi.stubEnv('VITE_GA4_MEASUREMENT_ID', 'G-TEST123')
     initAnalytics()
     const spy = vi.spyOn(window, 'gtag')
     trackPageview('/items')
-    expect(spy).toHaveBeenCalledWith('event', 'page_view', { page_path: '/items' })
+    expect(spy).toHaveBeenCalledWith('event', 'page_view', {
+      page_location: `${window.location.origin}/items`,
+    })
+  })
+
+  it('strips the query string so search terms/tokens are not sent to GA4', () => {
+    vi.stubEnv('VITE_GA4_MEASUREMENT_ID', 'G-TEST123')
+    initAnalytics()
+    const spy = vi.spyOn(window, 'gtag')
+    trackPageview('/items?token=secret&q=private+search')
+    expect(spy).toHaveBeenCalledWith('event', 'page_view', {
+      page_location: `${window.location.origin}/items`,
+    })
   })
 })
