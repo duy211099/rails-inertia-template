@@ -9,6 +9,9 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import AppLayout from '@/layouts/AppLayout'
 import PublicLayout from '@/layouts/PublicLayout'
 import { initI18n, syncLocale } from '@/lib/i18n'
+import { initSentry } from '@/lib/sentry'
+
+initSentry()
 
 const MissingPage: any = () =>
   createElement(

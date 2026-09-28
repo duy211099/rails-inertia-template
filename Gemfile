@@ -90,6 +90,9 @@ gem "lograge", "~> 0.15"
 gem "rack-attack", "~> 6.7"
 # Virus scan uploaded files via ClamAV
 gem "clamby", "~> 1.6"
+# Error tracking
+gem "sentry-ruby", "~> 5.22"
+gem "sentry-rails", "~> 5.22"
 # Typed, validated application configuration
 gem "anyway_config", "~> 2.7"
 # Parses Accept-Language headers for locale resolution

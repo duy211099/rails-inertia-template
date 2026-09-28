@@ -534,6 +534,12 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
+    sentry-rails (5.28.1)
+      railties (>= 5.0)
+      sentry-ruby (~> 5.28.1)
+    sentry-ruby (5.28.1)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     skooma (0.4.0)
       json_skooma (~> 0.2.7)
       rack (>= 2.0)
@@ -692,6 +698,8 @@ DEPENDENCIES
   rubocop-rails-omakase
   rubocop-rspec (~> 3.10)
   selenium-webdriver
+  sentry-rails (~> 5.22)
+  sentry-ruby (~> 5.22)
   skooma (~> 0.4.0)
   solid_cable (~> 4.0)
   solid_cache (~> 1.0)
@@ -898,6 +906,8 @@ CHECKSUMS
   rubyzip (3.7.0) sha256=65c19294da75297a939006f3516deacc33185fbd721ff1954f7a231db6d3e121
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
   selenium-webdriver (4.49.0) sha256=b430f091a3cababb356b6f6132e0e4f385b017819355f563557e1537819edc89
+  sentry-rails (5.28.1) sha256=43a5f884622c60fa459ba05dc8bd22fbd5f28daaced1d00dbcfc4669eaf93807
+  sentry-ruby (5.28.1) sha256=1162d474271e8b82202c984b1116db234007a084c5b73293e921468898d07e99
   skooma (0.4.0) sha256=e16fec051be0abd02cd7e7288fac12105dcf63b128bd05583d10dbb8b4f39f14
   snaky_hash (2.0.7) sha256=7d02c70012a3f932e48860cd024577908300c9aa615e0cb9b450aaa749cbcb4d
   solid_cable (4.1.0) sha256=828e3d509207b82b4f05f4e9c85f696994710679b52d511aa7f97ebd212d3226
