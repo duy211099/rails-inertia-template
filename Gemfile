@@ -39,7 +39,7 @@ gem "thruster", "~> 0.1", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.0"
 # S3-compatible storage (for Cloudflare R2)
-gem "aws-sdk-s3", "~> 1.180", require: false
+gem "aws-sdk-s3", "~> 1.232", require: false
 
 # --- Inertia / frontend ------------------------------------------------------
 
