@@ -66,7 +66,7 @@ gem "action_policy", "~> 0.7"
 gem "devise-jwt", "~> 0.12"
 
 # CORS for the JSON API, so a cross-origin web SPA can call it
-gem "rack-cors", "~> 2.0"
+gem "rack-cors", "~> 3.0"
 
 # --- Data & persistence -------------------------------------------------------
 
