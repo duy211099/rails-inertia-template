@@ -50,7 +50,7 @@ gem "vite_rails", "~> 3.0"
 gem "oj", "~> 3.17"
 gem "alba", "~> 4.0"
 gem "alba-inertia", "~> 0.1.4"
-gem "typelizer", "~> 0.13.1"
+gem "typelizer", "~> 0.14.0"
 
 # Frontend routes
 gem "js-routes", "2.4.1"
