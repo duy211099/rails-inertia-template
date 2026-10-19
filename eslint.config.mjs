@@ -2,11 +2,10 @@
 // Biome (biome.json) remains the sole linter/formatter for general JS/TS.
 
 import babelParser from '@babel/eslint-parser'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import { defineConfig } from 'eslint/config'
 import tailwindcss from 'eslint-plugin-tailwindcss'
 
 export default defineConfig([
-  globalIgnores(['private-agent-ui/']),
   tailwindcss.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
