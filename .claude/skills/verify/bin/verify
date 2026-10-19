@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Verification instance helper. Run from anywhere; it cds to the repo root.
+#   verify up              start Rails on $VERIFY_PORT (default 3100), wait until a page renders
+#   verify doctor          read-only health check of the instance this helper started
+#   verify user [--admin]  create a throwaway user, print EMAIL and PASSWORD
+#   verify evidence-dir    create and print a fresh evidence directory
+#   verify down            stop the instance this helper started
+#   verify purge           delete throwaway users (and their items) from the dev DB
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+cd "$ROOT"
+
+PORT="${VERIFY_PORT:-3100}"
+STATE_DIR="$ROOT/tmp/verify"
+PID_FILE="$ROOT/tmp/pids/verify-$PORT.pid"
+LOG_FILE="$STATE_DIR/server-$PORT.log"
+BASE_URL="http://localhost:$PORT"
+USER_DOMAIN="example.test"
+
+mkdir -p "$STATE_DIR" "$ROOT/tmp/pids"
+
+running_pid() {
+  [ -f "$PID_FILE" ] || return 1
+  local pid
+  pid="$(cat "$PID_FILE")"
+  kill -0 "$pid" 2>/dev/null || return 1
+  echo "$pid"
+}
+
+renders_page() {
+  curl -fsS -m 120 "$BASE_URL/" 2>/dev/null | grep -q 'data-page'
+}
+
+cmd_up() {
+  if pid="$(running_pid)"; then
+    echo "already running: pid $pid on $BASE_URL"
+    return 0
+  fi
+  if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "port $PORT is owned by another process; set VERIFY_PORT to a free port" >&2
+    exit 1
+  fi
+  pg_isready -q || { echo "PostgreSQL is not accepting connections" >&2; exit 1; }
+
+  bin/rails db:prepare >>"$LOG_FILE" 2>&1
+
+  # No Vite dev server: vite_ruby autoBuilds assets into public/vite-dev on first request.
+  # If the user's bin/dev Vite (port 3036) is running, Rails uses it instead; both work.
+  nohup bin/rails server -p "$PORT" -b 127.0.0.1 -P "$PID_FILE" >>"$LOG_FILE" 2>&1 &
+
+  for _ in $(seq 1 90); do
+    if curl -fsS -m 2 "$BASE_URL/up" >/dev/null 2>&1; then break; fi
+    sleep 1
+  done
+  curl -fsS -m 2 "$BASE_URL/up" >/dev/null 2>&1 || { echo "server did not answer /up; see $LOG_FILE" >&2; exit 1; }
+
+  # /up only proves Rails booted. Ready = the home page renders an Inertia payload (assets built).
+  renders_page || { echo "home page did not render; see $LOG_FILE" >&2; exit 1; }
+  echo "ready: $BASE_URL (pid $(cat "$PID_FILE"), log $LOG_FILE)"
+}
+
+cmd_doctor() {
+  local ok=0
+  if pid="$(running_pid)"; then echo "process: ok (pid $pid)"; else echo "process: NOT RUNNING (no live pid in $PID_FILE)"; ok=1; fi
+  local owner
+  owner="$(lsof -nP -t -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null | head -1 || true)"
+  if [ -n "$owner" ] && [ "$owner" = "${pid:-}" ]; then echo "port: ok ($PORT owned by our pid)"
+  else echo "port: NOT OURS (listener on $PORT: ${owner:-none})"; ok=1; fi
+  if curl -fsS -m 5 "$BASE_URL/up" >/dev/null 2>&1; then echo "health: ok (/up 200)"; else echo "health: FAIL (/up)"; ok=1; fi
+  if renders_page; then echo "render: ok (home page has data-page)"; else echo "render: FAIL (home page)"; ok=1; fi
+  echo "git: $(git rev-parse --short HEAD)$(git diff --quiet || echo ' +dirty')"
+  echo "log: $LOG_FILE"
+  return $ok
+}
+
+cmd_user() {
+  local admin=false
+  [ "${1:-}" = "--admin" ] && admin=true
+  local email="verify-$(date +%s)-$RANDOM@$USER_DOMAIN"
+  local password="Verify-$(openssl rand -hex 8)"
+  VERIFY_EMAIL="$email" VERIFY_PASSWORD="$password" VERIFY_ADMIN="$admin" bin/rails runner '
+    u = User.create!(email: ENV["VERIFY_EMAIL"], password: ENV["VERIFY_PASSWORD"], name: "Verify Bot")
+    u.roles << Role.find_by!(name: "admin") if ENV["VERIFY_ADMIN"] == "true"
+  ' >/dev/null
+  echo "EMAIL=$email"
+  echo "PASSWORD=$password"
+}
+
+cmd_evidence_dir() {
+  local dir="$STATE_DIR/evidence/$(date +%Y%m%d-%H%M%S)"
+  mkdir -p "$dir"
+  echo "$dir"
+}
+
+cmd_down() {
+  if pid="$(running_pid)"; then
+    kill "$pid"
+    for _ in $(seq 1 20); do kill -0 "$pid" 2>/dev/null || break; sleep 0.5; done
+    kill -0 "$pid" 2>/dev/null && kill -9 "$pid"
+    echo "stopped pid $pid"
+  else
+    echo "nothing running for port $PORT"
+  fi
+  rm -f "$PID_FILE"
+}
+
+cmd_purge() {
+  bin/rails runner '
+    users = User.where("email LIKE ?", "verify-%@'"$USER_DOMAIN"'")
+    n = users.count
+    users.find_each { |u| Item.with_discarded.where(user: u).delete_all; u.destroy! }
+    puts "purged #{n} throwaway users"
+  '
+}
+
+case "${1:-}" in
+  up) cmd_up ;;
+  doctor) cmd_doctor ;;
+  user) shift; cmd_user "$@" ;;
+  evidence-dir) cmd_evidence_dir ;;
+  down) cmd_down ;;
+  purge) cmd_purge ;;
+  *) sed -n '2,8p' "$0"; exit 2 ;;
+esac

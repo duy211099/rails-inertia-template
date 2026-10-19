@@ -41,7 +41,10 @@ node_modules
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
-.claude
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/verify/
 .playwright-mcp
 /.serena/
 /.vitest

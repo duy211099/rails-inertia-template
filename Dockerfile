@@ -9,7 +9,7 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=4.0.7
-ARG NODE_VERSION=24.21.0
+ARG NODE_VERSION=24.22.0
 FROM docker.io/library/node:$NODE_VERSION-bookworm-slim AS node
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 

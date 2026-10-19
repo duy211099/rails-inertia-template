@@ -50,7 +50,7 @@ gem "vite_rails", "~> 3.0"
 gem "oj", "~> 3.17"
 gem "alba", "~> 4.0"
 gem "alba-inertia", "~> 0.1.4"
-gem "typelizer", "~> 0.13.1"
+gem "typelizer", "~> 0.14.0"
 
 # Frontend routes
 gem "js-routes", "2.4.1"
@@ -66,7 +66,7 @@ gem "action_policy", "~> 0.7"
 gem "devise-jwt", "~> 0.12"
 
 # CORS for the JSON API, so a cross-origin web SPA can call it
-gem "rack-cors", "~> 2.0"
+gem "rack-cors", "~> 3.0"
 
 # --- Data & persistence -------------------------------------------------------
 
@@ -91,8 +91,8 @@ gem "rack-attack", "~> 6.7"
 # Virus scan uploaded files via ClamAV
 gem "clamby", "~> 1.6"
 # Error tracking
-gem "sentry-ruby", "~> 5.22"
-gem "sentry-rails", "~> 5.22"
+gem "sentry-ruby", "~> 7.1"
+gem "sentry-rails", "~> 7.1"
 # Typed, validated application configuration
 gem "anyway_config", "~> 2.7"
 # Parses Accept-Language headers for locale resolution
