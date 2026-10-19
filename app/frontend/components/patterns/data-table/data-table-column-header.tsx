@@ -1,15 +1,16 @@
 // Same name and role as the shadcn "Data Table" guide's DataTableColumnHeader, server-driven.
-import type { Column } from '@tanstack/react-table'
+import type { Column, RowData } from '@tanstack/react-table'
 import { ArrowDownIcon, ArrowUpIcon, ChevronsUpDownIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { DataTableFeatures } from './data-table'
 
 /** Sortable header button. First click sorts in the column's natural direction, the next reverses. */
-function DataTableColumnHeader<TData, TValue>({
+function DataTableColumnHeader<TData extends RowData, TValue>({
   column,
   title,
   className,
 }: {
-  column: Column<TData, TValue>
+  column: Column<DataTableFeatures, TData, TValue>
   title: string
   className?: string
 }) {

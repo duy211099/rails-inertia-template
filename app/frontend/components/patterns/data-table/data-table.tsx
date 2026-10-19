@@ -5,11 +5,15 @@
 import {
   type ColumnDef,
   flexRender,
-  getCoreRowModel,
+  metaHelper,
   type OnChangeFn,
+  type RowData,
   type RowSelectionState,
+  rowSelectionFeature,
+  rowSortingFeature,
   type SortingState,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table'
 import { type LucideIcon, MoreHorizontalIcon, XIcon } from 'lucide-react'
 import * as React from 'react'
@@ -44,19 +48,26 @@ export type BulkAction = {
 export type RowAction = { label: string; onSelect?: () => void; destructive?: boolean }
 
 /** Column meta Keel reads: align "end" for numbers/money; hideBelow drops a column on small screens; primary marks the row-header cell. */
-declare module '@tanstack/react-table' {
-  interface ColumnMeta<TData, TValue> {
-    align?: 'start' | 'end'
-    hideBelow?: 'md' | 'lg'
-    primary?: boolean
-    width?: string | number
-  }
+export type DataTableColumnMeta = {
+  align?: 'start' | 'end'
+  hideBelow?: 'md' | 'lg'
+  primary?: boolean
+  width?: string | number
 }
 
-export type DataTableProps<TData> = {
+export const dataTableFeatures = tableFeatures({
+  rowSortingFeature,
+  rowSelectionFeature,
+  columnMeta: metaHelper<DataTableColumnMeta>(),
+})
+
+export type DataTableFeatures = typeof dataTableFeatures
+export type DataTableColumnDef<TData extends RowData> = ColumnDef<DataTableFeatures, TData, any>
+
+export type DataTableProps<TData extends RowData> = {
   /** Accessible name (visually hidden caption), e.g. "Orders". */
   label: string
-  columns: ColumnDef<TData, any>[]
+  columns: DataTableColumnDef<TData>[]
   data: TData[]
   getRowId: (row: TData) => string
   /** Row click → detail page. The primary cell renders a real link. */
@@ -82,7 +93,7 @@ export type DataTableProps<TData> = {
 const INTERACTIVE = 'a,button,input,select,textarea,label,[role=checkbox],[role=menuitem]'
 const hide = (h?: 'md' | 'lg') => (h === 'md' ? 'max-md:hidden' : h === 'lg' ? 'max-lg:hidden' : '')
 
-function DataTable<TData>({
+function DataTable<TData extends RowData>({
   label,
   columns,
   data,
@@ -103,8 +114,8 @@ function DataTable<TData>({
   noun = { one: 'item', other: 'items' },
 }: DataTableProps<TData>) {
   const selectable = !!onRowSelectionChange
-  const allColumns = React.useMemo<ColumnDef<TData, any>[]>(() => {
-    const cols: ColumnDef<TData, any>[] = []
+  const allColumns = React.useMemo<DataTableColumnDef<TData>[]>(() => {
+    const cols: DataTableColumnDef<TData>[] = []
     if (selectable)
       cols.push({
         id: 'select',
@@ -170,13 +181,12 @@ function DataTable<TData>({
     return cols
   }, [columns, selectable, rowActions, noun.other, onAllMatchingSelectedChange])
 
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns: allColumns,
     getRowId: (r) => getRowId(r),
-    getCoreRowModel: getCoreRowModel(),
     manualSorting: true,
-    manualPagination: true,
     enableRowSelection: selectable,
     state: { sorting, rowSelection: rowSelection ?? {} },
     onSortingChange,
@@ -298,7 +308,7 @@ function DataTable<TData>({
             Array.from({ length: Math.max(data.length, 6) }).map((_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: Loading placeholders have no record identity or state.
               <TableRow key={`sk${i}`} className="hover:bg-transparent">
-                {table.getVisibleFlatColumns().map((c, ci) => (
+                {table.getAllLeafColumns().map((c, ci) => (
                   <TableCell key={c.id} className={hide(c.columnDef.meta?.hideBelow)}>
                     <Skeleton
                       className={cn(
@@ -332,7 +342,7 @@ function DataTable<TData>({
                   }}
                   className={cn(href && 'cursor-pointer')}
                 >
-                  {row.getVisibleCells().map((cell) => {
+                  {row.getAllCells().map((cell) => {
                     const m = cell.column.columnDef.meta
                     const isPrimary = cell.column.id === primaryId
                     const content = flexRender(cell.column.columnDef.cell, cell.getContext())

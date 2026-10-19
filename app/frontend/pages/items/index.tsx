@@ -1,9 +1,12 @@
 import { Head, router } from '@inertiajs/react'
-import type { ColumnDef } from '@tanstack/react-table'
 import { PackageIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DataTable, DataTablePagination } from '@/components/patterns/data-table'
+import {
+  DataTable,
+  type DataTableColumnDef,
+  DataTablePagination,
+} from '@/components/patterns/data-table'
 import {
   Page,
   PageActions,
@@ -39,7 +42,7 @@ export default function ItemsIndex({ items, pagy }: Props) {
     }
   }
 
-  const columns: ColumnDef<Item, any>[] = [
+  const columns: DataTableColumnDef<Item>[] = [
     { accessorKey: 'name', header: t('columnName'), meta: { primary: true } },
     { accessorKey: 'description', header: t('columnDescription'), meta: { hideBelow: 'md' } },
     { accessorKey: 'phoneNumber', header: t('columnPhone'), meta: { hideBelow: 'md' } },
