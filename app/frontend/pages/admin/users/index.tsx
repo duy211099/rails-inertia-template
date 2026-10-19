@@ -1,11 +1,12 @@
 import { Head, router } from '@inertiajs/react'
-import type { ColumnDef, SortingState } from '@tanstack/react-table'
+import type { SortingState } from '@tanstack/react-table'
 import { UsersIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Inline } from '@/components/layout/stack'
 import {
   DataTable,
+  type DataTableColumnDef,
   DataTableColumnHeader,
   DataTableFacetedFilter,
   DataTablePagination,
@@ -91,7 +92,7 @@ export default function AdminUsersIndex({ users, pagy, q, role, sort, direction 
 
   const isFiltered = query !== '' || roleFilter.length > 0
 
-  const columns: ColumnDef<User, any>[] = [
+  const columns: DataTableColumnDef<User>[] = [
     {
       accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title={t('columnName')} />,
