@@ -130,7 +130,7 @@ group :development, :test do
   gem "database_validations", "~> 2.1"
 
   # Database consistency checks
-  gem "database_consistency", "~> 3.0", require: false
+  gem "database_consistency", "~> 3.1", require: false
 
   # Test data factories
   gem "factory_bot_rails", "~> 6.4"
