@@ -151,7 +151,7 @@ group :development do
   gem "rack-mini-profiler", "~> 5.0"
 
   # N+1 query detection
-  gem "bullet", "~> 8.1"
+  gem "bullet", "~> 8.3"
 
   gem "letter_opener_web", "~> 3.0"
 end
