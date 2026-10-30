@@ -45,7 +45,7 @@
     "react": "^19.3.1",
     "react-day-picker": "^10.0.2",
     "react-dom": "^19.3.1",
-    "react-i18next": "^17.1.0",
+    "react-i18next": "^17.1.9",
     "shadcn": "^4.22.1",
     "snakecase-keys": "^9.0.2",
     "sonner": "^2.0.8",
