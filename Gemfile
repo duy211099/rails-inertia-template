@@ -31,7 +31,7 @@ gem "solid_cable", "~> 4.0"
 gem "mission_control-jobs", "~> 1.1"
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", "~> 1.23", require: false
+gem "bootsnap", "~> 1.26", require: false
 
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", "~> 0.1", require: false
