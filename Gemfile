@@ -94,7 +94,7 @@ gem "clamby", "~> 1.6"
 gem "sentry-ruby", "~> 7.1"
 gem "sentry-rails", "~> 7.1"
 # Typed, validated application configuration
-gem "anyway_config", "~> 2.7"
+gem "anyway_config", "~> 2.9"
 # Parses Accept-Language headers for locale resolution
 gem "http_accept_language", "~> 2.1"
 
