@@ -161,7 +161,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webmock", "~> 3.26"
-  gem "vcr", "~> 6.3"
+  gem "vcr", "~> 6.4"
   gem "test-prof", "~> 1.6"
   gem "n_plus_one_control", "~> 0.8"
   gem "skooma", "~> 0.4.0"

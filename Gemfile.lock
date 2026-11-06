@@ -602,7 +602,7 @@ GEM
     uri (1.1.2)
     uri-idna (0.3.1)
     useragent (0.16.11)
-    vcr (6.4.0)
+    vcr (6.4.1)
     version_gem (1.1.15)
     vite_rails (3.11.1)
       railties (>= 5.1, < 9)
@@ -714,7 +714,7 @@ DEPENDENCIES
   thruster (~> 0.1)
   typelizer (~> 0.14.0)
   tzinfo-data
-  vcr (~> 6.3)
+  vcr (~> 6.4)
   vite_rails (~> 3.0)
   web-console
   webmock (~> 3.26)
@@ -940,7 +940,7 @@ CHECKSUMS
   uri (1.1.2) sha256=89292e98eabbef6248b0a0ed5e7e398e152f83f17560023a6d94a7f492b169fb
   uri-idna (0.3.1) sha256=c8601a9ca545670a763f5a7c56c99d7072bc2b1f6d83df63e6f35c264b609823
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
-  vcr (6.4.0) sha256=077ac92cc16efc5904eb90492a18153b5e6ca5398046d8a249a7c96a9ea24ae6
+  vcr (6.4.1) sha256=74870fc87d1bdf1f24e847f57977ac9a5e55cde681f56f1172c7c82dc9f006aa
   version_gem (1.1.15) sha256=a73241587b29252e3567e0c818ded80730eb754d43b508f6ce4db22ca9ba27d0
   vite_rails (3.11.1) sha256=61fa4a7c9248fc28f22a05e0760810bf79f645b776c721d888a815c5d21dd338
   vite_ruby (3.11.1) sha256=51286571c86ae1639356755e141d5b191aac690e68d7ad52ef924a95c0710dcd
