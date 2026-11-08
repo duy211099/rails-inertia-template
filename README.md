@@ -1,5 +1,3 @@
-Compress this markdown into caveman format.
-
 # Rails + Inertia template
 
 Rails 8.1, SQLite, Inertia, React, TypeScript, Vite, Tailwind CSS.
